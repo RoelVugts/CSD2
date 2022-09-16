@@ -18,15 +18,25 @@ pause in between.
 
 import simpleaudio as sa
 import time
+import random
 
 # load audio files into a list
-samples = [ sa.WaveObject.from_wave_file("../audioFiles/Pop.wav"),
-            sa.WaveObject.from_wave_file("../audioFiles/Laser1.wav"),
-            sa.WaveObject.from_wave_file("../audioFiles/Dog2.wav")]
+samples = [ sa.WaveObject.from_wave_file("audioFiles/Pop.wav"),
+            sa.WaveObject.from_wave_file("audioFiles/Laser1.wav"),
+            sa.WaveObject.from_wave_file("audioFiles/Dog2.wav")]
 
+numPlaybackTimes = int(input("Enter amount of playbacks: "))
+
+def samplePlayer(audioSample, numPlayback): #Functie die sample gegeven keer afspeelt
+  for i in range(0, numPlayback):
+    playSample = audioSample[0].play()
+    time.sleep(random.uniform(0.01, 0.04)) #tijd tussen samples wordt random gegenereerd
+    playSample.wait_done()
+
+samplePlayer(samples, numPlaybackTimes)
 
 # play samples, wait 1 second in between
 for sample in samples:
   print(sample) # display the sample object
   sample.play() # play sample
-  time.sleep(1) # wait 1 second
+  time.sleep(random.uniform(0.4, 1.5))# wait random time
