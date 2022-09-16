@@ -25,12 +25,35 @@ An example project in which three wav files are used.
 
 # simpleaudio is imported as sa -> shorter name
 import simpleaudio as sa
+import time
 
 # load audio files
-sampleHigh = sa.WaveObject.from_wave_file("../audioFiles/Pop.wav")
-sampleMid = sa.WaveObject.from_wave_file("../audioFiles/Laser1.wav")
-sampleLow = sa.WaveObject.from_wave_file("../audioFiles/Dog2.wav")
+sampleHigh = sa.WaveObject.from_wave_file("audioFiles/Pop.wav")
+sampleMid = sa.WaveObject.from_wave_file("audioFiles/Laser1.wav")
+sampleLow = sa.WaveObject.from_wave_file("audioFiles/Dog2.wav")
 
+userSample = int(input("Enter sample (1 - 3) you would like to hear: "))
+
+audioSamples = [sa.WaveObject.from_wave_file("audioFiles/Pop.wav"), sa.WaveObject.from_wave_file("audioFiles/Laser1.wav"), sa.WaveObject.from_wave_file("audioFiles/Dog2.wav")]
+
+for i in range(0, 4): #speelt gekozen sample 5 keer af
+  playSample = audioSamples[userSample - 1].play()
+  playSample.wait_done()
+
+#speelt samples achter elkaar af
+playSample = audioSamples[0].play()
+playSample.wait_done()
+time.sleep(1)
+
+playSample = audioSamples[1].play()
+playSample.wait_done()
+time.sleep(1)
+
+playSample = audioSamples[2].play()
+playSample.wait_done()
+time.sleep(1)
+
+"""
 # play high sample
 sampleHighPlay = sampleHigh.play()
 # wait till sample is done playing
@@ -45,3 +68,15 @@ sampleMidPlay.wait_done()
 sampleLowPlay = sampleLow.play()
 # wait till sample is done playing
 sampleLowPlay.wait_done()
+
+
+
+#play sounds simultaneously
+sampleHighPlay = sampleHigh.play()
+sampleMidPlay = sampleMid.play()
+sampleLowPlay = sampleLow.play()
+sampleHighPlay.wait_done()
+sampleMidPlay.wait_done()
+sampleLowPlay.wait_done()
+
+"""
