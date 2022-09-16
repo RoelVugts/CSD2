@@ -11,7 +11,9 @@ An example project in which a sequence of one bar is played, using only one audi
   rhythm. Explain how this works.
 
 - Alter the code:
-  Fix the bug that occurs: "IndexError: pop from empty list"
+  Fix the bug that occurs: "IndexError: pop from empty list" 
+
+  Roel: Error omdat de lijst leeg is en de .pop iets uit deze lijst wil halen. 
 """
 
 import simpleaudio as sa
@@ -53,6 +55,7 @@ for currentStep in range(int(stepsPerBar)):
   if(currentStep == step):
     samples[0].play()
     # retrieve the next step at which we need to play a sample
-    step = sequence.pop(0)
+    if (len(sequence) > 0):  #Bug fixed :)
+      step = sequence.pop(0)
 
   time.sleep(stepDuration)
