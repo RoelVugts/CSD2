@@ -17,6 +17,8 @@ We will trigger events based on a timestamp.
     "04_randomNoteDuration.py" and "05_oneSampleSequenceSteps.py"?
     Notate your answer below this line (Dutch is allowed)!
 
+    Omdat time.sleep de code stil legt. Er kan dan verder niks meer uitgevoerd worden.
+
 - Alter the code:
   Currently one sample is played. Add another sample to the script.
   When a sample needs to be played, choose one of the two samples
@@ -37,7 +39,7 @@ import random
 
 # load 1 audioFile and store it into a list
 # note: using a list taking the next step into account: using multiple samples
-samples = [sa.WaveObject.from_wave_file("../audioFiles/Pop.wav")]
+samples = [sa.WaveObject.from_wave_file("audioFiles/Pop.wav"), sa.WaveObject.from_wave_file("audioFiles/Dog2.wav")]
 
 bpm = 120
 quarterNoteDuration = 60 / bpm
@@ -55,10 +57,12 @@ timestamps16th = [0, 2, 4, 8, 11]
 for timestamp in timestamps16th:
   timestamps.append(timestamp * sixteenthNoteDuration)
 
+timeStampIndex = 0
+playbackCounter = 0
 
 # retrieve the first timestamp
 # NOTE: pop(0) returns and removes the element at index 0
-timestamp = timestamps.pop(0)
+#timestamp = timestamps.pop(0)
 
 # retrieve the startime: current time
 startTime = time.time()
@@ -68,23 +72,30 @@ startTime = time.time()
 while True:
   # retrieve current time
   currentTime = time.time()
+  timestamp = timestamps[timeStampIndex] #index instead of .pop to loop through list
 
-  # check whether the current time is beyond the timestamp's time,
-  # meaning it is time to play the sample
-  if(currentTime - startTime >= timestamp):
-    samples[0].play()
+  if playbackCounter < 4:
+    # check whether the current time is beyond the timestamp's time,
+    # meaning it is time to play the sample
+    if(currentTime - startTime >= timestamp):
+      samples[random.randint(0,1)].play()  #random kiezen tussen samples
 
-    # if there are timestamps left in the timestamps list
-    if timestamps:
-      # retrieve the next timestamp
-      timestamp = timestamps.pop(0)
+      # if there are timestamps left in the timestamps list
+      if timeStampIndex < len(timestamps) - 1:
+        # retrieve the next timestamp
+        timeStampIndex += 1
+      else:
+        # list is empty, stop the loop
+        timeStampIndex = 0
+        playbackCounter += 1
+        startTime = time.time() #reset start timer
+      print("Index: " + str(timeStampIndex))
+      print("timeStamp: " + str(timestamp))
     else:
-      # list is empty, stop the loop
-      break
+      # short wait to prevent we'll keep the processor busy when there's
+      # nothing to do
+      time.sleep(0.001)
   else:
-    # short wait to prevent we'll keep the processor busy when there's
-    # nothing to do
-    time.sleep(0.001)
-
+    break
 
 time.sleep(1) # let the last 'note' ring out
