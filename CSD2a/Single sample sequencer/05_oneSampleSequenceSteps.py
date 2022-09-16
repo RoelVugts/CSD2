@@ -21,7 +21,7 @@ import random
 # load an audio file and store it into a list
 # note: using a list is a preparation for the next assignment in which we
 # will use multiple audio files
-samples = [sa.WaveObject.from_wave_file("../audioFiles/Pop.wav")]
+samples = [sa.WaveObject.from_wave_file("audioFiles/Pop.wav")]
 
 bpm = 120
 # calculate quarterNote with bpm
