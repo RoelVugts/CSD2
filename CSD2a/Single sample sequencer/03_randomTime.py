@@ -23,14 +23,16 @@ import time
 import random
 
 # load audio files into a list
-samples = [sa.WaveObject.from_wave_file("../audioFiles/Pop.wav"),
-              sa.WaveObject.from_wave_file("../audioFiles/Laser1.wav"),
-              sa.WaveObject.from_wave_file("../audioFiles/Dog2.wav")]
+samples = [sa.WaveObject.from_wave_file("audioFiles/Pop.wav"),
+              sa.WaveObject.from_wave_file("audioFiles/Laser1.wav"),
+              sa.WaveObject.from_wave_file("audioFiles/Dog2.wav")]
+
+BPM = 60 / int(input("Enter BPM: ")) #berekent BPM obv input
 
 # create a list to hold the timeIntervals 0.25, 0.5, 1.0
-timeIntervals = [0.25, 0.5, 1]
+timeIntervals = [0.25 * BPM, 0.5 * BPM, 1 * BPM]
 
-
+"""
 # play samples and wait in between (random duration)
 for sample in samples:
   print(sample)
@@ -44,3 +46,13 @@ for sample in samples:
 
   # wait some time
   time.sleep(timeIntervals[randomIndex])
+
+"""
+
+def samplePlayer(audioSamples, noteDurations): #functie die sample lijst en nootwaarden gebruikt
+  for sample in audioSamples:
+    sample.play()
+    for note in noteDurations:
+      time.sleep(note)
+
+samplePlayer(samples, timeIntervals)
