@@ -65,7 +65,7 @@ for i in range(4):
 
 """
 
-def createIntervals(bpm, noteDurations):
+def createIntervals(bpm, noteDurations): 
   timeIntervals =[]
   for note in noteDurations:
     timeIntervals.append((60 / bpm * note))
