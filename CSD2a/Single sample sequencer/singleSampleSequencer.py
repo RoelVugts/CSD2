@@ -56,6 +56,8 @@ def timestampToInterval(timestamps, BPM):
 print("NoteIntervals: " + str(timestampToInterval(timestamps, BPM)))
 
 def startSequencer(sample, sample1):
+    global threadTime1
+    global startTime
     print("startSequencer")
     startTime = time.time()
     index = 1
@@ -83,7 +85,12 @@ def startSequencer(sample, sample1):
 t = threading.Thread(target=startSequencer, args=(sample, sample1)) #Assign thread
 t.start() #run function in thread
 
+threadTime2 = time.time()
+timeDelta = startTime- threadTime2 #check time differences of threading
+
+
 while True:
+    print("timeDelta: " + str(timeDelta))
     keyInput = input("Change BPM or press q to exit: ")
     if (keyInput == "q"): #if pressed enter set bpm to 120 (default)
         isPlaying = False
