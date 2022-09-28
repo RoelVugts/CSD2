@@ -3,20 +3,23 @@ import simpleaudio as sa
 import time
 import threading
 
-class Event:
-    def __init__(note, timestamp, instrument, velocity, duration):
+class Event: #Class for storing event information
+    def __init__(note, timestamp, instrument, instrumentName, velocity, duration):
         note.timestamp = timestamp
-        note.instrument = instrument
+        note.instrument = instrument #wav file
+        note.instrumentName = instrumentName #reference name
         note.velocity = velocity
         note.duration = duration
+
+notes = [] #array to store class instances
 
 kick = sa.WaveObject.from_wave_file("audioFiles/Kick.wav")
 snare = sa.WaveObject.from_wave_file("audioFiles/Snare.wav")
 chord = sa.WaveObject.from_wave_file("audioFiles/F_Chord.wav")
 
-audioSamples = [kick, snare, chord]
+audioSamples = [kick, snare, chord] #store samples in array
 
-while True:
+while True: #Ask user for BPM
     try:
         BPM = int(input("Please enter BPM: "))
         print("BPM set to " + str(BPM))
@@ -24,7 +27,7 @@ while True:
     except ValueError:
         print("BPM needs to be an integer")
 
-def createTimestamps(BPM):
+def createTimestamps(BPM): #function that creates timestamps (random)
     noteDurations = [1, 0.5, 0.25] #quarter, eight and sixteenth notes
     tempo = 60 / BPM #calculate time per beat (in seconds)
     playTime = tempo * 16 #calculate time of 4 bars (16 beats)
@@ -55,22 +58,27 @@ def createTimestamps(BPM):
         #print("Timestamps: " + str(timestamps))
         return timestamps
 
-
-
-def createInstruments(samples):
+def createInstruments(samples): #function that adds samples to the timestamps
     global instruments
-    instruments = []
+    global instrumentNames
+    instruments = [] #array for the wave objects
+    instrumentNames = [] #array for the string variabels (as reference)
     pseudoRandom = 0
     for i in range(len(timestamps)): #voor aantal timestamps
-        if timestamps[i] % 2 == 0:
-            pseudoRandom = samples[0]
+        if timestamps[i] * BPM % 240 == 0:
+            pseudoRandom = samples[0] #Kick on every first beat
         else:
             pseudoRandom = samples[random.randint(0, len(samples) - 1)]
-        instruments.append(pseudoRandom) #choose random between souns in sample array
-    #print("Instruments: " + str(instruments))
-    return instruments
+        instruments.append(pseudoRandom) #choose random between sounds in sample array
+        
+        if pseudoRandom == kick:
+            instrumentNames.append("Kick")
+        elif pseudoRandom == snare:
+            instrumentNames.append("Snare")
+        elif pseudoRandom == chord:
+            instrumentNames.append("Chord")
 
-def createVelocities():
+def createVelocities(): #function that adds velocities to the timestamps
     global velocities
     velocities = []
     for i in range(len(timestamps)): #voor aantal timestamps
@@ -79,68 +87,35 @@ def createVelocities():
     #print("Velocities: " + str(velocities))
     return velocities
 
-
-#print("Timestamps: " + str(createTimestamps(BPM)))
-#print("Instruments" + str(createInstruments(audioSamples)))
-#print("Velocities: " + str(createVelocities()))
-
 createTimestamps(BPM)
 createInstruments(audioSamples)
 createVelocities()
-#print("Timestamps: " + str(timestamps))
 
-notes = list()
-
-for i in range(len(timestamps)):
-    notes.append(Event(timestamps[i], instruments[i], velocities[i], 0)) #create objects
-    print("No. " + str(i))
-    print("Timestamp: " + str(notes[i].timestamp))
-    print("Instrument: " + str(notes[i].instrument))
-    print("Velocity: " + str(notes[i].velocity))
-    print("\n")
+for i in range(len(timestamps)): #push arrays into class objects
+    notes.append(Event(timestamps[i], instruments[i], instrumentNames[i], velocities[i], 0)) #create objects
+    print(f'No. {i} ; Timestamp: {notes[i].timestamp} ; Instrument: {notes[i].instrumentName} ; Velocity: {notes[i].velocity}')
+    
 
 print(f'Created {len(timestamps)} Events')
 
-def playSequencer(eventArray, instrSelect):
+def playSequencer(eventArray): #Functie die de sequence speelt (Event Handler)
     startTime = time.time() #set start time
     index = 0
-    instrumentName = ""
 
     while index < len(eventArray):
-        if eventArray[index].instrument == kick:
-            instrumentName = "Kick" 
-        elif eventArray[index].instrument == snare:
-            instrumentName = "Snare"
-        elif eventArray[index].instrument == chord:
-            instrumentName = "Chord"
-
         timer = time.time() - startTime #start timer
-        if timer > eventArray[index].timestamp:         
-            if instrSelect == instrumentName:
+        if timer > eventArray[index].timestamp: 
                 eventArray[index].instrument.play()
-                print(f'Timestamp: {eventArray[index].timestamp} ; Velocity: {eventArray[index].velocity} ; Instrument: {instrumentName}')
-            index += 1
-
-
-kickThread = threading.Thread(target=playSequencer, args=(notes, "Kick"))
-snareThread = threading.Thread(target=playSequencer, args=(notes, "Snare"))
-chordThread = threading.Thread(target=playSequencer, args=(notes, "Chord"))
-
-
-
+                print(f'Timestamp: {eventArray[index].timestamp} ; Velocity: {eventArray[index].velocity} ; Instrument: {eventArray[index].instrumentName}')
+                index += 1
 
 
 while True:
     keyInput = input("\nStart the sequencer? [Y/n]")
     if (keyInput == "Y"):
-        kickThread.start()
-        snareThread.start()
-        #chordThread.start()
+        playSequencer(notes)
     elif (keyInput == "n"):
         break
     else:
         continue
-
-kickThread.join()
-snareThread.join()
-chordThread.join()
+    
