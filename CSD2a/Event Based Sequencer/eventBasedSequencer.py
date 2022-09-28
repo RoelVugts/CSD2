@@ -1,7 +1,6 @@
 import random
 import simpleaudio as sa
 import time
-import threading
 
 class Event: #Class for storing event information
     def __init__(note, timestamp, instrument, instrumentName, velocity, duration):
@@ -91,9 +90,13 @@ createTimestamps(BPM)
 createInstruments(audioSamples)
 createVelocities()
 
-for i in range(len(timestamps)): #push arrays into class objects
-    notes.append(Event(timestamps[i], instruments[i], instrumentNames[i], velocities[i], 0)) #create objects
-    print(f'No. {i} ; Timestamp: {notes[i].timestamp} ; Instrument: {notes[i].instrumentName} ; Velocity: {notes[i].velocity}')
+for i in range(len(timestamps)):
+    notes.append({"timestamp": timestamps[i], "instrument": instruments[i], "velocity": velocities[i], "duration" : 0})
+print(notes)
+
+# for i in range(len(timestamps)): #push arrays into class objects
+#     notes.append(Event(timestamps[i], instruments[i], instrumentNames[i], velocities[i], 0)) #create objects
+#     print(f'No. {i} ; Timestamp: {notes[i].timestamp} ; Instrument: {notes[i].instrumentName} ; Velocity: {notes[i].velocity}')
     
 
 print(f'Created {len(timestamps)} Events')
@@ -104,10 +107,21 @@ def playSequencer(eventArray): #Functie die de sequence speelt (Event Handler)
 
     while index < len(eventArray):
         timer = time.time() - startTime #start timer
-        if timer > eventArray[index].timestamp: 
-                eventArray[index].instrument.play()
-                print(f'Timestamp: {eventArray[index].timestamp} ; Velocity: {eventArray[index].velocity} ; Instrument: {eventArray[index].instrumentName}')
+        if timer > eventArray[index]["timestamp"]: 
+                eventArray[index]["instrument"].play()
+                #print(f'Timestamp: {eventArray[index]["timestamp"] ; "Velocity": {eventArray[index].velocity} ; Instrument: {eventArray[index].instrumentName}')
                 index += 1
+
+# def playSequencer(eventArray): #Functie die de sequence speelt (Event Handler)
+#     startTime = time.time() #set start time
+#     index = 0
+
+#     while index < len(eventArray):
+#         timer = time.time() - startTime #start timer
+#         if timer > eventArray[index].timestamp: 
+#                 eventArray[index].instrument.play()
+#                 print(f'Timestamp: {eventArray[index].timestamp} ; Velocity: {eventArray[index].velocity} ; Instrument: {eventArray[index].instrumentName}')
+#                 index += 1
 
 
 while True:
