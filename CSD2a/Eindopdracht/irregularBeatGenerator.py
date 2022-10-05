@@ -6,8 +6,9 @@ import threading
 
 kick = sa.WaveObject.from_wave_file("audioFiles/Kick.wav")
 snare = sa.WaveObject.from_wave_file("audioFiles/Snare.wav")
+hiHat = sa.WaveObject.from_wave_file("audioFiles/HiHat.wav")
 
-audioSamples = [kick, snare]
+audioSamples = [kick, snare, hiHat]
 
 events = []
 
@@ -42,9 +43,10 @@ def createTimestamps(): #function that creates timestamps
     global durations
     global sequenceLength
 
-    timeQuarterNote = 60 / BPM #calculate time (in seconds) per quarter note
+
+    timeQuarterNote = (60 / BPM)   #calculate time (in seconds) per qnote counted as beat
     noteRatios = [1, 0.5, 0.25] #Quarter-, eight- and sixteenth -notes
-    sequenceLength = timeQuarterNote * (beatsPerMeasure * 4) #Set sequence length to 4 bars
+    sequenceLength = (timeQuarterNote / (beatValue/4)) * (beatsPerMeasure * 4) #Set sequence length to 4 bars
 
     timestamps = [] #create array for timestamps
     timestamps.clear() #clear array if re-running function
@@ -68,26 +70,61 @@ def createTimestamps(): #function that creates timestamps
             timestamps.append(timestamps[-1] + durations[-1])
             durations.append(durations[i]) #copy durations from previous bar
    
-    while timestamps[-1] < sequenceLength: #create timestamps for last bar
+    while timestamps[-1] < sequenceLength: #create random timestamps for last bar
         if (durations[-1] + timestamps[-1]) < (sequenceLength): #if timestamp does not exceed sequenceLength --> add to array
                 timestamps.append(durations[-1] + timestamps[-1]) #add notevalue to last timestamp to move forward in time
                 durations.append(timeQuarterNote * noteRatios[random.randint(0, len(noteRatios) -1)]) #choose a random note value
         else:     
             durations[-1] = sequenceLength - timestamps[-1] #make last timestamp fit bar
             break
-    return timestamps
     
+    for i in range(0,len(timestamps)):
+        timestamps[i] = round(timestamps[i], 3) #round off floating point error
+    
+    for i in range(0, len(durations)):
+        durations[i] = round(durations[i], 3) #round off floating point error
+
+def timestampsToSixteenths():
+    global sixteenths
+    sixteenths = []
+    sixteenths.clear()
+    for stamp in timestamps:
+        sixteenths.append(round((stamp / ((60/BPM)*0.25)) + 1)) #convert timestamp to stixteenth
+
 
 def createInstruments():
     global instruments
     global instrumentNames
     instruments = []
     instruments.clear()
-    sampleNames = ["Kick", "Snare"]
+    sampleNames = ["Kick", "Snare", "HiHat"]
     instrumentNames = []
     instrumentNames.clear()
+
+
     for i in range(stampsBarOne): #create instruments for first bar
-        randomInst = random.randint(0,len(audioSamples)-1)
+        if sixteenths[i] % 16 == 1:         #Every first beat is probably kick
+            if random.randint(0, 100) < 80:
+                randomInst = 0 # 0 = Kick
+            elif 80 <= random.randint(0, 100) <= 90:
+                randomInst = 1 # 1 = Snare
+            else:
+                randomInst = 2 # 2 = HiHat
+        elif sixteenths[i] % 8 == 5:        #Every 2nd and 4th beat is probaly snare
+            if random.randint(0, 100) < 90:
+                randomInst = 1
+            elif 90 <= random.randint(0, 100) <= 95:
+                randomInst = 0
+            else:
+                randomInst = 2
+        else:
+            if random.randint(0, 100) < 50: # Everything else is most probable HiHat
+                randomInst = 2 
+            elif 50 <= random.randint(0, 100) <= 70:
+                randomInst = 0 
+            else:
+                randomInst = 1
+
         instruments.append(audioSamples[randomInst])
         instrumentNames.append(sampleNames[randomInst])
     
@@ -99,30 +136,41 @@ def createInstruments():
     stampsLastBar = len(timestamps) - stampsBarOne*3
 
     for i in range(stampsLastBar): #create instruments for last bar
-        randomInst = random.randint(0,len(audioSamples)-1)
+        randomInst = random.randint(1,len(audioSamples)-1)
         instruments.append(audioSamples[randomInst])
         instrumentNames.append(sampleNames[randomInst])
+
+def createVelocities():
+    global velocities
+    velocities = []
+    velocities.clear()
+
+    for i in range(stampsBarOne): #create instruments for first bar
+        randomVel = random.randint(50, 127)
+        velocities.append(randomVel)
 
 events = []
 
 def createEvents(): #add event info to dictionary in event array
     events.clear()
     for i in range(len(timestamps)):
-        events.append({"Timestamp" : timestamps[i], "Sample": instruments[i], "InstrumentName": instrumentNames[i], "Duration": durations[i]})
-        print(f'Timestamp {i}: {events[i]["Timestamp"]} ; {events[i]["InstrumentName"]} ; Duration: {events[i]["Duration"]}')
+        events.append({"Timestamp" : timestamps[i], "Sixteenth": sixteenths[i], "Sample": instruments[i], "InstrumentName": instrumentNames[i], "Duration": durations[i]})
+        print(f'Timestamp {i}: {events[i]["Timestamp"]} ; Sixteenth: {events[i]["Sixteenth"]} ;  {events[i]["InstrumentName"]} ; Duration: {events[i]["Duration"]}')
         if len(events) % (stampsBarOne) == 0:
             if timestamps[i] <= (sequenceLength/4) * 3:
                 print("\n") #leave a blank line for every bar
 
 
 
-createTimestamps()
-createInstruments()
 
+def createNewBeat():
+    createTimestamps()
+    timestampsToSixteenths()
+    createInstruments()
+    createVelocities()
+    createEvents()
 
-createEvents()
-
-
+createNewBeat()
 
 def playSequencer():
     startTime = time.time()
@@ -134,6 +182,9 @@ def playSequencer():
                 events[index]["Sample"].play()
                 print(f'Timestamp {index}: {events[index]["Timestamp"]} ; {events[index]["InstrumentName"]}')
                 index += 1
+                if index % (stampsBarOne) == 0:
+                    if timestamps[index] <= (sequenceLength/4) * 3:
+                        print("\n") #leave a blank line for every bar
                 time.sleep(0.001) #Reduce CPU usage
             elif (keyInput == "x") or (keyInput == "X"):
                 break #break while loop if user exits sequencer
@@ -163,13 +214,17 @@ storeInput = "" #create variable scoreInput for while loop
 while True: #while loop with 2 while loops. 1. for asking to start or exit sequencer. 2. For store options or to create new beat, and then go back to while loop 1 --> start sequencer
     if storeInput != "X": #if user input did not exit program than stay in while loop, else break
         while True:
-            keyInput = input("\nGo = start sequencer\nX = exit sequencer\n")
-            if (keyInput == "Go") or (keyInput == "go"):
+            keyInput = input("\nGo = start sequencer\nX = exit sequencer\nN = Create New Beat\n\n")
+            if (keyInput == "Go"): 
+                stopThread()  
                 startThread() #create thread to start the sequencer
-            elif (keyInput == "x") or (keyInput == "X"):
+            elif (keyInput == "X"):
                 stopThread() #stop thread
                 break
+            elif (keyInput == "N"):
+                createNewBeat()
             else:
+                #stopThread()
                 print("False input")
                 continue
 
@@ -179,14 +234,11 @@ while True: #while loop with 2 while loops. 1. for asking to start or exit seque
                 dummy = 5
                 #storemidi
             elif storeInput == "N":
-                createTimestamps()
-                createInstruments()
-                createEvents()
+                createNewBeat()
                 break
             elif storeInput =="X":
                 break
             else:
                 print("False input\n")
-        continue
     else:
         break
