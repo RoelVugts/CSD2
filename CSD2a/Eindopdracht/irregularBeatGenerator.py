@@ -2,6 +2,7 @@ import simpleaudio as sa
 import random
 import time
 import threading
+from midiutil import MIDIFile
 
 
 kick = sa.WaveObject.from_wave_file("audioFiles/Kick.wav")
@@ -9,8 +10,6 @@ snare = sa.WaveObject.from_wave_file("audioFiles/Snare.wav")
 hiHat = sa.WaveObject.from_wave_file("audioFiles/HiHat.wav")
 
 audioSamples = [kick, snare, hiHat]
-
-events = []
 
 print("\nWelcome to the irregular beat generator! :)\n")
 
@@ -95,8 +94,11 @@ def timestampsToSixteenths():
 def createInstruments():
     global instruments
     global instrumentNames
+    global instruments2
     instruments = []
     instruments.clear()
+    instruments2 = []
+    instruments2.clear()
     sampleNames = ["Kick", "Snare", "HiHat"]
     instrumentNames = []
     instrumentNames.clear()
@@ -124,6 +126,16 @@ def createInstruments():
                 randomInst = 0 
             else:
                 randomInst = 1
+            
+        #code to generate 2nd sample (hihat) that will be played simultaneous
+        #i chose only for a hihat since i don't want a kick and snare to be played at the same time
+        if randomInst != 2:  #if the first sample is not a hiHat
+            if random.randint(0,100) < 50:
+                instruments2.append(hiHat) #50% chance that a hiHat sample is added to kick or snare
+            else:
+                instruments2.append("Empty") #50% that no extra instrument is added
+        else:
+            instruments2.append("Empty") #if the first sample is a hiHat dont add a 2nd hihat
 
         instruments.append(audioSamples[randomInst])
         instrumentNames.append(sampleNames[randomInst])
@@ -131,13 +143,21 @@ def createInstruments():
     for j in range(2): #copy first bar 2 times
         for i in range(stampsBarOne):
             instruments.append(instruments[i])
+            instruments2.append(instruments2[i])
             instrumentNames.append(instrumentNames[i])
 
-    stampsLastBar = len(timestamps) - stampsBarOne*3
+    stampsLastBar = len(timestamps) - stampsBarOne*3 #calculate amount of stamps in last bar (fill)
 
     for i in range(stampsLastBar): #create instruments for last bar
         randomInst = random.randint(1,len(audioSamples)-1)
         instruments.append(audioSamples[randomInst])
+        if randomInst != 2:
+            if random.randint(0,100) < 25:
+                instruments2.append(hiHat)
+            else:
+                instruments2.append("Empty")
+        else:
+            instruments2.append("Empty")        
         instrumentNames.append(sampleNames[randomInst])
 
 def createVelocities():
@@ -145,25 +165,30 @@ def createVelocities():
     velocities = []
     velocities.clear()
 
-    for i in range(stampsBarOne): #create instruments for first bar
-        randomVel = random.randint(50, 127)
-        velocities.append(randomVel)
+    for i in range(len(sixteenths)): #create instruments for first bar
+        if (sixteenths[i]) % 4 == 1:
+            randomVel = random.randint(100, 127)
+            velocities.append(randomVel)
+        else:
+            randomVel = random.randint(40, 70)
+            velocities.append(randomVel)
 
 events = []
 
 def createEvents(): #add event info to dictionary in event array
     events.clear()
-    for i in range(len(timestamps)):
-        events.append({"Timestamp" : timestamps[i], "Sixteenth": sixteenths[i], "Sample": instruments[i], "InstrumentName": instrumentNames[i], "Duration": durations[i]})
-        print(f'Timestamp {i}: {events[i]["Timestamp"]} ; Sixteenth: {events[i]["Sixteenth"]} ;  {events[i]["InstrumentName"]} ; Duration: {events[i]["Duration"]}')
-        if len(events) % (stampsBarOne) == 0:
+    for i in range(len(timestamps)): #for loop to push individual arrays in dictionary
+        events.append({"Timestamp" : timestamps[i], "Sixteenth": sixteenths[i], "Sample": instruments[i], "Sample2": instruments2[i], "InstrumentName": instrumentNames[i], "Duration": durations[i], "Velocity": velocities[i]})
+        print(f'Timestamp {i}: {events[i]["Timestamp"]:<8} ; Sixteenth: {events[i]["Sixteenth"]} ;  {events[i]["InstrumentName"]} ; Duration: {events[i]["Duration"]} ; Velocity: {velocities[i]}')
+        
+        if len(events) % (stampsBarOne) == 0: #for every bar
             if timestamps[i] <= (sequenceLength/4) * 3:
                 print("\n") #leave a blank line for every bar
 
 
 
 
-def createNewBeat():
+def createNewBeat(): #function that generates a new 4 bar rhytm
     createTimestamps()
     timestampsToSixteenths()
     createInstruments()
@@ -176,21 +201,26 @@ def playSequencer():
     startTime = time.time()
     index = 0
     while True:
+        timer = time.time() - startTime
         if index < (len(timestamps)):
-            timer = time.time() - startTime
-            if timer > events[index]["Timestamp"]:
+            
+            if timer > events[index]["Timestamp"]: #trigger sample if timestamp = timer
                 events[index]["Sample"].play()
+                if events[index]["Sample2"] != "Empty": #Play sample2 simultaneous if not empty
+                    events[index]["Sample2"].play()
                 print(f'Timestamp {index}: {events[index]["Timestamp"]} ; {events[index]["InstrumentName"]}')
-                index += 1
-                if index % (stampsBarOne) == 0:
+                if (index+1) % (stampsBarOne) == 0:
                     if timestamps[index] <= (sequenceLength/4) * 3:
-                        print("\n") #leave a blank line for every bar
-                time.sleep(0.001) #Reduce CPU usage
+                        print("\nbar end") #leave a blank line for every bar
+                index += 1               
             elif (keyInput == "x") or (keyInput == "X"):
                 break #break while loop if user exits sequencer
         else:
-            index = 0
-            startTime = time.time()
+            if timer > sequenceLength:
+                index = 0
+                startTime = time.time()
+                print("\nloop end")
+        time.sleep(0.001) #Reduce CPU usage
 
 threadIndex = 0
 t = []
@@ -209,10 +239,42 @@ def stopThread(): #function to stop current thread
         t[-1].join() #close thread if thread is active
         threadIndex += 1 #move index up for restarting thread
 
+
+def storeToMidi():
+    newMidiFile = MIDIFile(1) #midifile with 1 track
+    track = 0
+    channel = 0
+    time = 0.0
+
+    newMidiFile.addTempo(track, time, BPM)
+    for event in events:
+        if event["InstrumentName"] == "Kick":
+            pitch = 60
+        elif event["InstrumentName"] == "Snare":
+            pitch = 61
+        elif event["InstrumentName"] == "HiHat":
+            pitch = 62
+        
+        time = (event["Sixteenth"] -1) / 4 #timestamp in beats
+        duration = event["Duration"] / (60 / BPM) #duration in time
+        volume = event["Velocity"]
+
+
+        #print(track, channel, pitch, time, duration, volume)
+        #MIDIFile.addNote(track, channel, pitch, time, duration, volume)
+        newMidiFile.addNote(track, channel, pitch, time, duration, volume)
+
+    outputFilePath = input("Enter file name and/or directory: ") + str(".mid")
+    
+    with open(outputFilePath, "wb") as output_file:
+        newMidiFile.writeFile(output_file)
+    
+    return print(f'MIDI File created in {outputFilePath}')
+
 storeInput = "" #create variable scoreInput for while loop
 
 while True: #while loop with 2 while loops. 1. for asking to start or exit sequencer. 2. For store options or to create new beat, and then go back to while loop 1 --> start sequencer
-    if storeInput != "X": #if user input did not exit program than stay in while loop, else break
+    if storeInput != "X" and storeInput != "Y": #if user input did not exit program than stay in while loop, else break
         while True:
             keyInput = input("\nGo = start sequencer\nX = exit sequencer\nN = Create New Beat\n\n")
             if (keyInput == "Go"): 
@@ -224,19 +286,18 @@ while True: #while loop with 2 while loops. 1. for asking to start or exit seque
             elif (keyInput == "N"):
                 createNewBeat()
             else:
-                #stopThread()
                 print("False input")
                 continue
 
         while True:
             storeInput = input("\nWould you like to store this beat?\nY = Yes, store this beat!\nN = No, create a new beat\nX = Exit program\n")
             if storeInput == "Y":
-                dummy = 5
-                #storemidi
+                storeToMidi()
+                break
             elif storeInput == "N":
                 createNewBeat()
                 break
-            elif storeInput =="X":
+            elif storeInput == "X":
                 break
             else:
                 print("False input\n")
