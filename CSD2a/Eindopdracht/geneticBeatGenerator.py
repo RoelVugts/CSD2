@@ -26,7 +26,7 @@ while True: #Ask user to input BPM
 while True: #Ask user to input time signature
     try:
         beatsPerMeasure = int(input("\nPlease enter the beats per measure: \n> "))
-        beatValue = int(input("\nPlease enter the note value counted as beat: \n> "))
+        beatValue = int(input("\nPlease enter the note value counted as beat (4-8-16): \n> "))
         print(f'\n                       {beatsPerMeasure}')
         print("time signature set to: -")
         print(f'                       {beatValue}\n')
@@ -34,7 +34,83 @@ while True: #Ask user to input time signature
     except ValueError:
         print("Error: unvalid time signature entered")
 
+timeQuarterNote = (60 / BPM)   #calculate time (in seconds) per qnote counted as beat
+noteRatios = [1, 0.5, 0.25] #Quarter-, eight- and sixteenth -notes
+sequenceLength = (timeQuarterNote / (beatValue/4)) * beatsPerMeasure #Length of bar in seconds
+sixteenthAmount = int(beatsPerMeasure / (beatValue/16))
 
+
+
+rhythms = []
+#Properties of rhythm
+rhythms.append({"syncopation": 0.5, "beatRepetition": 1.0, "Density": 0.4, "firstBeat": 0.1})
+print(f'Syncopation: {rhythms[0]["syncopation"]} ; beatRepetition: {rhythms[0]["beatRepetition"]} ; Density: {rhythms[0]["Density"]} ; firstBeat: {rhythms[0]["firstBeat"]} ')
+
+#Syncope = Kans dat er geen sample op de tel wordt gespeeld
+#repetition = hoe veel kans er is dat beat zich herhaalt
+#density = hoe veel noten er in een beat zitten
+#firstBeat = Kans dat iets op de eerste tel valt
+
+def createRhythm():
+    global sixteenths
+    global timestamps
+    global durations
+    global stampsOneBeat
+
+    timestamps = []
+    timestamps.clear() #clear array if re-running function
+
+    durations = [] 
+    durations.clear()
+
+    sixteenths = []
+    sixteenths.clear()
+
+    barIndex = 0 #keeps count of how many bars we have created
+
+    print(f'SixteenthAmount: {sixteenthAmount}')
+    print(f'beatsPerMeasure {beatsPerMeasure}')
+    
+    def createOneBeat():
+        for i in range(0, int((sixteenthAmount/beatsPerMeasure))):
+            if i+(barIndex*4) == 0:
+                if random.random() < rhythms[0]["firstBeat"]: #Chance a stamp is on first beat
+                    sixteenths.append(1 + (barIndex * 4)) #add to first beat of bar
+            elif i % (16/beatValue) == 0 or i != 0: #for every beat thats not the first beat
+                if random.random() > rhythms[0]["syncopation"]: #if syncopation is low (0.0)
+                    sixteenths.append(i+1 + (barIndex * 4)) #Add stamp on beat/pulse, else don't
+            elif i % (16/beatValue) != 0: #for every other position
+                if random.random() < rhythms[0]["Density"]: #create stamp if < % density
+                    sixteenths.append(i+1 + (barIndex*4)) 
+    
+    
+    
+    createOneBeat()
+    stampsOneBeat = len(sixteenths) #var to store amount of stamps in first beat
+
+    for i in range(1, 4): #(1, 2, 3) create 3 more beats
+        if random.random() < rhythms[0]["beatRepetition"]:
+            for j in range(stampsOneBeat):
+                sixteenths.append((i*4) + sixteenths[j]) #repeat first beat to next beat
+        else:
+            barIndex += 1
+            createOneBeat() #create a new beat
+
+
+    for sixteenth in sixteenths:
+        timestamps.append((sixteenth/sixteenthAmount) * sequenceLength)
+
+    for i in range(len(timestamps)):
+        if i+1 < len(timestamps):
+            durations.append(timestamps[i+1] - timestamps[i])
+        else:
+            durations.append(sequenceLength - timestamps[i])
+
+    print(f'sixteenth: {sixteenths}')
+    print(f'timestamps: {timestamps}')
+
+
+createRhythm()
 
 def createTimestamps(): #function that creates timestamps
     global timestamps
@@ -103,7 +179,7 @@ def createInstruments():
     instrumentNames.clear()
 
 
-    for i in range(stampsBarOne): #create instruments for first bar
+    for i in range(stampsOneBeat): #create instruments for first bar
         if sixteenths[i] % 16 == 1:         #Every first beat is probably kick
             if random.randint(0, 100) < 80:
                 randomInst = 0 # 0 = Kick
@@ -139,25 +215,19 @@ def createInstruments():
         instruments.append(audioSamples[randomInst])
         instrumentNames.append(sampleNames[randomInst])
     
-    for j in range(2): #copy first bar 2 times
-        for i in range(stampsBarOne):
-            instruments.append(instruments[i])
-            instruments2.append(instruments2[i])
-            instrumentNames.append(instrumentNames[i])
+  #  stampsLastBar = len(timestamps) - stampsBarOne*3 #calculate amount of stamps in last bar (fill)
 
-    stampsLastBar = len(timestamps) - stampsBarOne*3 #calculate amount of stamps in last bar (fill)
-
-    for i in range(stampsLastBar): #create instruments for last bar
-        randomInst = random.randint(1,len(audioSamples)-1)
-        instruments.append(audioSamples[randomInst])
-        if randomInst != 2:
-            if random.randint(0,100) < 25:
-                instruments2.append(hiHat)
-            else:
-                instruments2.append("Empty")
-        else:
-            instruments2.append("Empty")        
-        instrumentNames.append(sampleNames[randomInst])
+    # for i in range(stampsLastBar): #create instruments for last bar
+    #     randomInst = random.randint(1,len(audioSamples)-1)
+    #     instruments.append(audioSamples[randomInst])
+    #     if randomInst != 2:
+    #         if random.randint(0,100) < 25:
+    #             instruments2.append(hiHat)
+    #         else:
+    #             instruments2.append("Empty")
+    #     else:
+    #         instruments2.append("Empty")        
+    #     instrumentNames.append(sampleNames[randomInst])
 
 def createVelocities():
     global velocities
@@ -180,14 +250,14 @@ def createEvents(): #add event info to dictionary in event array
         events.append({"Timestamp" : timestamps[i], "Sixteenth": sixteenths[i], "Sample": instruments[i], "Sample2": instruments2[i], "InstrumentName": instrumentNames[i], "Duration": durations[i], "Velocity": velocities[i]})
         print(f'Timestamp {i}: {events[i]["Timestamp"]:<8} ; Sixteenth: {events[i]["Sixteenth"]} ;  {events[i]["InstrumentName"]} ; Duration: {events[i]["Duration"]} ; Velocity: {velocities[i]}')
         
-        if len(events) % (stampsBarOne) == 0: #for every bar
-            if timestamps[i] <= (sequenceLength/4) * 3:
-                print("\n") #leave a blank line for every bar
+        # if len(events) % (stampsBarOne) == 0: #for every bar
+        #     if timestamps[i] <= (sequenceLength/4) * 3:
+        #         print("\n") #leave a blank line for every bar
 
 
 def createNewBeat(): #function that generates a new 4 bar rhythm
-    createTimestamps()
-    timestampsToSixteenths()
+    #createTimestamps()
+    #timestampsToSixteenths()
     createInstruments()
     createVelocities()
     createEvents()
@@ -273,7 +343,8 @@ while True: #while loop with 2 while loops. 1. for asking to start or exit seque
                 stopThread() #stop thread
                 break
             elif (keyInput == "N"):
-                createNewBeat()
+                #createNewBeat()
+                createRhythm()
             else:
                 print("False input")
                 continue
@@ -284,7 +355,8 @@ while True: #while loop with 2 while loops. 1. for asking to start or exit seque
                 storeToMidi()
                 break
             elif storeInput == "N":
-                createNewBeat()
+                #createNewBeat()
+                createRhythm()
                 break
             elif storeInput == "X":
                 break
