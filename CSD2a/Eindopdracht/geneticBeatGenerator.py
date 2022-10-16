@@ -3,6 +3,7 @@ import random
 import time
 import threading
 from midiutil import MIDIFile
+import askQuestion
 
 
 kick = sa.WaveObject.from_wave_file("audioFiles/Kick.wav")
@@ -42,13 +43,13 @@ sixteenthAmount = int(beatsPerMeasure / (beatValue/16)) #total amount of sixteen
 # print(f'SequenceLength:  = {timeQuarterNote} / ({beatValue}/4) * {beatsPerMeasure} * 4 = {sequenceLength}')
 # print(f'Sixteenths: {sixteenthAmount}')
 
-rhythmProperties = []
+rhythmProperties = [] #list to store properties of each rhythm
 #Properties of rhythm
 # rhythms.append({"syncopation": 0.6, "beatRepetition": 1.0, "Density": 0.2, "firstBeat": 0.8, "randomFill": 1.0})
 # print(f'Syncopation: {rhythms[0]["syncopation"]} ; beatRepetition: {rhythms[0]["beatRepetition"]} ; Density: {rhythms[0]["Density"]} ; firstBeat: {rhythms[0]["firstBeat"]} ; randomFill: {rhythms[0]["randomFill"]}')
 
 #Syncope = Kans dat er geen sample op de tel wordt gespeeld
-#repetition = hoe veel kans er is dat beat zich herhaalt
+#repetition = hoe veel kans er is dat beat zich herhaalt (zowel ritme als instrumenten)
 #density = hoe veel noten er in een beat zitten
 #firstBeat = Kans dat iets op de eerste tel valt
 
@@ -184,18 +185,18 @@ def createVelocities():
             randomVel = random.randint(40, 70)
             velocities.append(randomVel)
 
-rhythms = []
-eventList = []
+rhythms = [] #list to store 5 rhythms that will be generated
+eventList = [] #list to store all the events within a rhythm
 
 def createEvents(eventList): #add event info to dictionary in event array
     eventList = []
  
-    print(f'timestamps{len(timestamps)}')
-    print(f'Sixteenths: {len(sixteenths)}')
-    print(f'Samples: {len(instruments)}')
-    print(f'names: {len(instrumentNames)}')
-    print(f'Duration: {len(durations)}')
-    print(f'velocities: {len(velocities)}')
+    # print(f'timestamps{len(timestamps)}')
+    # print(f'Sixteenths: {len(sixteenths)}')
+    # print(f'Samples: {len(instruments)}')
+    # print(f'names: {len(instrumentNames)}')
+    # print(f'Duration: {len(durations)}')
+    # print(f'velocities: {len(velocities)}')
     for i in range(len(timestamps)): #for loop to push individual arrays in dictionary
         eventList.append({"Timestamp" : timestamps[i]
         , "Sixteenth": sixteenths[i]
@@ -203,72 +204,76 @@ def createEvents(eventList): #add event info to dictionary in event array
         , "InstrumentName": instrumentNames[i]
         , "Duration": durations[i]
         , "Velocity": velocities[i]})
-    rhythms.append(eventList)
+    rhythms.append(eventList) #add list of events to rhythms list (list in list)
         # print(f'Timestamp {i}: {events[i]["Timestamp"]:<8} ; Sixteenth: {events[i]["Sixteenth"]} ;  {events[i]["InstrumentName"]} ; Duration: {events[i]["Duration"]} ; Velocity: {velocities[i]}')
 
 
 def createNewBeat(): #function that generates a new 4 bar rhythm
-    for i in range(5):
+    for i in range(len(rhythmProperties)): 
         createRhythm(i)
         createVelocities()
         createEvents(i)
     print("\n")
-    for i in range(len(rhythms)):
-        print(f' Rhythms: {len(rhythms[i])}')
-    print(f' First timestamp: {rhythms[0][0]}')
-    # for index in range(len(timestamps)):
-    #     print(f'Timestamp {index}: {events[index]["Timestamp"]} ; Sixteenth: {events[index]["Sixteenth"]} ; {events[index]["InstrumentName"]}')
+
 
 createNewBeat()
-# hier gebleven, zorgen dat ritmes apart afgespeeld kunnen worden.
-def playSequencer():
+
+def playSequencer(rhythmIndex):
     startTime = time.time()
     index = 0
     bar = 1
     print("\n")
     while True:
         timer = time.time() - startTime
-        if index < (len(timestamps)):  
-            if timer > eventList[index]["Timestamp"]: #trigger sample if timestamp = timer
-                eventList[index]["Sample"].play()
+        if index < (len(rhythms[rhythmIndex])):  
+            if timer > rhythms[rhythmIndex][index]["Timestamp"]: #trigger sample if timestamp = timer
+                rhythms[rhythmIndex][index]["Sample"].play()
                 # if events[index]["Sample2"] != "Empty": #Play sample2 simultaneous if not empty
                 #     events[index]["Sample2"].play()
-                if eventList[index]["Sixteenth"] > sixteenthAmount*bar:
-                        print(f'\nBar {bar+1}') #leave a blank line for every bar        
+                if rhythms[rhythmIndex][index]["Sixteenth"] > sixteenthAmount*bar:
+                        # print(f'\nBar {bar+1}') #leave a blank line for every bar        
                         bar += 1 
-                print(f'Timestamp {index}: {eventList[index]["Timestamp"]} ; {eventList[index]["InstrumentName"]} Sixteenth: {eventList[index]["Sixteenth"]}')
+                # print(f'Timestamp {index}: {eventList[index]["Timestamp"]} ; {eventList[index]["InstrumentName"]} Sixteenth: {eventList[index]["Sixteenth"]}')
                 index += 1              
-            elif (keyInput == "x") or (keyInput == "X"):
-                break #break while loop if user exits sequencer
         else:
             if timer > sequenceLength:
                 index = 0
                 startTime = time.time()
                 bar = 1
-                print("\nBar 1")
+                # print("\nBar 1")
+        if not isPlaying:
+            break #break while loop if user exits sequencer       
         time.sleep(0.001) #Reduce CPU usage
 
-threadIndex = 0
-t = []
 
-def startThread(): #function to create a new thread when restarting sequencer
-    global threadIndex
-    global t
-    t.append(threading.Thread(target=playSequencer))
-    t[threadIndex].start()
 
-def stopThread(): #function to stop current thread
-    global threadIndex
-    if threading.active_count() > 1: #check if there are more threads running than 1 (main thread)
-        t[-1].join() #close thread if thread is active
-        threadIndex += 1 #move index up for restarting thread
+class myThread(threading.Thread):
+  # constructor calls threading init
+  def __init__(self,threadID,name,ratingIndex):
+    threading.Thread.__init__(self)
+    self.threadID = threadID
+    self.name = name
+    self.ratingIndex = ratingIndex
+  # run() contains the code that performs the thread's tasks
+  def run(self):
+    print(f'Rhythm {self.threadID+1} now playing...')
+    playSequencer(self.threadID)
+    global rating
+
+
+threads = [
+myThread(0, "Rhythm-1", 0),
+myThread(1, "Rhythm-2", 1),
+myThread(2, "Rhythm-3", 2),
+myThread(3, "Rhythm-4", 3),
+myThread(4, "Rhythm-5", 4)]
 
 
 def storeToMidi():
     newMidiFile = MIDIFile(1) #midifile with 1 track
     track = 0
     channel = 0
-    for event in events: #convert samples to midi pitch
+    for event in eventList: #convert samples to midi pitch
         if event["InstrumentName"] == "Kick":
             pitch = 60
         elif event["InstrumentName"] == "Snare":
@@ -291,36 +296,91 @@ def storeToMidi():
 
 storeInput = "" #create variable scoreInput for while loop
 
+startSequencer = askQuestion.askQuestion('bool', "Start Sequencer?[Y/n]", {'allowEmpty': False})
+ratings = []
 
-
-
-while True: #while loop with 2 while loops. 1. for asking to start or exit sequencer. 2. For store options or to create new beat, and then go back to while loop 1 --> start sequencer
-    if storeInput != "X" and storeInput != "Y": #if user input did not exit program than stay in while loop, else break
-        while True:
-            keyInput = input("\nGo = start sequencer\nX = exit sequencer\nN = Create New Beat\n> ")
-            if (keyInput == "Go"): 
-                stopThread()  
-                startThread() #create thread to start the sequencer
-            elif (keyInput == "X"):
-                stopThread() #stop thread
-                break
-            elif (keyInput == "N"):
-                createNewBeat()
-            else:
-                print("False input")
-                continue
-
-        while True:
-            storeInput = input("\nWould you like to store this beat?\nY = Yes, store this beat!\nN = No, create a new beat\nX = Exit program\n> ")
-            if storeInput == "Y":
-                storeToMidi()
-                break
-            elif storeInput == "N":
-                createNewBeat()
-                break
-            elif storeInput == "X":
-                break
-            else:
-                print("False input\n")
+while startSequencer:
+    rhythmIndexPlayer = 0 #indexer for the current rhythm playing
+    ratingIndex = 0 #indexer for the rating of that rhythm
+    while rhythmIndexPlayer < 5: #quit playing after all 5 rhythms are played
+        isPlaying = True 
+        threads[rhythmIndexPlayer].start() 
+        ratings.insert(ratingIndex, askQuestion.askQuestion('int', f'Rhythm {rhythmIndexPlayer+1} (rating 1 - 10)', {"Min": 1, "Max": 10}))
+        if ratings[ratingIndex]:
+            isPlaying = False
+            threads[rhythmIndexPlayer].join()
+            ratingIndex += 1
+            rhythmIndexPlayer += 1
+            continue
     else:
         break
+else:
+    exit()
+
+print(f'Ratings:\nRhythm 1: {ratings[0]}\nRhythm 2: {ratings[1]}\nRhythm 3: {ratings[2]}\nRhythm 4: {ratings[3]}\nRhythm 5: {ratings[4]}')
+
+print("Generating new baby rhythms based on your ratings...")
+
+def beatMutation():
+    #hier moet een functie komen die de ratings en de eigenschappen van de ritmes combineert en nieuwe ritmes genereert.
+    rhythmProperties[0]["syncopation"] * ratings[0]
+
+    rhythmProperties.append({"syncopation": random.random(), "beatRepetition": random.random(), "Density": random.random(), "firstBeat": random.random(), "randomFill": random.random()})
+
+    """
+    Eigenschap1 ritme * rating + Eigenschap2 ritme * rating 
+    
+    
+    
+    
+    """
+
+# while True: #while loop with 2 while loops. 1. for asking to start or exit sequencer. 2. For store options or to create new beat, and then go back to while loop 1 --> start sequencer
+#     if storeInput != "X" and storeInput != "Y": #if user input did not exit program than stay in while loop, else break
+#         while True:
+#             keyInput = input("\nGo = start sequencer\nX = exit sequencer\nN = Create New Beat\n> ")
+#             if (keyInput == "Go"): 
+#                 stopThread()  
+#                 startThread() #create thread to start the sequencer
+#             elif (keyInput == "X"):
+#                 stopThread() #stop thread
+#                 break
+#             elif (keyInput == "N"):
+#                 createNewBeat()
+#             else:
+#                 print("False input")
+#                 continue
+
+#         while True:
+#             storeInput = input("\nWould you like to store this beat?\nY = Yes, store this beat!\nN = No, create a new beat\nX = Exit program\n> ")
+#             if storeInput == "Y":
+#                 storeToMidi()
+#                 break
+#             elif storeInput == "N":
+#                 createNewBeat()
+#                 break
+#             elif storeInput == "X":
+#                 break
+#             else:
+#                 print("False input\n")
+#     else:
+#         break
+
+
+
+
+
+# threadIndex = 0
+# t = []
+
+# def startThread(rhythmIndex): #function to create a new thread when restarting sequencer
+#     global threadIndex
+#     global t
+#     t.append(threading.Thread(target=playSequencer, args=(rhythmIndex,))) #waarom die komma?!
+#     t[threadIndex].start()
+
+# def stopThread(): #function to stop current thread
+#     global threadIndex
+#     if threading.active_count() > 1: #check if there are more threads running than 1 (main thread)
+#         t[-1].join() #close thread if thread is active
+#         threadIndex += 1 #move index up for restarting thread
