@@ -317,54 +317,56 @@ while startSequencer:
 else:
     exit()
 
-print(f'Ratings:\nRhythm 1: {ratings[0]}\nRhythm 2: {ratings[1]}\nRhythm 3: {ratings[2]}\nRhythm 4: {ratings[3]}\nRhythm 5: {ratings[4]}')
+print(f'Ratings:\nRhythm 1: {ratings[0]}\nRhythm 2: {ratings[1]}\nRhythm 3: {ratings[2]}\nRhythm 4: {ratings[3]}\nRhythm 5: {ratings[4]}\n')
 
-print("Generating new baby rhythms based on your ratings...")
+def naturalSelection(): #functie die de beste ritmes selecteert
+    selectedRhythms = []
+    numGoodRatings = 0
 
-def beatMutation():
-    #hier moet een functie komen die de ratings en de eigenschappen van de ritmes combineert en nieuwe ritmes genereert.
-    rhythmProperties[0]["syncopation"] * ratings[0]
+    for i in range(len(ratings)):
+        if ratings[i] > 5:
+            selectedRhythms.append({"Rhythm": i, "Rating": ratings[i]})
 
-    rhythmProperties.append({"syncopation": random.random(), "beatRepetition": random.random(), "Density": random.random(), "firstBeat": random.random(), "randomFill": random.random()})
+    if len(selectedRhythms) == 0:
+        print("Sorry.. i'll try to make better beats now...")
 
-    """
-    Eigenschap1 ritme * rating + Eigenschap2 ritme * rating 
-    
-    
-    
-    
-    """
+    elif len(selectedRhythms) == 1:
+        print("At least there's one you liked...")
 
-# while True: #while loop with 2 while loops. 1. for asking to start or exit sequencer. 2. For store options or to create new beat, and then go back to while loop 1 --> start sequencer
-#     if storeInput != "X" and storeInput != "Y": #if user input did not exit program than stay in while loop, else break
-#         while True:
-#             keyInput = input("\nGo = start sequencer\nX = exit sequencer\nN = Create New Beat\n> ")
-#             if (keyInput == "Go"): 
-#                 stopThread()  
-#                 startThread() #create thread to start the sequencer
-#             elif (keyInput == "X"):
-#                 stopThread() #stop thread
-#                 break
-#             elif (keyInput == "N"):
-#                 createNewBeat()
-#             else:
-#                 print("False input")
-#                 continue
+    elif len(selectedRhythms) == 2:
+        print("Creating babies with your 2 favorite rhythms")
 
-#         while True:
-#             storeInput = input("\nWould you like to store this beat?\nY = Yes, store this beat!\nN = No, create a new beat\nX = Exit program\n> ")
-#             if storeInput == "Y":
-#                 storeToMidi()
-#                 break
-#             elif storeInput == "N":
-#                 createNewBeat()
-#                 break
-#             elif storeInput == "X":
-#                 break
-#             else:
-#                 print("False input\n")
-#     else:
-#         break
+    elif len(selectedRhythms) > 2:
+        print("i see you're liking this...")
+
+    return selectedRhythms
+
+print(naturalSelection())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
