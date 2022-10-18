@@ -15,51 +15,36 @@ instrumentStrings = ["Kick", "Snare", "HiHat"]
 
 print("\nWelcome to the irregular beat generator! :)\n")
 
-while True: #Ask user to input BPM
-    try:
-        BPM = int(input("Please enter BPM: \n> "))
-        print(f'BPM is set to {BPM}')
-        break
-    except ValueError:
-        print("Error: BPM has to be an integer\n")
+BPM = askQuestion.askQuestion('int', "Please enter BPM", {'allowEmpty': False, 'Min': 0})
+beatsPerMeasure = askQuestion.askQuestion('int', "\nPlease enter beats per measure", {'allowEmpty': False, 'Min': 0})
+beatValue = askQuestion.askQuestion('int', "\nPlease enter the note value counted as beat", {'allowEmpty': False, 'Min': 4, 'Max': 16})
 
 
-
-while True: #Ask user to input time signature
-    try:
-        beatsPerMeasure = int(input("\nPlease enter the beats per measure: \n> "))
-        beatValue = int(input("\nPlease enter the note value counted as beat (4-8-16): \n> "))
-        print(f'\n                       {beatsPerMeasure}')
-        print("time signature set to: -")
-        print(f'                       {beatValue}\n')
-        break
-    except ValueError:
-        print("Error: unvalid time signature entered")
-
+#Global variables
+#----------------------------------------
 timeQuarterNote = (60 / BPM)   #calculate time (in seconds) per qnote counted as beat
 noteRatios = [1, 0.5, 0.25] #Quarter-, eight- and sixteenth -notes
 sequenceLength = (timeQuarterNote / (beatValue/4)) * beatsPerMeasure*4 #Length of 4 bars in seconds
 sixteenthAmount = int(beatsPerMeasure / (beatValue/16)) #total amount of sixteenths in 1 bar
-# print(f'SequenceLength:  = {timeQuarterNote} / ({beatValue}/4) * {beatsPerMeasure} * 4 = {sequenceLength}')
-# print(f'Sixteenths: {sixteenthAmount}')
+
 
 rhythmProperties = [] #list to store properties of each rhythm
-#Properties of rhythm
-# rhythms.append({"syncopation": 0.6, "beatRepetition": 1.0, "Density": 0.2, "firstBeat": 0.8, "randomFill": 1.0})
-# print(f'Syncopation: {rhythms[0]["syncopation"]} ; beatRepetition: {rhythms[0]["beatRepetition"]} ; Density: {rhythms[0]["Density"]} ; firstBeat: {rhythms[0]["firstBeat"]} ; randomFill: {rhythms[0]["randomFill"]}')
+rhythms = [] #list to store 5 rhythms that will be generated
+eventList = [] #list to store all the events within a rhythm
 
+#Properties of rhythm
+#-------------------------
 #Syncope = Kans dat er geen sample op de tel wordt gespeeld
 #repetition = hoe veel kans er is dat beat zich herhaalt (zowel ritme als instrumenten)
 #density = hoe veel noten er in een beat zitten
 #firstBeat = Kans dat iets op de eerste tel valt
 
-for i in range(5): #give birth to 5 rhytms
-    rhythmProperties.append({"syncopation": random.random(), "beatRepetition": random.random(), "Density": random.random(), "firstBeat": random.random(), "randomFill": random.random()})
+#Function to generate properties of a rhythm
+def createRhythmProperties(syncopation, beatRepetition, density, firstBeat, randomFill):
+    rhythmProperties.append({"syncopation": round(syncopation,4), "beatRepetition": round(beatRepetition,4), "density": round(density,4), "firstBeat": round(firstBeat,4), "randomFill": round(randomFill,4)})
+    #print(f'Syncopation: {rhythmProperties[-1]["syncopation"]} ; beatRepetition: {rhythmProperties[-1]["beatRepetition"]} ; density: {rhythmProperties[-1]["density"]} ; firstBeat: {rhythmProperties[-1]["firstBeat"]} ; randomFill: {rhythmProperties[-1]["randomFill"]}')
 
-print("Gave birth to 5 new rhytms!")
-print("Please rate the rhythms and let only the best ones create new baby rhythms")
-
-
+#function that creates 4 bar rhythm based on properties
 def createRhythm(rhythmIndex):
     global sixteenths
     global timestamps
@@ -95,11 +80,9 @@ def createRhythm(rhythmIndex):
                     sixteenths.append(1 + (barIndex * sixteenthAmount)) #add to first beat of bar
                     instruments.append(kick)
                     instrumentNames.append(("Kick"))
-                    # print(f' FirstBeat: {1 + (barIndex * sixteenthAmount)}')
             elif i % (sixteenthAmount/beatsPerMeasure) == 0 and i != 0: #for every beat thats not the first beat
                 randomSyncope = random.random()
-                #print(f'randomSyncope {randomSyncope}')
-                if randomSyncope < rhythmProperties[rhythmIndex]["syncopation"] and randomSyncope < rhythmProperties[rhythmIndex]["Density"]: #if syncopation is high (1.0) create a syncopation  
+                if randomSyncope < rhythmProperties[rhythmIndex]["syncopation"] and randomSyncope < rhythmProperties[rhythmIndex]["density"]: #if syncopation is high (1.0) create a syncopation  
                     syncopatedStamp = random.randint(1,2) # add stamp with offset 1 or 2 sixteenths
                     if not sixteenths: #if list is empty
                         lastIndex = 0 #amount of indexes in list = 0
@@ -107,8 +90,7 @@ def createRhythm(rhythmIndex):
                         lastIndex = sixteenths[-1] #if not empty set to last index in list
                     if (syncopatedStamp + lastIndex) <= (((barIndex+1)*sixteenthAmount)): # and syncopatedStamp + sixteenths[-1] in sixteenths:
                         sixteenths.append(i+1+(syncopatedStamp*random.choice(randomPosNeg)) + (barIndex * sixteenthAmount)) #Add stamp with positive or negative offset (syncopation)
-                        # print(f'Syncope: {i+(syncopatedStamp*random.choice(randomPosNeg)) + (barIndex * sixteenthAmount)}')
-                        randomSample = random.randint(0,1)
+                        randomSample = random.randint(0,1) #choose between kick or snare
                         instruments.append(audioSamples[randomSample])
                         instrumentNames.append(instrumentStrings[randomSample])
                 else: #if syncopation is low
@@ -118,9 +100,8 @@ def createRhythm(rhythmIndex):
                     instruments.append(audioSamples[randomSample])
                     instrumentNames.append(instrumentStrings[randomSample])
             elif i % (sixteenthAmount/beatsPerMeasure) != 0 or (i+(barIndex*sixteenthAmount)) % sixteenthAmount == 0: #for every other position
-                if random.random() < rhythmProperties[rhythmIndex]["Density"]: #create stamp in between beats if density is high
+                if random.random() < rhythmProperties[rhythmIndex]["density"]: #create stamp in between beats if density is high
                     sixteenths.append(i+1 + (barIndex*sixteenthAmount))
-                    # print(f'Dense: {i+1 + (barIndex*sixteenthAmount)}')
                     randomSample = random.randint(0, 2)
                     instruments.append(audioSamples[randomSample])
                     instrumentNames.append(instrumentStrings[randomSample])
@@ -169,9 +150,7 @@ def createRhythm(rhythmIndex):
         else:
             durations.append(sequenceLength - timestamps[i])
 
-
-
-
+#function to create velocites (for MIDI File)
 def createVelocities():
     global velocities
     velocities = []
@@ -185,18 +164,11 @@ def createVelocities():
             randomVel = random.randint(40, 70)
             velocities.append(randomVel)
 
-rhythms = [] #list to store 5 rhythms that will be generated
-eventList = [] #list to store all the events within a rhythm
-
-def createEvents(eventList): #add event info to dictionary in event array
+#function that creates events in a dictionar of a rhythm
+def createEvents(eventList): #list is a parameter since we will make a separate list per rhythm
     eventList = []
- 
-    # print(f'timestamps{len(timestamps)}')
-    # print(f'Sixteenths: {len(sixteenths)}')
-    # print(f'Samples: {len(instruments)}')
-    # print(f'names: {len(instrumentNames)}')
-    # print(f'Duration: {len(durations)}')
-    # print(f'velocities: {len(velocities)}')
+    eventList.clear()
+
     for i in range(len(timestamps)): #for loop to push individual arrays in dictionary
         eventList.append({"Timestamp" : timestamps[i]
         , "Sixteenth": sixteenths[i]
@@ -205,19 +177,53 @@ def createEvents(eventList): #add event info to dictionary in event array
         , "Duration": durations[i]
         , "Velocity": velocities[i]})
     rhythms.append(eventList) #add list of events to rhythms list (list in list)
-        # print(f'Timestamp {i}: {events[i]["Timestamp"]:<8} ; Sixteenth: {events[i]["Sixteenth"]} ;  {events[i]["InstrumentName"]} ; Duration: {events[i]["Duration"]} ; Velocity: {velocities[i]}')
 
 
-def createNewBeat(): #function that generates a new 4 bar rhythm
-    for i in range(len(rhythmProperties)): 
-        createRhythm(i)
+#function that executes above functions
+def createNewBeat(): 
+    print("\nGave birth to 5 new rhytms!")
+    print("\nPlease rate the rhythms and let only the best ones create new baby rhythms")
+    rhythms.clear()
+    for rhythmIndex in range(len(rhythmProperties)): 
+        createRhythm(rhythmIndex)
         createVelocities()
-        createEvents(i)
+        createEvents(rhythmIndex)
     print("\n")
 
+#Function that asks to start the sequencer and rate the individual rhythms
+def playNewRhythm():
+    global isPlaying
+    global ratings
+    global threads
+    threads = [
+    myThread(0, "Rhythm-1", 0),
+    myThread(1, "Rhythm-2", 1),
+    myThread(2, "Rhythm-3", 2),
+    myThread(3, "Rhythm-4", 3),
+    myThread(4, "Rhythm-5", 4)]
+    startSequencer = askQuestion.askQuestion('bool', "\nStart Sequencer?[Y/n]", {'allowEmpty': False})
+    ratings = []
+    ratings.clear()
+    while startSequencer:
+        rhythmIndexPlayer = 0 #indexer for the current rhythm playing
+        ratingIndex = 0 #indexer for the rating of that rhythm
+        while rhythmIndexPlayer < 5: #quit playing after all 5 rhythms are played
+            isPlaying = True 
+            threads[rhythmIndexPlayer].start() 
+            ratings.insert(ratingIndex, askQuestion.askQuestion('int', f'\nRhythm {rhythmIndexPlayer+1} (rating 1 - 10)', {"Min": 1, "Max": 10}))
+            if ratings[ratingIndex]:
+                isPlaying = False
+                threads[rhythmIndexPlayer].join()
+                ratingIndex += 1
+                rhythmIndexPlayer += 1
+                continue
+        else:
+            print(f'\nRatings:\nRhythm 1: {ratings[0]}\nRhythm 2: {ratings[1]}\nRhythm 3: {ratings[2]}\nRhythm 4: {ratings[3]}\nRhythm 5: {ratings[4]}\n')
+            break
+    else:
+        exit()
 
-createNewBeat()
-
+#function to play the audio (Event Handler)
 def playSequencer(rhythmIndex):
     startTime = time.time()
     index = 0
@@ -228,12 +234,9 @@ def playSequencer(rhythmIndex):
         if index < (len(rhythms[rhythmIndex])):  
             if timer > rhythms[rhythmIndex][index]["Timestamp"]: #trigger sample if timestamp = timer
                 rhythms[rhythmIndex][index]["Sample"].play()
-                # if events[index]["Sample2"] != "Empty": #Play sample2 simultaneous if not empty
-                #     events[index]["Sample2"].play()
                 if rhythms[rhythmIndex][index]["Sixteenth"] > sixteenthAmount*bar:
                         # print(f'\nBar {bar+1}') #leave a blank line for every bar        
                         bar += 1 
-                # print(f'Timestamp {index}: {eventList[index]["Timestamp"]} ; {eventList[index]["InstrumentName"]} Sixteenth: {eventList[index]["Sixteenth"]}')
                 index += 1              
         else:
             if timer > sequenceLength:
@@ -246,7 +249,7 @@ def playSequencer(rhythmIndex):
         time.sleep(0.001) #Reduce CPU usage
 
 
-
+#class for threads with run() function to execute playSequencer() function
 class myThread(threading.Thread):
   # constructor calls threading init
   def __init__(self,threadID,name,ratingIndex):
@@ -260,20 +263,117 @@ class myThread(threading.Thread):
     playSequencer(self.threadID)
     global rating
 
+#function that selects the 2 (or less) most favorite rhythms
+def naturalSelection(): 
+    global selectedRhythms
+    selectedRhythms = []
 
-threads = [
-myThread(0, "Rhythm-1", 0),
-myThread(1, "Rhythm-2", 1),
-myThread(2, "Rhythm-3", 2),
-myThread(3, "Rhythm-4", 3),
-myThread(4, "Rhythm-5", 4)]
+    for i in range(len(ratings)):
+        if ratings[i] > 5: #only select rhythm if it has a higher rating than 5
+            selectedRhythms.append({"Rhythm": i, "Rating": ratings[i]})
+
+    if len(selectedRhythms) == 0:
+        print("\nSorry.. i'll try to make better beats now...")
+        time.sleep(1)
+    elif len(selectedRhythms) == 1:
+        print("\nAt least there's one you liked...")
+        time.sleep(1)
+    elif len(selectedRhythms) == 2:
+        print("\nCreating babies with your favorite rhythms..")
+        time.sleep(1)
+    elif len(selectedRhythms) > 2:
+        print("i see you're liking this... There's more from where that came from")
+        time.sleep(1)
+    
+    def sortRating(rhythmsList):
+        return rhythmsList["Rating"]
+    
+    selectedRhythms.sort(key=sortRating)
 
 
-def storeToMidi():
+#function that creates new rhythm properties based on the favorite rhythms
+def mutationProcess():
+    if len(selectedRhythms) == 0: #if there are no good rhythms create completely (random) new ones
+        print("Drol")
+        rhythmProperties.clear()
+        for i in range(5):
+            createRhythmProperties(
+              random.random()
+            , random.random()
+            , random.random()
+            , random.random()
+            , random.random())
+    
+    if len(selectedRhythms) == 1: #if only 1 good rhythm, make 3 new rhythms based on that one and 2 random ones
+        ratingDelta = 10 - selectedRhythms[0]["Rating"] #10 is highest rating
+        randomRange = ratingDelta + 1 #+1 so we always have some range
+        
+        print(f'sel: {selectedRhythms}')
+        print(f' selected: {rhythmProperties[selectedRhythms[0]["Rhythm"]]}')
+
+        oldProperties = [
+            rhythmProperties[selectedRhythms[0]["Rhythm"]]["syncopation"]
+        , rhythmProperties[selectedRhythms[0]["Rhythm"]]["beatRepetition"]
+        , rhythmProperties[selectedRhythms[0]["Rhythm"]]["density"]
+        , rhythmProperties[selectedRhythms[0]["Rhythm"]]["firstBeat"]
+        , rhythmProperties[selectedRhythms[0]["Rhythm"]]["randomFill"]
+        ]
+        
+        rhythmProperties.clear() #clear old properties
+
+        for i in range(3): #create 3 rhythms
+            createRhythmProperties(
+                ((random.randint(0, randomRange) / 10)+1) * oldProperties[0]
+            ,   ((random.randint(0, randomRange) / 10)+1) * oldProperties[1]
+            ,   ((random.randint(0, randomRange) / 10)+1) * oldProperties[2]
+            ,   ((random.randint(0, randomRange) / 10)+1) * oldProperties[3]
+            ,   ((random.randint(0, randomRange) / 10)+1) * oldProperties[4]
+            )
+        
+        for i in range(2): #create 2 random rhythms
+            createRhythmProperties(
+              random.random()
+            , random.random()
+            , random.random()
+            , random.random()
+            , random.random())
+
+    if len(selectedRhythms) >= 2: #if we have 2 or more good rhythms
+     
+        parentSyncopation = rhythmProperties[selectedRhythms[0]["Rhythm"]]["syncopation"]
+        parentRepetition= rhythmProperties[selectedRhythms[0]["Rhythm"]]["beatRepetition"]
+        parentDensity = rhythmProperties[selectedRhythms[0]["Rhythm"]]["density"]
+        parentFirstBeat = rhythmProperties[selectedRhythms[0]["Rhythm"]]["firstBeat"]
+        parentRandomFill = rhythmProperties[selectedRhythms[0]["Rhythm"]]["randomFill"]
+
+        parent1Syncopation = rhythmProperties[selectedRhythms[1]["Rhythm"]]["syncopation"]
+        parent1Repetition= rhythmProperties[selectedRhythms[1]["Rhythm"]]["beatRepetition"]
+        parent1Density = rhythmProperties[selectedRhythms[1]["Rhythm"]]["density"]
+        parent1FirstBeat = rhythmProperties[selectedRhythms[1]["Rhythm"]]["firstBeat"]
+        parent1RandomFill = rhythmProperties[selectedRhythms[1]["Rhythm"]]["randomFill"]
+
+        #Misschien niet kiezen tussen 2 maar ergens tussenin pakken? dichterbij waarde pakken van hogere rating
+        syncopationGenome = abs((parentSyncopation - parent1Syncopation))
+        repetitionGenome = abs(parentRepetition - parent1Repetition)
+        densityGenome = abs(parentDensity - parent1Density)
+        firstBeatGenome = abs(parentFirstBeat - parent1FirstBeat)
+        randomFillGenome = abs(parentRandomFill - parent1RandomFill)
+
+        rhythmProperties.clear() #remove old properties
+        for i in range(5):
+            createRhythmProperties( #create 5 new rhythms with mixed propterties of parents
+            random.random() * syncopationGenome +  min([parentSyncopation, parent1Syncopation]),
+            random.random() * repetitionGenome + min([parentRepetition, parent1Repetition]),
+            random.random() * densityGenome + min([parentDensity, parent1Density]),
+            random.random() * firstBeatGenome + min([parentFirstBeat, parent1FirstBeat]),
+            random.random() * randomFillGenome + min([parentRandomFill, parent1RandomFill])
+            )
+
+def storeToMidi(rhythmChoice):
     newMidiFile = MIDIFile(1) #midifile with 1 track
     track = 0
     channel = 0
-    for event in eventList: #convert samples to midi pitch
+    for event in rhythms[rhythmChoice]: #for the events in hte chosen rhythm
         if event["InstrumentName"] == "Kick":
             pitch = 60
         elif event["InstrumentName"] == "Snare":
@@ -287,63 +387,47 @@ def storeToMidi():
 
         newMidiFile.addNote(track, channel, pitch, time, duration, volume)
 
-    outputFilePath = input("\nEnter file name and/or directory: \n> ") + str(".mid") #create filename
+    outputFilePath = askQuestion.askQuestion('string', "\nEnter file name and/or directory ", {'allowEmpty': False, 'Max': 20}) + str(".mid") #create filename
     
     with open(outputFilePath, "wb") as output_file: #open and write to file
         newMidiFile.writeFile(output_file)
     
     return print(f'MIDI File created in {outputFilePath}')
 
-storeInput = "" #create variable scoreInput for while loop
-
-startSequencer = askQuestion.askQuestion('bool', "Start Sequencer?[Y/n]", {'allowEmpty': False})
-ratings = []
-
-while startSequencer:
-    rhythmIndexPlayer = 0 #indexer for the current rhythm playing
-    ratingIndex = 0 #indexer for the rating of that rhythm
-    while rhythmIndexPlayer < 5: #quit playing after all 5 rhythms are played
-        isPlaying = True 
-        threads[rhythmIndexPlayer].start() 
-        ratings.insert(ratingIndex, askQuestion.askQuestion('int', f'Rhythm {rhythmIndexPlayer+1} (rating 1 - 10)', {"Min": 1, "Max": 10}))
-        if ratings[ratingIndex]:
-            isPlaying = False
-            threads[rhythmIndexPlayer].join()
-            ratingIndex += 1
-            rhythmIndexPlayer += 1
-            continue
-    else:
-        break
-else:
-    exit()
-
-print(f'Ratings:\nRhythm 1: {ratings[0]}\nRhythm 2: {ratings[1]}\nRhythm 3: {ratings[2]}\nRhythm 4: {ratings[3]}\nRhythm 5: {ratings[4]}\n')
-
-def naturalSelection(): #functie die de beste ritmes selecteert
-    selectedRhythms = []
-    numGoodRatings = 0
-
-    for i in range(len(ratings)):
-        if ratings[i] > 5:
-            selectedRhythms.append({"Rhythm": i, "Rating": ratings[i]})
-
-    if len(selectedRhythms) == 0:
-        print("Sorry.. i'll try to make better beats now...")
-
-    elif len(selectedRhythms) == 1:
-        print("At least there's one you liked...")
-
-    elif len(selectedRhythms) == 2:
-        print("Creating babies with your 2 favorite rhythms")
-
-    elif len(selectedRhythms) > 2:
-        print("i see you're liking this...")
-
-    return selectedRhythms
-
-print(naturalSelection())
 
 
+#create first generation
+rhythmProperties.clear()
+for i in range (5):
+    createRhythmProperties(
+      random.random()
+    , random.random()
+    , random.random()
+    , random.random()
+    , random.random()) 
+
+createNewBeat()
+playNewRhythm()
+
+
+
+while True:
+    newGeneration = askQuestion.askQuestion('bool', "\nCreate a new generation?[Y/n]", {'allowEmpty': False})
+    if newGeneration:
+        naturalSelection()
+        mutationProcess()
+        createNewBeat()
+        playNewRhythm()
+        newGeneration = ""
+        continue
+    elif not newGeneration:
+        midiStore = askQuestion.askQuestion('bool', "Store your favorite child to MIDI?[Y/n]", {'allowEmpty': False})
+        if midiStore:
+            chosenRhythm = askQuestion.askQuestion('int', "Which child would you like to store to MIDI?", {'allowEmpty': False, 'Min': 1, 'Max': 5}) -1
+            storeToMidi(chosenRhythm)
+            break
+        else:
+            break
 
 
 
