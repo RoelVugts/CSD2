@@ -17,7 +17,7 @@ print("\nWelcome to the irregular beat generator! :)\n")
 
 BPM = askQuestion.askQuestion('int', "Please enter BPM", {'allowEmpty': False, 'Min': 0})
 beatsPerMeasure = askQuestion.askQuestion('int', "\nPlease enter beats per measure", {'allowEmpty': False, 'Min': 0})
-beatValue = askQuestion.askQuestion('int', "\nPlease enter the note value counted as beat", {'allowEmpty': False, 'Min': 4, 'Max': 16})
+beatValue = askQuestion.askQuestion('int', "\nPlease enter the note value counted as beat(4/8/16)", {'allowEmpty': False, 'Choices': [4, 8 ,16]})
 
 
 #Global variables
@@ -46,7 +46,7 @@ def createRhythmProperties(syncopation, beatRepetition, density, firstBeat, rand
 
 #function that creates 4 bar rhythm based on properties
 def createRhythm(rhythmIndex):
-    global sixteenths
+    global sixteenths #global variables since there used on several places in the code
     global timestamps
     global durations
     global instruments
@@ -72,7 +72,7 @@ def createRhythm(rhythmIndex):
     barIndex = 0 #keeps count of how many bars we have created
     
     def createOneBar():
-        randomPosNeg =[1, -1]
+        randomPosNeg =[1, -1] #list for deciding if syncopated offset is before or after the beat/pulse
 
         for i in range(0, int((sixteenthAmount))):
             if (i+(barIndex*sixteenthAmount)) % sixteenthAmount == 0:
@@ -182,7 +182,7 @@ def createEvents(eventList): #list is a parameter since we will make a separate 
 #function that executes above functions
 def createNewBeat(): 
     print("\nGave birth to 5 new rhytms!")
-    print("\nPlease rate the rhythms and let only the best ones create new baby rhythms")
+    print("\nPlease rate the rhythms and let only the best ones create new baby rhythms!")
     rhythms.clear()
     for rhythmIndex in range(len(rhythmProperties)): 
         createRhythm(rhythmIndex)
@@ -195,7 +195,7 @@ def playNewRhythm():
     global isPlaying
     global ratings
     global threads
-    threads = [
+    threads = [ #create objects for the thread class
     myThread(0, "Rhythm-1", 0),
     myThread(1, "Rhythm-2", 1),
     myThread(2, "Rhythm-3", 2),
@@ -288,7 +288,7 @@ def naturalSelection():
     def sortRating(rhythmsList):
         return rhythmsList["Rating"]
     
-    selectedRhythms.sort(key=sortRating)
+    selectedRhythms.sort(key=sortRating, reverse=True) #sort the selected rhythms based on rating
 
 
 #function that creates new rhythm properties based on the favorite rhythms
@@ -395,7 +395,6 @@ def storeToMidi(rhythmChoice):
     return print(f'MIDI File created in {outputFilePath}')
 
 
-
 #create first generation
 rhythmProperties.clear()
 for i in range (5):
@@ -410,14 +409,13 @@ createNewBeat()
 playNewRhythm()
 
 
-
-while True:
+while True: #While loop to keep creating new generations if user says so or to store to midi
     newGeneration = askQuestion.askQuestion('bool', "\nCreate a new generation?[Y/n]", {'allowEmpty': False})
-    if newGeneration:
-        naturalSelection()
-        mutationProcess()
-        createNewBeat()
-        playNewRhythm()
+    if newGeneration: #if user wants to create new generation
+        naturalSelection() #select best rhythms from current generation
+        mutationProcess() #Create new rhythhm properties based on the selected rhythms
+        createNewBeat() #Create the actual rhythms (timestamps, dur, instruments)
+        playNewRhythm() #Ask user to play and rate the new generation
         newGeneration = ""
         continue
     elif not newGeneration:

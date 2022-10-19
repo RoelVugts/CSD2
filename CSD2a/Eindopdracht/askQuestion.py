@@ -46,11 +46,14 @@ def askQuestion(type: str, questionString: str, options: dict = {}):
                 isError = True
                 raise ValueError
             if 'Max' in options and answer > options['Max']:
-                print(f'Answer must be less than {options["Max"]}') 
+                print(f'Answer can be max {options["Max"]}') 
+                isError = True
+                raise ValueError
+            if 'Choices' in options and answer not in options['Choices']:
                 isError = True
                 raise ValueError
         except ValueError:
-            print("Answer must be an integer")
+            print("Unvalid answer")
             isError = True
 
 
