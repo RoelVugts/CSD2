@@ -42,7 +42,7 @@ eventList = [] #list to store all the events within a rhythm
 #Function to generate properties of a rhythm
 def createRhythmProperties(syncopation, beatRepetition, density, firstBeat, randomFill):
     rhythmProperties.append({"syncopation": round(syncopation,4), "beatRepetition": round(beatRepetition,4), "density": round(density,4), "firstBeat": round(firstBeat,4), "randomFill": round(randomFill,4)})
-    #print(f'Syncopation: {rhythmProperties[-1]["syncopation"]} ; beatRepetition: {rhythmProperties[-1]["beatRepetition"]} ; density: {rhythmProperties[-1]["density"]} ; firstBeat: {rhythmProperties[-1]["firstBeat"]} ; randomFill: {rhythmProperties[-1]["randomFill"]}')
+    print(f'Syncopation: {rhythmProperties[-1]["syncopation"]} ; beatRepetition: {rhythmProperties[-1]["beatRepetition"]} ; density: {rhythmProperties[-1]["density"]} ; firstBeat: {rhythmProperties[-1]["firstBeat"]} ; randomFill: {rhythmProperties[-1]["randomFill"]}')
 
 #function that creates 4 bar rhythm based on properties
 def createRhythm(rhythmIndex):
@@ -261,11 +261,10 @@ class myThread(threading.Thread):
   def run(self):
     print(f'Rhythm {self.threadID+1} now playing...')
     playSequencer(self.threadID)
-    global rating
+
 
 #function that selects the 2 (or less) most favorite rhythms
 def naturalSelection(): 
-    global selectedRhythms
     selectedRhythms = []
 
     for i in range(len(ratings)):
@@ -289,11 +288,11 @@ def naturalSelection():
         return rhythmsList["Rating"]
     
     selectedRhythms.sort(key=sortRating, reverse=True) #sort the selected rhythms based on rating
-
+    return selectedRhythms
 
 #function that creates new rhythm properties based on the favorite rhythms
-def mutationProcess():
-    if len(selectedRhythms) == 0: #if there are no good rhythms create completely (random) new ones
+def mutationProcess(parentRhythms):
+    if len(parentRhythms) == 0: #if there are no good rhythms create completely (random) new ones
         print("Drol")
         rhythmProperties.clear()
         for i in range(5):
@@ -304,20 +303,14 @@ def mutationProcess():
             , random.random()
             , random.random())
     
-    if len(selectedRhythms) == 1: #if only 1 good rhythm, make 3 new rhythms based on that one and 2 random ones
-        ratingDelta = 10 - selectedRhythms[0]["Rating"] #10 is highest rating
+    if len(parentRhythms) == 1: #if only 1 good rhythm, make 3 new rhythms based on that one and 2 random ones
+        ratingDelta = 10 - parentRhythms[0]["Rating"] #10 is highest rating
         randomRange = ratingDelta + 1 #+1 so we always have some range
-        
-        print(f'sel: {selectedRhythms}')
-        print(f' selected: {rhythmProperties[selectedRhythms[0]["Rhythm"]]}')
 
-        oldProperties = [
-            rhythmProperties[selectedRhythms[0]["Rhythm"]]["syncopation"]
-        , rhythmProperties[selectedRhythms[0]["Rhythm"]]["beatRepetition"]
-        , rhythmProperties[selectedRhythms[0]["Rhythm"]]["density"]
-        , rhythmProperties[selectedRhythms[0]["Rhythm"]]["firstBeat"]
-        , rhythmProperties[selectedRhythms[0]["Rhythm"]]["randomFill"]
-        ]
+        oldProperties = [] #list that contains properties of best rhythm of current generation
+        for property in rhythmProperties[parentRhythms[0]["Rhythm"]]:
+            oldProperties.append(rhythmProperties[parentRhythms[0]["Rhythm"]][property])
+        
         
         rhythmProperties.clear() #clear old properties
 
@@ -338,35 +331,33 @@ def mutationProcess():
             , random.random()
             , random.random())
 
-    if len(selectedRhythms) >= 2: #if we have 2 or more good rhythms
-     
-        parentSyncopation = rhythmProperties[selectedRhythms[0]["Rhythm"]]["syncopation"]
-        parentRepetition= rhythmProperties[selectedRhythms[0]["Rhythm"]]["beatRepetition"]
-        parentDensity = rhythmProperties[selectedRhythms[0]["Rhythm"]]["density"]
-        parentFirstBeat = rhythmProperties[selectedRhythms[0]["Rhythm"]]["firstBeat"]
-        parentRandomFill = rhythmProperties[selectedRhythms[0]["Rhythm"]]["randomFill"]
+    if len(parentRhythms) >= 2: #if we have 2 or more good rhythms
 
-        parent1Syncopation = rhythmProperties[selectedRhythms[1]["Rhythm"]]["syncopation"]
-        parent1Repetition= rhythmProperties[selectedRhythms[1]["Rhythm"]]["beatRepetition"]
-        parent1Density = rhythmProperties[selectedRhythms[1]["Rhythm"]]["density"]
-        parent1FirstBeat = rhythmProperties[selectedRhythms[1]["Rhythm"]]["firstBeat"]
-        parent1RandomFill = rhythmProperties[selectedRhythms[1]["Rhythm"]]["randomFill"]
+        parentProperties = []
+        parent1Properties = []
 
-        #Misschien niet kiezen tussen 2 maar ergens tussenin pakken? dichterbij waarde pakken van hogere rating
-        syncopationGenome = abs((parentSyncopation - parent1Syncopation))
-        repetitionGenome = abs(parentRepetition - parent1Repetition)
-        densityGenome = abs(parentDensity - parent1Density)
-        firstBeatGenome = abs(parentFirstBeat - parent1FirstBeat)
-        randomFillGenome = abs(parentRandomFill - parent1RandomFill)
+        for property in rhythmProperties[parentRhythms[0]["Rhythm"]]:
+            parentProperties.append(rhythmProperties[parentRhythms[0]["Rhythm"]][property])
+        
+        for property in rhythmProperties[parentRhythms[1]["Rhythm"]]:
+            parent1Properties.append(rhythmProperties[parentRhythms[1]["Rhythm"]][property])
+
+        childProperties = []
+        for i in range(len(parentProperties)):
+            childProperties.append(parent1Properties[i] - parentProperties[i])
 
         rhythmProperties.clear() #remove old properties
+
+        #Parabolic equation so that the change of the child properties is likely to be of the parent with the higher rating
+        #(ValueParent1 - ValueParent) * random.random() ** ((Rating1/Rating2)*SlopeFactor) + ValueParent1 #slopeFactor is the steepness of the parabolic function
+        slopeFactor = 1.5
         for i in range(5):
             createRhythmProperties( #create 5 new rhythms with mixed propterties of parents
-            random.random() * syncopationGenome +  min([parentSyncopation, parent1Syncopation]),
-            random.random() * repetitionGenome + min([parentRepetition, parent1Repetition]),
-            random.random() * densityGenome + min([parentDensity, parent1Density]),
-            random.random() * firstBeatGenome + min([parentFirstBeat, parent1FirstBeat]),
-            random.random() * randomFillGenome + min([parentRandomFill, parent1RandomFill])
+            childProperties[0]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[0],
+            childProperties[1]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[1],
+            childProperties[2]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[2],
+            childProperties[3]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[3],
+            childProperties[4]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[4]
             )
 
 def storeToMidi(rhythmChoice):
@@ -383,9 +374,9 @@ def storeToMidi(rhythmChoice):
         
         time = (event["Sixteenth"] -1) / 4 #timestamp in beats 
         duration = event["Duration"] / (60 / BPM) #duration in beats
-        volume = event["Velocity"]
+        velocity = event["Velocity"]
 
-        newMidiFile.addNote(track, channel, pitch, time, duration, volume)
+        newMidiFile.addNote(track, channel, pitch, time, duration, velocity)
 
     outputFilePath = askQuestion.askQuestion('string', "\nEnter file name and/or directory ", {'allowEmpty': False, 'Max': 20}) + str(".mid") #create filename
     
@@ -412,8 +403,8 @@ playNewRhythm()
 while True: #While loop to keep creating new generations if user says so or to store to midi
     newGeneration = askQuestion.askQuestion('bool', "\nCreate a new generation?[Y/n]", {'allowEmpty': False})
     if newGeneration: #if user wants to create new generation
-        naturalSelection() #select best rhythms from current generation
-        mutationProcess() #Create new rhythhm properties based on the selected rhythms
+        #naturalSelection() #select best rhythms from current generation
+        mutationProcess(naturalSelection()) #Create new rhythhm properties based on the selected rhythms
         createNewBeat() #Create the actual rhythms (timestamps, dur, instruments)
         playNewRhythm() #Ask user to play and rate the new generation
         newGeneration = ""
