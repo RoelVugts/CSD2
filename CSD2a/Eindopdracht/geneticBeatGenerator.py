@@ -156,7 +156,7 @@ def createVelocities():
     velocities = []
     velocities.clear()
 
-    for i in range(len(sixteenths)): #create instruments for first bar
+    for i in range(len(sixteenths)): #if velocity is on beat it's probably higher
         if (sixteenths[i]) % beatValue == 1:
             randomVel = random.randint(100, 127)
             velocities.append(randomVel)
@@ -191,10 +191,8 @@ def createNewBeat():
     print("\n")
 
 #Function that asks to start the sequencer and rate the individual rhythms
-def playNewRhythm():
-    global isPlaying
-    global ratings
-    global threads
+def rateNewRhythm():
+    global isPlaying #global since we want to change this in playSequencer() to stop the sequencer
     threads = [ #create objects for the thread class
     myThread(0, "Rhythm-1", 0),
     myThread(1, "Rhythm-2", 1),
@@ -203,23 +201,23 @@ def playNewRhythm():
     myThread(4, "Rhythm-5", 4)]
     startSequencer = askQuestion.askQuestion('bool', "\nStart Sequencer?[Y/n]", {'allowEmpty': False})
     ratings = []
-    ratings.clear()
+
     while startSequencer:
         rhythmIndexPlayer = 0 #indexer for the current rhythm playing
         ratingIndex = 0 #indexer for the rating of that rhythm
         while rhythmIndexPlayer < 5: #quit playing after all 5 rhythms are played
             isPlaying = True 
-            threads[rhythmIndexPlayer].start() 
+            threads[rhythmIndexPlayer].start() #start playSequencer thread
             ratings.insert(ratingIndex, askQuestion.askQuestion('int', f'\nRhythm {rhythmIndexPlayer+1} (rating 1 - 10)', {"Min": 1, "Max": 10}))
-            if ratings[ratingIndex]:
-                isPlaying = False
-                threads[rhythmIndexPlayer].join()
-                ratingIndex += 1
-                rhythmIndexPlayer += 1
-                continue
+            isPlaying = False #set to false to end function playSequencer()
+            threads[rhythmIndexPlayer].join() #when playSequencer() has ended, end the thread
+            ratingIndex += 1
+            rhythmIndexPlayer += 1
+            continue
         else:
             print(f'\nRatings:\nRhythm 1: {ratings[0]}\nRhythm 2: {ratings[1]}\nRhythm 3: {ratings[2]}\nRhythm 4: {ratings[3]}\nRhythm 5: {ratings[4]}\n')
-            break
+            isPlaying = False #stop sequencer
+            return ratings #return ratings, will be input for naturalSelection() function
     else:
         exit()
 
@@ -245,11 +243,13 @@ def playSequencer(rhythmIndex):
                 bar = 1
                 # print("\nBar 1")
         if not isPlaying:
-            break #break while loop if user exits sequencer       
+            print("Sequencer stopped")
+            break #break while loop if user exits sequencer  
+
         time.sleep(0.001) #Reduce CPU usage
 
 
-#class for threads with run() function to execute playSequencer() function
+#class for threads with run() function to execute playSequencer()function
 class myThread(threading.Thread):
   # constructor calls threading init
   def __init__(self,threadID,name,ratingIndex):
@@ -264,7 +264,7 @@ class myThread(threading.Thread):
 
 
 #function that selects the 2 (or less) most favorite rhythms
-def naturalSelection(): 
+def naturalSelection(ratings): 
     selectedRhythms = []
 
     for i in range(len(ratings)):
@@ -314,7 +314,7 @@ def mutationProcess(parentRhythms):
         
         rhythmProperties.clear() #clear old properties
 
-        for i in range(3): #create 3 rhythms
+        for i in range(3): #create 3 rhythms based on parent
             createRhythmProperties(
                 ((random.randint(0, randomRange) / 10)+1) * oldProperties[0]
             ,   ((random.randint(0, randomRange) / 10)+1) * oldProperties[1]
@@ -349,8 +349,8 @@ def mutationProcess(parentRhythms):
         rhythmProperties.clear() #remove old properties
 
         #Parabolic equation so that the change of the child properties is likely to be of the parent with the higher rating
-        #(ValueParent1 - ValueParent) * random.random() ** ((Rating1/Rating2)*SlopeFactor) + ValueParent1 #slopeFactor is the steepness of the parabolic function
-        slopeFactor = 1.5
+        #(ValueParent1 - ValueParent) * random.random() ** ((Rating1/Rating2)*SlopeFactor) + ValueParent1 
+        slopeFactor = 1.5 #slopeFactor is the steepness of the parabolic function
         for i in range(5):
             createRhythmProperties( #create 5 new rhythms with mixed propterties of parents
             childProperties[0]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[0],
@@ -397,16 +397,16 @@ for i in range (5):
     , random.random()) 
 
 createNewBeat()
-playNewRhythm()
+ratings = rateNewRhythm()
 
 
 while True: #While loop to keep creating new generations if user says so or to store to midi
     newGeneration = askQuestion.askQuestion('bool', "\nCreate a new generation?[Y/n]", {'allowEmpty': False})
     if newGeneration: #if user wants to create new generation
         #naturalSelection() #select best rhythms from current generation
-        mutationProcess(naturalSelection()) #Create new rhythhm properties based on the selected rhythms
+        mutationProcess(naturalSelection(ratings)) #Create new rhythhm properties based on the selected rhythms
         createNewBeat() #Create the actual rhythms (timestamps, dur, instruments)
-        playNewRhythm() #Ask user to play and rate the new generation
+        ratings = rateNewRhythm() #Ask user to play and rate the new generation
         newGeneration = ""
         continue
     elif not newGeneration:
