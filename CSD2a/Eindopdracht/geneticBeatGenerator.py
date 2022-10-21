@@ -19,7 +19,6 @@ BPM = askQuestion.askQuestion('int', "Please enter BPM", {'allowEmpty': False, '
 beatsPerMeasure = askQuestion.askQuestion('int', "\nPlease enter beats per measure", {'allowEmpty': False, 'Min': 0})
 beatValue = askQuestion.askQuestion('int', "\nPlease enter the note value counted as beat(4/8/16)", {'allowEmpty': False})
 
-
 #Global variables
 #----------------------------------------
 timeQuarterNote = (60 / BPM)   #calculate time (in seconds) per qnote counted as beat
@@ -27,10 +26,8 @@ noteRatios = [1, 0.5, 0.25] #Quarter-, eight- and sixteenth -notes
 sequenceLength = (timeQuarterNote / (beatValue/4)) * beatsPerMeasure*4 #Length of 4 bars in seconds
 sixteenthAmount = int(beatsPerMeasure / (beatValue/16)) #total amount of sixteenths in 1 bar
 
-
 rhythmProperties = [] #list to store properties of each rhythm
 rhythms = [] #list to store 5 rhythms that will be generated
-eventList = [] #list to store all the events within a rhythm
 
 #Properties of rhythm
 #-------------------------
@@ -40,14 +37,11 @@ eventList = [] #list to store all the events within a rhythm
 #firstBeat = Kans dat iets op de eerste tel valt
 #randomFill = Kans dat de laatste maat een fill is met veel random kansberekening
 
-#Function to generate properties of a rhythm
-def createRhythmProperties(syncopation, beatRepetition, density, firstBeat, randomFill):
-    rhythmProperties.append({"syncopation": round(syncopation,4), "beatRepetition": round(beatRepetition,4), "density": round(density,4), "firstBeat": round(firstBeat,4), "randomFill": round(randomFill,4)})
-    #print(f'Syncopation: {rhythmProperties[-1]["syncopation"]} ; beatRepetition: {rhythmProperties[-1]["beatRepetition"]} ; density: {rhythmProperties[-1]["density"]} ; firstBeat: {rhythmProperties[-1]["firstBeat"]} ; randomFill: {rhythmProperties[-1]["randomFill"]}')
-
 #function that creates 4 bar rhythm based on properties
-def createRhythm(rhythmIndex):
+def createRhythm(syncopation, beatRepetition, density, firstBeat, randomFill):
     #lists that will contain outputs
+    rhythmProperties.append({"syncopation": round(syncopation,4), "beatRepetition": round(beatRepetition,4), "density": round(density,4), "firstBeat": round(firstBeat,4), "randomFill": round(randomFill,4)})
+    print(f'Syncopation: {syncopation} ; beatRepetition: {beatRepetition}')
     timestamps = []
     durations = [] 
     sixteenths = []
@@ -62,13 +56,13 @@ def createRhythm(rhythmIndex):
 
         for i in range(0, int((sixteenthAmount))):
             if (i+(barIndex*sixteenthAmount)) % sixteenthAmount == 0:
-                if random.random() < rhythmProperties[rhythmIndex]["firstBeat"]: #Chance a stamp is on first beat
+                if random.random() < firstBeat: #Chance a stamp is on first beat
                     sixteenths.append(1 + (barIndex * sixteenthAmount)) #add to first beat of bar
                     instruments.append(kick)
                     instrumentNames.append(("Kick"))
             elif i % (sixteenthAmount/beatsPerMeasure) == 0 and i != 0: #for every beat thats not the first beat
                 randomSyncope = random.random()
-                if randomSyncope < rhythmProperties[rhythmIndex]["syncopation"] and randomSyncope < rhythmProperties[rhythmIndex]["density"]: #if syncopation is high (1.0) create a syncopation  
+                if randomSyncope < syncopation and randomSyncope < density: #if syncopation is high (1.0) create a syncopation  
                     syncopatedStamp = random.randint(1,2) # add stamp with offset 1 or 2 sixteenths
                     if not sixteenths: #if list is empty
                         lastIndex = 0 #amount of indexes in list = 0
@@ -86,7 +80,7 @@ def createRhythm(rhythmIndex):
                     instruments.append(audioSamples[randomSample])
                     instrumentNames.append(instrumentStrings[randomSample])
             elif i % (sixteenthAmount/beatsPerMeasure) != 0 or (i+(barIndex*sixteenthAmount)) % sixteenthAmount == 0: #for every other position
-                if random.random() < rhythmProperties[rhythmIndex]["density"]: #create stamp in between beats if density is high
+                if random.random() < density: #create stamp in between beats if density is high
                     sixteenths.append(i+1 + (barIndex*sixteenthAmount))
                     randomSample = random.randint(0, 2)
                     instruments.append(audioSamples[randomSample])
@@ -108,8 +102,8 @@ def createRhythm(rhythmIndex):
     stampsOneBar = len(sixteenths) #var to store amount of stamps in first bar
 
     for i in range(1, 4): #(1, 2, 3) create 3 more bars
-        if i != 3 or random.random() > rhythmProperties[rhythmIndex]["randomFill"]: #if true do not create fill
-            if random.random() < rhythmProperties[rhythmIndex]["beatRepetition"]: #if true then repeat first bar
+        if i != 3 or random.random() > randomFill: #if true do not create fill
+            if random.random() < beatRepetition: #if true then repeat first bar
                 for j in range(stampsOneBar):
                     sixteenths.append((i*sixteenthAmount) + sixteenths[j]) #repeat first beat to next beat
                     instruments.append(instruments[j]) #repeat instruments for beat
@@ -148,7 +142,7 @@ def createRhythm(rhythmIndex):
     return timestamps, sixteenths, instruments, instrumentNames, durations, velocities
 
 #function that creates events in a dictionar of a rhythm
-def createEvents(eventList, timestamps, sixteenths, instruments, instrumentNames, durations, velocities): #list is a parameter since we will make a separate list per rhythm
+def createEvents(timestamps, sixteenths, instruments, instrumentNames, durations, velocities): #list is a parameter since we will make a separate list per rhythm
     eventList = []
     eventList.clear()
 
@@ -160,17 +154,7 @@ def createEvents(eventList, timestamps, sixteenths, instruments, instrumentNames
         , "Duration": durations[i]
         , "Velocity": velocities[i]})
     rhythms.append(eventList) #add list of events to rhythms list (list in list)
-
-#function that executes above functions
-def createNewBeat(): 
-    print("\nGave birth to 5 new rhytms!")
-    print("\nPlease rate the rhythms and let only the best ones create new baby rhythms!")
-    rhythms.clear()
-    for rhythmIndex in range(len(rhythmProperties)): 
-        rhythmBaby = createRhythm(rhythmIndex)
-        # createVelocities()
-        createEvents(rhythmIndex, rhythmBaby[0], rhythmBaby[1], rhythmBaby[2], rhythmBaby[3], rhythmBaby[4], rhythmBaby[5])
-    print("\n")
+    return rhythms
 
 #Function that asks to start the sequencer and rate the individual rhythms
 def rateNewRhythm():
@@ -204,17 +188,17 @@ def rateNewRhythm():
         exit()
 
 #function to play the audio (Event Handler)
-def playSequencer(rhythmIndex):
+def playSequencer(rhythmEvents):
     startTime = time.time()
     index = 0
     bar = 1
     print("\n")
     while True:
         timer = time.time() - startTime
-        if index < (len(rhythms[rhythmIndex])):  
-            if timer > rhythms[rhythmIndex][index]["Timestamp"]: #trigger sample if timestamp = timer
-                rhythms[rhythmIndex][index]["Sample"].play()
-                if rhythms[rhythmIndex][index]["Sixteenth"] > sixteenthAmount*bar:
+        if index < len(rhythmEvents):  
+            if timer > rhythmEvents[index]["Timestamp"]: #trigger sample if timestamp = timer
+                rhythmEvents[index]["Sample"].play()
+                if rhythmEvents[index]["Sixteenth"] > sixteenthAmount*bar:
                         # print(f'\nBar {bar+1}') #leave a blank line for every bar        
                         bar += 1 
                 index += 1              
@@ -238,10 +222,11 @@ class myThread(threading.Thread):
     self.threadID = threadID
     self.name = name
     self.ratingIndex = ratingIndex
+    self.rhythmEvents = rhythms[self.threadID]
   # run() contains the code that performs the thread's tasks
   def run(self):
     print(f'Rhythm {self.threadID+1} now playing...')
-    playSequencer(self.threadID)
+    playSequencer(self.rhythmEvents)
 
 #function that selects the 2 (or less) most favorite rhythms
 def naturalSelection(ratings): 
@@ -272,15 +257,18 @@ def naturalSelection(ratings):
 
 #function that creates new rhythm properties based on the favorite rhythms
 def mutationProcess(parentRhythms):
+    newProperties = [] #will be output of function
     if len(parentRhythms) == 0: #if there are no good rhythms create completely (random) new ones
         rhythmProperties.clear()
+
         for i in range(5):
-            createRhythmProperties(
-              random.random()
-            , random.random()
-            , random.random()
-            , random.random()
-            , random.random())
+            newProperties.append({
+            "syncopation": random.random(), 
+            "beatRepetition": random.random(), 
+            "density": random.random(),
+            "firstBeat": random.random(),
+            "randomFill": random.random()})
+        return newProperties
     
     if len(parentRhythms) == 1: #if only 1 good rhythm, make 3 new rhythms based on that one and 2 random ones
         ratingDelta = 10 - parentRhythms[0]["Rating"] #10 is highest rating
@@ -290,25 +278,24 @@ def mutationProcess(parentRhythms):
         for property in rhythmProperties[parentRhythms[0]["Rhythm"]]:
             oldProperties.append(rhythmProperties[parentRhythms[0]["Rhythm"]][property])
         
-        
         rhythmProperties.clear() #clear old properties
 
         for i in range(3): #create 3 rhythms based on parent
-            createRhythmProperties(
-                ((random.randint(0, randomRange) / 10)+1) * oldProperties[0]
-            ,   ((random.randint(0, randomRange) / 10)+1) * oldProperties[1]
-            ,   ((random.randint(0, randomRange) / 10)+1) * oldProperties[2]
-            ,   ((random.randint(0, randomRange) / 10)+1) * oldProperties[3]
-            ,   ((random.randint(0, randomRange) / 10)+1) * oldProperties[4]
-            )
+            newProperties.append({
+            "syncopation": ((random.randint(0, randomRange) / 10)+1) * oldProperties[0], 
+            "beatRepetition": ((random.randint(0, randomRange) / 10)+1) * oldProperties[1], 
+            "density": ((random.randint(0, randomRange) / 10)+1) * oldProperties[2],
+            "firstBeat": ((random.randint(0, randomRange) / 10)+1) * oldProperties[3],
+            "randomFill": ((random.randint(0, randomRange) / 10)+1) * oldProperties[4]})
         
-        for i in range(2): #create 2 random rhythms
-            createRhythmProperties(
-              random.random()
-            , random.random()
-            , random.random()
-            , random.random()
-            , random.random())
+        for i in range(2):
+            newProperties.append({
+            "syncopation": random.random(), 
+            "beatRepetition": random.random(), 
+            "density": random.random(),
+            "firstBeat": random.random(),
+            "randomFill": random.random()})
+        return newProperties
 
     if len(parentRhythms) >= 2: #if we have 2 or more good rhythms
 
@@ -317,13 +304,16 @@ def mutationProcess(parentRhythms):
 
         for property in rhythmProperties[parentRhythms[0]["Rhythm"]]:
             parentProperties.append(rhythmProperties[parentRhythms[0]["Rhythm"]][property])
+            print(f'Parent1: {rhythmProperties[parentRhythms[0]["Rhythm"]][property]}')
         
         for property in rhythmProperties[parentRhythms[1]["Rhythm"]]:
             parent1Properties.append(rhythmProperties[parentRhythms[1]["Rhythm"]][property])
+            print(f'Parent2: {rhythmProperties[parentRhythms[1]["Rhythm"]][property]}')
 
-        childProperties = []
+        parentsDelta = []
         for i in range(len(parentProperties)):
-            childProperties.append(parent1Properties[i] - parentProperties[i])
+            parentsDelta.append(parent1Properties[i] - parentProperties[i])
+            print(f'ParentsDelta: {parent1Properties[i] - parentProperties[i]}')
 
         rhythmProperties.clear() #remove old properties
 
@@ -331,13 +321,14 @@ def mutationProcess(parentRhythms):
         #(ValueParent1 - ValueParent) * random.random() ** ((Rating1/Rating2)*SlopeFactor) + ValueParent1 
         slopeFactor = 1.5 #slopeFactor is the steepness of the parabolic function
         for i in range(5):
-            createRhythmProperties( #create 5 new rhythms with mixed propterties of parents
-            childProperties[0]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[0],
-            childProperties[1]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[1],
-            childProperties[2]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[2],
-            childProperties[3]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[3],
-            childProperties[4]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[4]
+            newProperties.append({ #create 5 new rhythms with mixed propterties of parents
+            "syncopation": parentsDelta[0]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[0],
+            "beatRepetition": parentsDelta[1]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[1], 
+            "density": parentsDelta[2]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[2],
+            "firstBeat": parentsDelta[3]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[3],
+            "randomFill": parentsDelta[4]*(random.random()**((parentRhythms[0]["Rating"] / parentRhythms[1]["Rating"])*slopeFactor)) + parentProperties[4]}
             )
+        return newProperties
 
 def storeToMidi(rhythmChoice):
     newMidiFile = MIDIFile(1) #midifile with 1 track
@@ -364,26 +355,30 @@ def storeToMidi(rhythmChoice):
     
     return print(f'MIDI File created in {outputFilePath}')
 
-
-#create first generation
-rhythmProperties.clear()
 for i in range (5):
-    createRhythmProperties(
-      random.random()
+    firstGen = createRhythm(
+    random.random()
     , random.random()
     , random.random()
     , random.random()
     , random.random()) 
+    createEvents(firstGen[0], firstGen[1], firstGen[2], firstGen[3], firstGen[4], firstGen[5])
 
-createNewBeat()
 ratings = rateNewRhythm()
-
 
 while True: #While loop to keep creating new generations if user says so or to store to midi
     newGeneration = askQuestion.askQuestion('bool', "\nCreate a new generation?[Y/n]", {'allowEmpty': False})
     if newGeneration: #if user wants to create new generation
-        mutationProcess(naturalSelection(ratings)) #Create new rhythhm properties based on the selected rhythms
-        createNewBeat() #Create the actual rhythms (timestamps, dur, instruments)
+        newRhythmProperties = mutationProcess(naturalSelection(ratings)) #Create new rhythhm properties based on the selected rhythms
+        rhythms.clear() #clear list with old rhythms
+        for i in range(5):
+            newGen = createRhythm(
+            newRhythmProperties[i]["syncopation"], 
+            newRhythmProperties[i]["beatRepetition"], 
+            newRhythmProperties[i]["density"],
+            newRhythmProperties[i]["firstBeat"],
+            newRhythmProperties[i]["randomFill"])
+            createEvents(newGen[0], newGen[1], newGen[2], newGen[3], newGen[4], newGen[5])
         ratings = rateNewRhythm() #Ask user to play and rate the new generation
         newGeneration = ""
         continue
