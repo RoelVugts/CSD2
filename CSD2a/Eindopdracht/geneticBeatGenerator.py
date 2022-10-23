@@ -17,7 +17,7 @@ print("\nWelcome to the irregular beat generator! :)\n")
 
 BPM = askQuestion.askQuestion('int', "Please enter BPM", {'allowEmpty': False, 'Min': 0})
 beatsPerMeasure = askQuestion.askQuestion('int', "\nPlease enter beats per measure", {'allowEmpty': False, 'Min': 0})
-beatValue = askQuestion.askQuestion('int', "\nPlease enter the note value counted as beat(4/8/16)", {'allowEmpty': False})
+beatValue = askQuestion.askQuestion('int', "\nPlease enter the note value counted as beat", {'allowEmpty': False})
 
 #Global variables
 #----------------------------------------
@@ -41,7 +41,6 @@ rhythms = [] #list to store 5 rhythms that will be generated
 def createRhythm(syncopation, beatRepetition, density, firstBeat, randomFill):
     #lists that will contain outputs
     rhythmProperties.append({"syncopation": round(syncopation,4), "beatRepetition": round(beatRepetition,4), "density": round(density,4), "firstBeat": round(firstBeat,4), "randomFill": round(randomFill,4)})
-    print(f'Syncopation: {syncopation} ; beatRepetition: {beatRepetition}')
     timestamps = []
     durations = [] 
     sixteenths = []
@@ -144,7 +143,6 @@ def createRhythm(syncopation, beatRepetition, density, firstBeat, randomFill):
 #function that creates events in a dictionar of a rhythm
 def createEvents(timestamps, sixteenths, instruments, instrumentNames, durations, velocities): #list is a parameter since we will make a separate list per rhythm
     eventList = []
-    eventList.clear()
 
     for i in range(len(timestamps)): #for loop to push individual arrays in dictionary
         eventList.append({"Timestamp" : timestamps[i]
@@ -209,7 +207,6 @@ def playSequencer(rhythmEvents):
                 bar = 1
                 # print("\nBar 1")
         if not isPlaying:
-            print("Sequencer stopped")
             break #break while loop if user exits sequencer  
 
         time.sleep(0.001) #Reduce CPU usage
@@ -245,7 +242,7 @@ def naturalSelection(ratings):
     elif len(selectedRhythms) == 2:
         print("\nCreating babies with your favorite rhythms..")
         time.sleep(1)
-    elif len(selectedRhythms) > 2:
+    elif len(selectedRhythms) > 3:
         print("i see you're liking this... There's more from where that came from")
         time.sleep(1)
     
@@ -304,16 +301,13 @@ def mutationProcess(parentRhythms):
 
         for property in rhythmProperties[parentRhythms[0]["Rhythm"]]:
             parentProperties.append(rhythmProperties[parentRhythms[0]["Rhythm"]][property])
-            print(f'Parent1: {rhythmProperties[parentRhythms[0]["Rhythm"]][property]}')
         
         for property in rhythmProperties[parentRhythms[1]["Rhythm"]]:
             parent1Properties.append(rhythmProperties[parentRhythms[1]["Rhythm"]][property])
-            print(f'Parent2: {rhythmProperties[parentRhythms[1]["Rhythm"]][property]}')
 
         parentsDelta = []
         for i in range(len(parentProperties)):
             parentsDelta.append(parent1Properties[i] - parentProperties[i])
-            print(f'ParentsDelta: {parent1Properties[i] - parentProperties[i]}')
 
         rhythmProperties.clear() #remove old properties
 
@@ -380,12 +374,12 @@ while True: #While loop to keep creating new generations if user says so or to s
             newRhythmProperties[i]["randomFill"])
             createEvents(newGen[0], newGen[1], newGen[2], newGen[3], newGen[4], newGen[5])
         ratings = rateNewRhythm() #Ask user to play and rate the new generation
-        newGeneration = ""
+        newGeneration = "" #initialize newGeneration and repaet While loop
         continue
     elif not newGeneration:
-        midiStore = askQuestion.askQuestion('bool', "Store your favorite child to MIDI?[Y/n]", {'allowEmpty': False})
+        midiStore = askQuestion.askQuestion('bool', "\nStore your favorite child to MIDI?[Y/n]", {'allowEmpty': False})
         if midiStore:
-            chosenRhythm = askQuestion.askQuestion('int', "Which child would you like to store to MIDI?", {'allowEmpty': False, 'Min': 1, 'Max': 5}) -1
+            chosenRhythm = askQuestion.askQuestion('int', "\nWhich child would you like to store to MIDI?", {'allowEmpty': False, 'Min': 1, 'Max': 5}) -1
             storeToMidi(chosenRhythm)
             break
         else:
