@@ -330,11 +330,11 @@ def storeToMidi(rhythmChoice):
     channel = 0
     for event in rhythms[rhythmChoice]: #for the events in the chosen rhythm
         if event["InstrumentName"] == "Kick":
-            pitch = 60
+            pitch = 36
         elif event["InstrumentName"] == "Snare":
-            pitch = 61
+            pitch = 38
         elif event["InstrumentName"] == "HiHat":
-            pitch = 62
+            pitch = 42
         
         time = (event["Sixteenth"] -1) / 4 #timestamp in beats 
         duration = event["Duration"] / (60 / BPM) #duration in beats
