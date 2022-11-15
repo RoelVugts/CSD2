@@ -4,3 +4,5 @@ CSD2a/Eindopdracht/__pycache__
 *.s
 *.o
 *.exe
+*.vscode
+CSD2b/Instrument/instrument

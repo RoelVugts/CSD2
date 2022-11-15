@@ -8,4 +8,6 @@ int main() {
     Instrument piano("Piano");
     piano.playSound("tuuuuuummmmmm");
 
+    snare.roll(19);
+
 }
