@@ -1,3 +1,5 @@
 CSD2a/__pycache__/
 CSD2a/Event Based Sequencer/.swp
 CSD2a/Eindopdracht/__pycache__
+*.s
+*.o
