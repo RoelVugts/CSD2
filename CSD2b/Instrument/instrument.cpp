@@ -1,13 +1,12 @@
 #include <iostream>
 #include "instrument.h"
 
-int main() {
-    Instrument snare("Snare");
-    snare.playSound("poeffff");
+// Instrument::playSound(std::string soundsLike) {
+//     std::cout << "Playing " + Instrument::sound + ": " + soundsLike << std::endl;
+// }
 
-    Instrument piano("Piano");
-    piano.playSound("tuuuuuummmmmm");
-
-    snare.roll(19);
-
+void Instrument::roll() {
+    for(int i = 0; i < 10; i++) {
+        std::cout << "Playing: " + Instrument::sound + ": " << rollSounds[i%5] << std::endl;
+    }
 }
