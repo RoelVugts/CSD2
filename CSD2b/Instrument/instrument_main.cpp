@@ -3,7 +3,7 @@
 
 int main() {
 
-    Instrument snare("Snare");
+    Instrument snare("Boem");
 
     snare.roll();
 
