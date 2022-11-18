@@ -2,13 +2,22 @@
 
 #include <iostream>
 
-class Instrument {
-    public:
-        std::string sound;
-        std::string rollSounds[5] = {"Boem", "baduum", "poefff", "katsss", "trrrr"};
-        //playSound();
-        void roll();
-    Instrument(std::string objectSound) {
-        sound = objectSound;
-    };
+class Instrument
+{
+public:
+    std::string sound;
+    std::string harmonic;
+
+    Instrument(std::string s, std::string h) {
+        sound = s;
+        harmonic = h;
+    }
+
+    void playSound();
+    void showHarmonics(int tonic);
+
+    private:
+        int harmonics;
+
+
 };
