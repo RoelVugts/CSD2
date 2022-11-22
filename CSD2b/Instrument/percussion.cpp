@@ -31,3 +31,7 @@ void Percussion::showProperties()
     cout << "Release time: " << releaseTime << endl; 
     cout << "Type: " << type << endl;
 }
+
+void Percussion::hit() {
+    cout << name << ": " << sound << endl;
+}

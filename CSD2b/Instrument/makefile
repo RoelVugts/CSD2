@@ -1,6 +1,6 @@
 # Makefile voor HelloGoodbye
 #
-# Marc_G 2012 (Aangepast door Roel Vugts)
+# Marc_G 2012
 
 NAME = instrument #enter name here
 
@@ -20,6 +20,6 @@ $(TARGET): $(OBJS)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 clean:
-	rm -rf $(TARGET) *.o
+	rm -f $(TARGET) *.o
 	
 .PHONY: all clean

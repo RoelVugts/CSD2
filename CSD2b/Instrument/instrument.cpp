@@ -7,10 +7,10 @@
 
 Instrument::Instrument() : Instrument(0, 0, 0, 0)  //default constructor
 { 
-    cout << "Attack time set to default: " << attackTime << endl;
-    cout << "Decay time set to default: " << decayTime << endl;
-    cout << "Sustain level set to default: " << sustainLevel << endl;
-    cout << "Release time set to default: " << releaseTime << endl;
+    // cout << "Attack time set to default: " << attackTime << endl;
+    // cout << "Decay time set to default: " << decayTime << endl;
+    // cout << "Sustain level set to default: " << sustainLevel << endl;
+    // cout << "Release time set to default: " << releaseTime << endl;
 }
 
 Instrument::Instrument(float attackTime, float decayTime, float sustainLevel, float releaseTime) //constructor

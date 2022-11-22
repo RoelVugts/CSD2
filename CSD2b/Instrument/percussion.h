@@ -15,6 +15,8 @@ class Percussion : public Instrument {
     void setType(string type);
     void showProperties();
 
+    void hit();
+
     private:
         string type;
 };
