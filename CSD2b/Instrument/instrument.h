@@ -2,22 +2,49 @@
 
 #include <iostream>
 
+using namespace std;
+
 class Instrument
 {
 public:
-    std::string sound;
-    std::string harmonic;
+    Instrument();
+    Instrument(float attackTime, float decayTime, float sustainLevel, float releaseTime);
+    ~Instrument();
 
-    Instrument(std::string s, std::string h) {
-        sound = s;
-        harmonic = h;
-    }
+    //---------------------------------------
 
-    void playSound();
-    void showHarmonics(int tonic);
+    void setName(string name);
+    string getName();
 
-    private:
-        int harmonics;
+    void setSound(string sound);
+    string getSound();
 
+    void setHarmStruct(string harmStruct);
+    string getHarmStruct();
+
+    void setAttackTime(float attackTime);
+    float getAttackTime();
+
+    void setDecayTime(float decayTime);
+    float getDecayTime();
+
+    void setSustainLevel(float sustainLevel);
+    float getSustainLevel();
+
+    void setReleaseTime(float releaseTime);
+    float getReleaseTime();
+    
+    //----------------------------
+
+    void play();
+
+protected:
+    string name;
+    string sound;
+    string harmStruct;
+    float attackTime;
+    float decayTime;
+    float sustainLevel;
+    float releaseTime;
 
 };

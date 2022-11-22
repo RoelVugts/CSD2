@@ -4,15 +4,13 @@ using namespace std;
 
 class BankAccount {
     public:
-        int accountID;
         string currency;
-        float balance;
         string name;
 
-        BankAccount(int id)
+        BankAccount(int accountID)
         {
             balance = 0.0;
-            accountID = id;
+            this->accountID = accountID;
         }
 
         void setDetails();
@@ -22,5 +20,12 @@ class BankAccount {
 
         void getInfo();
         void showMenu();
+
+        void setAccountID(int accountIDSet);
+        int getAccountID();
+
+    private:
+        float balance;
+        int accountID;
 
 };

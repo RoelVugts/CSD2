@@ -4,23 +4,22 @@
 
 NAME = instrument #enter name here
 
-CC = g++
-CFLAGS = -Wall
-PROG = $(NAME)
-SRC = $(NAME).cpp $(NAME)_main.cpp
-OBJS = instrument.o instrument_main.o
 
-$(PROG): $(OBJS)
-	$(CC) -o $@ $(OBJS)
-	@rm $(OBJS)
-	@echo "\n" 
-	@./$(NAME) 
+CXX := g++
+CXXFLAGS := -Wall -g
+TARGET := Instrument
 
-.cpp.o:
-	$(CC) -c $< $(CFLAGS)
+# $(wildcard *.cpp /xxx/xxx/*.cpp): get all .cpp files from the current directory and dir "/xxx/xxx/"
+SRCS := $(wildcard *.cpp)
+# $(patsubst %.cpp,%.o,$(SRCS)): substitute all ".cpp" file name strings to ".o" file name strings
+OBJS := $(patsubst %.cpp,%.o,$(SRCS))
 
+all: $(TARGET)
+$(TARGET): $(OBJS)
+	$(CXX) -o $@ $^
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $<
 clean:
-	/bin/rm -f $(PROG) $(OBJS)
+	rm -rf $(TARGET) *.o
 	
-depend:
-	makedepend $(SRC)
+.PHONY: all clean

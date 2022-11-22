@@ -73,3 +73,13 @@ void BankAccount::showMenu() {
         break;
     };
 }
+
+void BankAccount::setAccountID(int accountIDSet) {
+    if(accountIDSet > 0) {
+        accountID = accountIDSet;
+    };
+}
+
+int BankAccount::getAccountID() {
+    return accountID;
+}
