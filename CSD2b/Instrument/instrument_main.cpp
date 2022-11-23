@@ -1,7 +1,6 @@
 #include <iostream>
-#include <cmath>
 #include <unistd.h>
-
+#include <math.h>
 #include "instrument.h"
 #include "percussion.h"
 #include "synth.h"
@@ -14,23 +13,13 @@ int main() {
 
     snare.setName("Dirty Snare");
     snare.setHarmStruct("Noisy");
-    snare.setSound("Duummffff");
     cout << "\n";
 
-    snare.hit();
+    snare.play();
 
-    Synth osc;
-    osc.setOscillator("Square");
+    Synth osc(10, 5, 1, 15, "Saw", 400, 1.0, 0);
+    osc.play();
 
-    osc.setFreq(200);
-    
-    cout << "\n";
-    for(float i = 1; i < 20; i++) {
-        cout << osc.play(i) << endl;
-        usleep(100000); // 1/44100
-    };
-
-
-
+    cout << "\n" << endl;
     return 0;
 }

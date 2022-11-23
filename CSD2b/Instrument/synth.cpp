@@ -1,6 +1,7 @@
 #include "synth.h"
 #include "instrument.h"
-#include <cmath>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <iostream>
 #include <unistd.h>
 
@@ -11,24 +12,28 @@ Synth::Synth() : Synth(10, 0, 1.0, 20, "Sine", 440, 1.0, 0)
 
 }
 
-Synth::Synth(float attackTime, float decayTime, float sustainLevel, float releaseTime, string oscillator, float freq, float amp, float phase)
+Synth::Synth(float attackTime, float decayTime, float sustainLevel, float releaseTime, string oscillator, float freq, float amp, float phase) 
+: Instrument(attackTime,  decayTime,  sustainLevel,  releaseTime), oscillator(oscillator), freq(freq), amp(amp), phase(phase)
 {
-    this->attackTime = attackTime;
-    this->decayTime = decayTime;
-    this->sustainLevel = sustainLevel;
-    this->releaseTime = releaseTime;
-    this->oscillator = "Sine";
-    this->freq = freq;
-    this->amp = amp;
-    this->phase = phase;
-
+   if(oscillator == "Sine") {
+    this->sound = "Tuuuuuuuuuuuu...";
+   } else if (oscillator == "Square") {
+    this->sound = "toeeeeeeeeeeeee...";
+   } else if (oscillator == "Saw") {
+    this->sound = "Buzzzzzzzz....";
+   };
 }
 
 void Synth::setOscillator(string oscillator) {
-    if(oscillator == "Sine" || oscillator == "Square" || oscillator == "Saw") {
-        this->oscillator = oscillator;
+    if(oscillator == "Sine") {
+    this->sound = "Tuuuuuuuuuuuu...";
+    } else if (oscillator == "Square") {
+    this->sound = "toeeeeeeeeeeeee...";
+    } else if (oscillator == "Saw") {
+    this->sound = "Buzzzzzzzz....";
     } else {
-        };
+        this->oscillator = oscillator;
+    };
 }
 
 string Synth::getOscillator() {
@@ -59,20 +64,23 @@ float Synth::getPhase() {
     return phase;
 }
 
-float Synth::play(float i) {
-    double sample;
-    if(oscillator == "Sine") {
-        sample = sin(2*3.14*freq*i+phase);
-    };
+// double Synth::play(float i) {
+//     double sample;
+    
+//     if(oscillator == "Sine") {
+//         double angle = i * (2 * 3.14 * freq);
+//         sample = sin(angle);
 
-    if(oscillator == "Square") {
-        sample = (fmod(i,2.0)) * 2.0 - 1.0;
-    };
+//     }
 
-    if(oscillator == "Saw") {
-        sample = fmod((i/10),1.0);
-    }
-    return sample;
+//     else if(oscillator == "Square") {
+//         sample = (fmod(i,2.0)) * 2.0 - 1.0;
+//     }
 
-}
+//     else if(oscillator == "Saw") {
+//         sample = fmod((i/10),1.0);
+//     }
+
+//     return sample;
+// }
 

@@ -7,16 +7,15 @@ using namespace std;
 
 Percussion::Percussion() : Percussion(0, 0, 0, 0, "Unknown type")
 {
-    cout << "Percussion constructor";
+
 }
 
-Percussion::Percussion(float attackTime, float decayTime, float sustainLevel, float releaseTime, string type) : Instrument(attackTime, decayTime, sustainLevel, releaseTime)
+Percussion::Percussion(float attackTime, float decayTime, float sustainLevel, float releaseTime, string type) 
+: Instrument(attackTime, decayTime, sustainLevel, releaseTime), type(type)
 {
-    this->attackTime = attackTime;
-    this->decayTime = decayTime;
-    this->sustainLevel = sustainLevel;
-    this->releaseTime = releaseTime;
-    this->type = type;
+    if(type == "Snare") {
+        sound = "Doeeeeemffff";
+    }
 }
 
 void Percussion::showProperties() 
@@ -30,8 +29,4 @@ void Percussion::showProperties()
     cout << "Sustain level: " << sustainLevel << endl;
     cout << "Release time: " << releaseTime << endl; 
     cout << "Type: " << type << endl;
-}
-
-void Percussion::hit() {
-    cout << name << ": " << sound << endl;
 }

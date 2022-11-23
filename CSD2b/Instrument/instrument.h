@@ -40,11 +40,11 @@ public:
 
 protected:
     string name;
-    string sound;
     string harmStruct;
     float attackTime;
     float decayTime;
     float sustainLevel;
     float releaseTime;
+    string sound;
 
 };
