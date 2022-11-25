@@ -63,24 +63,3 @@ void Synth::setPhase(float phase) {
 float Synth::getPhase() {
     return phase;
 }
-
-// double Synth::play(float i) {
-//     double sample;
-    
-//     if(oscillator == "Sine") {
-//         double angle = i * (2 * 3.14 * freq);
-//         sample = sin(angle);
-
-//     }
-
-//     else if(oscillator == "Square") {
-//         sample = (fmod(i,2.0)) * 2.0 - 1.0;
-//     }
-
-//     else if(oscillator == "Saw") {
-//         sample = fmod((i/10),1.0);
-//     }
-
-//     return sample;
-// }
-

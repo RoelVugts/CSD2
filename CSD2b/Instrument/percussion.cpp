@@ -13,8 +13,9 @@ Percussion::Percussion() : Percussion(0, 0, 0, 0, "Unknown type")
 Percussion::Percussion(float attackTime, float decayTime, float sustainLevel, float releaseTime, string type) 
 : Instrument(attackTime, decayTime, sustainLevel, releaseTime), type(type)
 {
-    if(type == "Snare") {
-        sound = "Doeeeeemffff";
+    if(type == "Snare") 
+    {
+        this->sound = "Doemmffff";
     }
 }
 
@@ -29,4 +30,24 @@ void Percussion::showProperties()
     cout << "Sustain level: " << sustainLevel << endl;
     cout << "Release time: " << releaseTime << endl; 
     cout << "Type: " << type << endl;
+}
+
+void Percussion::setType(string type) 
+{
+    this->type = type;
+}
+
+string Percussion::getType() 
+{
+    return type;
+}
+
+void Percussion::setResonance(int resonance)
+{
+    this->resonance = resonance;
+}
+
+int Percussion::getResonance()
+{
+    return resonance;
 }

@@ -26,7 +26,7 @@ class Synth : public Instrument {
 
         //double play(float i);
 
-    private:
+    protected:
         string oscillator;
         float freq;
         float amp;

@@ -12,9 +12,17 @@ class Percussion : public Instrument {
     Percussion();
     Percussion(float attackTime, float decayTime, float sustainLevel, float releaseTime, string type);
 
-    void setType(string type);
+
     void showProperties();
 
-    private:
+    void setType(string type);
+    string getType();
+
+    void setResonance(int resonance);
+    int getResonance();
+
+    protected:
         string type;
+        int resonance;
 };
+

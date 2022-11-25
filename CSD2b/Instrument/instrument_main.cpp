@@ -3,7 +3,9 @@
 #include <math.h>
 #include "instrument.h"
 #include "percussion.h"
-#include "synth.h"
+#include "synth.h" 
+#include "sampler.h"
+#include "perc_synth.h"
 
 using namespace std;
 
@@ -14,12 +16,20 @@ int main() {
     snare.setName("Dirty Snare");
     snare.setHarmStruct("Noisy");
     cout << "\n";
-
     snare.play();
 
-    Synth osc(10, 5, 1, 15, "Saw", 400, 1.0, 0);
+    Synth osc(10, 5, 1, 15, "Sine", 400, 1.0, 0);
     osc.play();
 
+    Sampler tomSample(1, 50, 1, 10, "lowTom");
+    tomSample.play();
+
+    PercSynth synthKick;
+    synthKick.Percussion::setSound("Boem");
+    synthKick.Percussion::play();
+
     cout << "\n" << endl;
+
     return 0;
+
 }
