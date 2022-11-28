@@ -16,9 +16,9 @@ public:
     void setName(string name);
     string getName();
 
-    void setSound(string sound);
+    virtual void setSound(string sound);
     string getSound();
-
+    
     void setHarmStruct(string harmStruct);
     string getHarmStruct();
 
@@ -36,7 +36,7 @@ public:
     
     //----------------------------
 
-    void play();
+    virtual void play();
 
 protected:
     string name;

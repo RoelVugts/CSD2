@@ -25,8 +25,8 @@ int main() {
     tomSample.play();
 
     PercSynth synthKick;
-    synthKick.Percussion::setSound("Boem");
-    synthKick.Percussion::play();
+    synthKick.setSound("Boem");
+    synthKick.play();
 
     cout << "\n" << endl;
 

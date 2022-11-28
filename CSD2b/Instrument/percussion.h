@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class Percussion : public Instrument {
+class Percussion : virtual public Instrument {
     public:
 
     Percussion();
