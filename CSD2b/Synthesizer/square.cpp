@@ -12,6 +12,12 @@ Square::Square(float frequency, float amplitude, float phase, float samplerate) 
 
 }
 
+Square::Square(float frequency, float amplitude) : Oscillator(frequency, amplitude)
+{
+    phase = 0;
+    samplerate = 48000;
+}
+
 Square::~Square()
 {
 
@@ -20,15 +26,12 @@ Square::~Square()
 float Square::process()
 {
     phase += frequency / samplerate;
-    frequency = frequency - sqrt(phase/100);
-    if (frequency < 10) {
-        frequency += 500;
-    }
 
     if(phase > 1.0f)
     {
         phase -= 1.0f;
     }
+
     if(phase < 0.5)
     {
         sample = amplitude;

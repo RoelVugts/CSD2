@@ -4,6 +4,7 @@
 #include "math.h"
 #include "sine.h"
 #include "square.h"
+#include "sawtooth.h"
 
 /*
  * NOTE: jack2 needs to be installed
@@ -24,14 +25,15 @@ public:
   void process(AudioBuffer buffer) override {
     for (int i = 0; i < buffer.numFrames; ++i) {
       // write sample to buffer at channel 0, amp = 0.25
-      buffer.outputChannels[0][i] = square.getSample();
-      square.process();
+      buffer.outputChannels[0][i] = saw.getSample();
+      saw.process();
     }
   }
   private:
   float samplerate = 44100;
-  Sine sine = Sine(500, 0.5, 0, 48000);
-  Square square = Square(500, 0.1, 0, 48000);
+  Sine sine = Sine(500, 0.5);
+  Square square = Square(500, 0.1);
+  Sawtooth saw = Sawtooth(500, 1.0);
 };
 
 int main(int argc,char **argv)

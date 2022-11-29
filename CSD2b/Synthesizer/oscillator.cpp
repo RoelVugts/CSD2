@@ -13,6 +13,13 @@ Oscillator::Oscillator(float frequency, float amplitude, float phase, float samp
     std::cout << "Constructed oscillator: \nFrequency: " << frequency << "\nAmplitude: " << amplitude << std::endl;
 }
 
+Oscillator::Oscillator(float frequency, float amplitude) : frequency(frequency), amplitude(amplitude)
+{
+    phase = 0;
+    samplerate = 48000;
+
+}
+
 Oscillator::~Oscillator()
 {
     std::cout << "Oscillator destructor" << std::endl;

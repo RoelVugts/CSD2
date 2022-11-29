@@ -11,6 +11,12 @@ Sine::Sine(float frequency, float amplitude, float phase, float samplerate) : Os
   std::cout << "Sine - constructor\n";
 }
 
+Sine::Sine(float frequency, float amplitude) : Oscillator(frequency, amplitude)
+{
+  phase = 0;
+  samplerate = 48000;
+}
+
 
 Sine::~Sine() {
   std::cout << "Sine - destructor\n";

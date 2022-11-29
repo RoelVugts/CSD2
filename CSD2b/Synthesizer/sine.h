@@ -11,6 +11,7 @@ class Sine : public Oscillator
     //Constructor and destructor
     Sine();
     Sine(float frequency, float ampliltude, float phase, float samplerate);
+    Sine(float frequency, float amplitude);
     ~Sine();
     void tick();
 };
