@@ -1,5 +1,7 @@
 #pragma once
 
+#define SAMPLERATE 44100
+
 class Oscillator {
     public:
         Oscillator();
@@ -9,6 +11,8 @@ class Oscillator {
 
         void setSamplerate(float samplerate);
         float getSample();
+        
+        float getSampleRate();
 
         //getters and setters
         void setFrequency(float frequency);
@@ -19,5 +23,5 @@ class Oscillator {
         float amplitude;
         float phase;
         float sample;
-        float samplerate;
+        float samplerate = SAMPLERATE;
 };

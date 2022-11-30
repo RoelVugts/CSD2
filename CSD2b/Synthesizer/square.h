@@ -9,5 +9,5 @@ class Square : public Oscillator {
         Square(float frequency, float amplitude);
         ~Square();
     
-    float process();
+    void process();
 };

@@ -7,5 +7,5 @@ class Sawtooth : public Oscillator {
         Sawtooth(float frequency, float amplitude);
         ~Sawtooth();
     
-    float process();
+    void process();
 };

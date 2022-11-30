@@ -35,6 +35,11 @@ float Oscillator::getSample()
     return sample;
 }
 
+float Oscillator::getSampleRate()
+{
+    return samplerate;
+}
+
 void Oscillator::setFrequency(float frequency)
 {
     this->frequency = frequency;

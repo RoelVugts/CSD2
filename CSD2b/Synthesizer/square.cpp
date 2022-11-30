@@ -23,7 +23,7 @@ Square::~Square()
 
 }
 
-float Square::process()
+void Square::process()
 {
     phase += frequency / samplerate;
 
@@ -38,5 +38,4 @@ float Square::process()
     } else {
         sample = amplitude*-1.0f;
     }
-    return sample;
 }
