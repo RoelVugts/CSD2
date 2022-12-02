@@ -1,4 +1,5 @@
-#define NUM_NOTES 13
+
+#include <vector>
 
 #pragma once
 
@@ -7,11 +8,14 @@ class Melody {
 
     Melody();
     
-    void addNote(int midiNote);
+    void addNote(int numNotes, int minimum, int maximum);
     float getNote(int readPointer);
+    int getSize();
+
+    void clear();
 
     protected:
-        int notes[NUM_NOTES];
+        std::vector<int> notes;
         float freq;
         int writePointer;
 };

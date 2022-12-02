@@ -7,7 +7,7 @@ NAME = main #enter name here
 
 CXX := g++
 CXXFLAGS := -Wall -g -std=c++14
-TARGET := Instrument
+TARGET := Test
 
 # $(wildcard *.cpp /xxx/xxx/*.cpp): get all .cpp files from the current directory and dir "/xxx/xxx/"
 SRCS := $(wildcard *.cpp)

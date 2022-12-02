@@ -1,6 +1,6 @@
 #pragma once
 
-#define SAMPLERATE 44100
+#define SAMPLERATE 48000
 
 class Oscillator {
     public:

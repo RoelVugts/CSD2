@@ -8,7 +8,7 @@
 #include "sawtooth.h"
 #include "melGen.h"
 
-#define SOUND 1
+#define SOUND 0
 #define FREQ 5
 
 /*
@@ -32,14 +32,14 @@ public:
   void process(AudioBuffer buffer) override {
     for (int i = 0; i < buffer.numFrames; ++i) {
       // write sample to buffer at channel 0, amp = 0.25
-      buffer.outputChannels[0][i] = saw.getSample();
-      saw.process();
+      buffer.outputChannels[0][i] = square.getSample();
+      square.process();
     }
   }
   private:
   float samplerate = 48000;
   Sine sine = Sine(500, 0.5);
-  Square square = Square(500, 0.1);
+  Square square = Square(FREQ, 0.1);
   Sawtooth saw = Sawtooth(500, 1.0);
 };
 
@@ -48,7 +48,12 @@ public:
 
 int main(int argc,char **argv)
 {
-  #if SOUND
+
+
+#if SOUND
+
+
+
   auto callback = CustomCallback {};
   auto jackModule = JackModule { callback };
 
@@ -56,40 +61,39 @@ int main(int argc,char **argv)
 
   bool running = true;
   while (running) {
+    }
       switch (std::cin.get()) {
           case 'q':
               running = false;
       }
-  }
 
-  #endif
+#endif
 
   Sine sine1 = Sine(FREQ, 1.0);
   Square square1 = Square(FREQ, 1.0);
   Sawtooth saw1 = Sawtooth(FREQ, 1.0);
+  Melody melody1;
+  
+  melody1.addNote(10, 60, 80); //Amount of notes, minimum, maximum
+  melody1.addNote(5, 20, 30);
+
+  for(int i = 0; i < melody1.getSize(); i++)
+  {
+    std::cout << "Note: " << melody1.getNote(i) << std::endl;
+  }
 
   std::ofstream audioFile;
   audioFile.open("output.csv");
+  int duration = 2;
 
-  for(int i = 0; i < SAMPLERATE; i++)
+  for(int i = 0; i < SAMPLERATE * duration; i++)
   {
-    audioFile << saw1.getSample() << std::endl;
-    saw1.process();
+    audioFile << square1.getSample() << std::endl;
+    square1.process();
   }
 
   audioFile.close();
 
-  Melody melody1;
-
-  for(int i = 0; i < NUM_NOTES; i++)
-  {
-      melody1.addNote(i + 69);
-      std::cout << "Note: " << melody1.getNote(i) << std::endl;
-  }
-
-  int readPointer;
-  std::cin >> readPointer;
-  saw1.setFrequency(melody1.getNote(readPointer));
 
 
   //end the program

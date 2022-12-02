@@ -29,5 +29,6 @@ void Sawtooth::process()
         phase -= 1.0f;
     }
 
-    sample = amplitude*2 * phase - 1;
+    sample = amplitude*2 * phase - amplitude;
 }
+
