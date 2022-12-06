@@ -1,11 +1,6 @@
 #include "sawtooth.h"
 
-Sawtooth::Sawtooth() : Oscillator(500, 1.0, 0, 48000)
-{
-
-}
-
-Sawtooth::Sawtooth(float frequency, float amplitude, float phase, float samplerate) : Oscillator(frequency, amplitude, phase, samplerate)
+Sawtooth::Sawtooth() : Oscillator(500, 1.0)
 {
 
 }

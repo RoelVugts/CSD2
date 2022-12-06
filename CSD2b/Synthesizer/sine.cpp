@@ -1,30 +1,27 @@
 #include "sine.h"
 #include "math.h"
 
-Sine::Sine() : Oscillator(440, 0.5, 0, 4800)
-{
-  
-}
+#include <iostream>
 
-Sine::Sine(float frequency, float amplitude, float phase, float samplerate) : Oscillator(frequency, amplitude, phase, samplerate)
+Sine::Sine() : Oscillator(440, 0.5)
 {
-  std::cout << "Sine - constructor\n";
+  std::cout << "Constructed default sine" << std::endl;
 }
 
 Sine::Sine(float frequency, float amplitude) : Oscillator(frequency, amplitude)
 {
-  phase = 0;
-  samplerate = 48000;
+  std::cout << "Constructed sine with frequency: " << frequency << " and amplitude: " << amplitude << std::endl;
 }
 
 
-Sine::~Sine() {
+Sine::~Sine() 
+{
   std::cout << "Sine - destructor\n";
 }
 
 void Sine::calculate() 
 {
 
-  sample = sin(M_PI * 2 * phase) * amplitude;
+  sample = sin(pi * 2 * phase) * amplitude;
 
 }

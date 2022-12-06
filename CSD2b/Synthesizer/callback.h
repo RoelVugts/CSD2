@@ -6,6 +6,7 @@
 #include "sine.h"
 #include "sawtooth.h"
 #include "square.h"
+#include "organSynth.h"
 
 class CustomCallback : public AudioCallback {
 public:
@@ -14,9 +15,10 @@ public:
 
 private:
   float samplerate = 44100;
-  Sine sine = Sine(500, 0.5);
-  Sawtooth saw = Sawtooth(500, 0.5);
-  Square square = Square(500, 0.5); 
+  OrganSynth organ = OrganSynth();
+  // Sine sine = Sine(500, 0.5);
+  // Sawtooth saw = Sawtooth(500, 0.5);
+  // Square square = Square(500, 0.5); 
 };
 
 

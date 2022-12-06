@@ -3,23 +3,16 @@
 
 #include <iostream>
 
-Oscillator::Oscillator() : Synth(440, 0.5, 48000)
+Oscillator::Oscillator() : Oscillator(440, 0.5)
 {
     std::cout << "Concstructed default oscillator" << std::endl;
-    phase = 0;
 }
 
-Oscillator::Oscillator(float frequency, float amplitude, float samplerate, float phase)
-:   Synth(frequency, amplitude, samplerate) , phase(phase)
+Oscillator::Oscillator(float frequency, float amplitude) : frequency(frequency), amplitude(amplitude)
 {
-    std::cout << "Constructed oscillator: \nFrequency: " << frequency << "\nAmplitude: " << amplitude << std::endl;
-}
-
-Oscillator::Oscillator(float frequency, float amplitude) : Synth(frequency, amplitude)
-{
-    phase = 0;
+    phase = 0.0f;
+    sample = 0.0f;
     samplerate = 48000;
-
 }
 
 Oscillator::~Oscillator()
@@ -33,6 +26,27 @@ float Oscillator::getSample()
     return sample;
 }
 
+void Oscillator::setFrequency(float frequency)
+{
+    this->frequency = frequency;
+}
+
+float Oscillator::getFrequency()
+{
+    return frequency;
+}
+
+float Oscillator::getSampleRate()
+{
+    return samplerate;
+}
+
+void Oscillator::setSamplerate(float samplerate) 
+{
+    this->samplerate = samplerate;
+}
+
+
 void Oscillator::tick()
 {
     phase += frequency / samplerate;
@@ -41,4 +55,3 @@ void Oscillator::tick()
     }
     calculate();
 }
-

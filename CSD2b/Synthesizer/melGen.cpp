@@ -45,3 +45,21 @@ void Melody::clear()
 {
     notes.clear();
 }
+
+
+
+// void changeFreq() {
+//     while (playing) {
+//     timer1.start();
+//     if (fmod(timer1.getTime(), 250) == 0)
+//     {
+//       sine.setFrequency(melody1.getNote(readPointer));
+//       std::cout << "Freq: " << melody1.getNote(readPointer++) << std::endl;
+
+//       if (readPointer == melody1.getSize())
+//       {
+//         readPointer = 0;
+//       }
+//     }
+//   }
+// }

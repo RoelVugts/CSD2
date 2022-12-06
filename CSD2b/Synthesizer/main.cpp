@@ -25,67 +25,25 @@
  * jackd -d coreaudio
  */
 
-
-Melody melody1;
-Timer timer1;
-
-int readPointer = 0;
-bool playing = true;
-
-// void changeFreq() {
-//     while (playing) {
-//     timer1.start();
-//     if (fmod(timer1.getTime(), 250) == 0)
-//     {
-//       sine.setFrequency(melody1.getNote(readPointer));
-//       std::cout << "Freq: " << melody1.getNote(readPointer++) << std::endl;
-
-//       if (readPointer == melody1.getSize())
-//       {
-//         readPointer = 0;
-//       }
-//     }
-//   }
-// }
-
-
-
 int main(int argc,char **argv)
 {
-
-  melody1.addNote(10, 60, 80); //Amount of notes, minimum, maximum
-  melody1.addNote(5, 90, 100);
-
-  // thread changeNote(changeFreq);
-
   auto callback = CustomCallback {};
   auto jackModule = JackModule { callback };
-
-  #if SOUND
-
-
 
   jackModule.init(0, 1);
 
   bool running = true;
   while (running) {
-    }
       switch (std::cin.get()) {
           case 'q':
               running = false;
-              playing = false;
       }
+  }
 
-  // changeNote.join();
-
-  #endif
-
-  #if WRITE_TO_FILE
 
   AudioToFile audioFile = AudioToFile();
   audioFile.write(callback);
 
-  #endif
   //end the program
   return 0;
 } // main()

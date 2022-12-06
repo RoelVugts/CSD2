@@ -3,25 +3,29 @@
 #include <cmath>
 #include <vector>
 
-#include "synth.h"
 
-
-#define SAMPLERATE 48000
-
-class Oscillator : public Synth {
+class Oscillator {
     public:
         Oscillator();
-        Oscillator(float frequency, float amplitude, float samplerate, float phase);
         Oscillator(float frequency, float amplitude);
         ~Oscillator();
 
+        //getters and setters
+        void setFrequency(float frequency);
+        float getFrequency();
         float getSample();
+        float getSampleRate();
+        void setSamplerate(float samplerate);
+
         void tick();
 
     protected:
+        float samplerate;
+        float frequency;
+        float amplitude;
         float phase;
         float sample;
-        float samplerate = SAMPLERATE;
+        int voices;
         double pi = acos(-1);
 
         virtual void calculate() = 0;

@@ -4,12 +4,7 @@
 #include <vector>
 #include <numeric>
 
-Square::Square() : Oscillator(1000, 1.0, 0, 48000)
-{
-
-}
-
-Square::Square(float frequency, float amplitude, float phase, float samplerate) : Oscillator(frequency, amplitude, phase, samplerate)
+Square::Square() : Oscillator(1000, 1.0)
 {
 
 }
