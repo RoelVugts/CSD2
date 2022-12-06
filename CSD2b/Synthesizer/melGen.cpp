@@ -38,7 +38,7 @@ float Melody::getNote(int readPointer)
 
 int Melody::getSize()
 {
-    return notes.size();
+    return int(notes.size());
 }
 
 void Melody::clear() 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "oscillator.h"
+#include "sine.h"
 
 class Square : public Oscillator {
     public:
@@ -9,5 +10,7 @@ class Square : public Oscillator {
         Square(float frequency, float amplitude);
         ~Square();
     
-    void process();
+    void calculate();
+
+    std::vector<Sine> partials;
 };

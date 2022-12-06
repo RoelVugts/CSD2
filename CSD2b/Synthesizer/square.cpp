@@ -1,6 +1,8 @@
 #include "square.h"
 
 #include <cmath>
+#include <vector>
+#include <numeric>
 
 Square::Square() : Oscillator(1000, 1.0, 0, 48000)
 {
@@ -23,15 +25,8 @@ Square::~Square()
 
 }
 
-void Square::process()
+void Square::calculate()
 {
-    phase += frequency / samplerate;
-
-    if(phase > 1.0f)
-    {
-        phase -= 1.0f;
-    }
-
     if(phase < 0.5)
     {
         sample = amplitude;

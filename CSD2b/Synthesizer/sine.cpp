@@ -22,12 +22,9 @@ Sine::~Sine() {
   std::cout << "Sine - destructor\n";
 }
 
-void Sine::process() {
-  // NOTE 1. - frequency / SAMPLERATE can be implemented in a more efficient way
-  phase += frequency / samplerate;
-  if(phase > 1.0f) {
-    phase -= 1.0f;
-  }
+void Sine::calculate() 
+{
+
   sample = sin(M_PI * 2 * phase) * amplitude;
 
 }

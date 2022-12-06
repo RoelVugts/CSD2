@@ -21,14 +21,7 @@ Sawtooth::~Sawtooth()
 
 }
 
-void Sawtooth::process()
+void Sawtooth::calculate()
 {
-    phase += frequency / samplerate;
-    if(phase > 1.0f)
-    {
-        phase -= 1.0f;
-    }
-
     sample = amplitude*2 * phase - amplitude;
 }
-

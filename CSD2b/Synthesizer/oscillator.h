@@ -1,27 +1,28 @@
 #pragma once
 
+#include <cmath>
+#include <vector>
+
+#include "synth.h"
+
+
 #define SAMPLERATE 48000
 
-class Oscillator {
+class Oscillator : public Synth {
     public:
         Oscillator();
-        Oscillator(float frequency, float amplitude, float phase, float samplerate);
+        Oscillator(float frequency, float amplitude, float samplerate, float phase);
         Oscillator(float frequency, float amplitude);
         ~Oscillator();
 
-        void setSamplerate(float samplerate);
         float getSample();
-        
-        float getSampleRate();
-
-        //getters and setters
-        void setFrequency(float frequency);
-        float getFrequency();
+        void tick();
 
     protected:
-        float frequency;
-        float amplitude;
         float phase;
         float sample;
         float samplerate = SAMPLERATE;
+        double pi = acos(-1);
+
+        virtual void calculate() = 0;
 };

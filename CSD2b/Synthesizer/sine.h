@@ -13,7 +13,8 @@ class Sine : public Oscillator
     Sine(float frequency, float ampliltude, float phase, float samplerate);
     Sine(float frequency, float amplitude);
     ~Sine();
-    void process();
+
+    void calculate();
 };
 
 #endif
