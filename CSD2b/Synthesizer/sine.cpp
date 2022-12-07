@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Sine::Sine() : Oscillator(440, 0.5)
+Sine::Sine() : Oscillator()
 {
   std::cout << "Constructed default sine" << std::endl;
 }

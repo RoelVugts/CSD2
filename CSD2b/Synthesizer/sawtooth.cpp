@@ -1,6 +1,6 @@
 #include "sawtooth.h"
 
-Sawtooth::Sawtooth() : Oscillator(500, 1.0)
+Sawtooth::Sawtooth() : Oscillator()
 {
 
 }

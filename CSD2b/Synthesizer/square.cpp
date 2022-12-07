@@ -4,7 +4,7 @@
 #include <vector>
 #include <numeric>
 
-Square::Square() : Oscillator(1000, 1.0)
+Square::Square() : Oscillator()
 {
 
 }

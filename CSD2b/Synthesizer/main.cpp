@@ -12,8 +12,10 @@
 #include "timer.h"
 #include "callback.h"
 #include "audioToFile.h"
+#include "antiAliasedSquare.h"
+#include "antiAliasedOsc.h"
 
-#define SOUND 1
+#define SOUND 0
 #define WRITE_TO_FILE 1
 #define FREQ 5
 
@@ -27,6 +29,10 @@
 
 int main(int argc,char **argv)
 {
+
+  // AntiAliasedSquare highSquare = AntiAliasedSquare();
+  // highSquare.showMe();
+
   auto callback = CustomCallback {};
   auto jackModule = JackModule { callback };
 
@@ -39,7 +45,6 @@ int main(int argc,char **argv)
               running = false;
       }
   }
-
 
   AudioToFile audioFile = AudioToFile();
   audioFile.write(callback);

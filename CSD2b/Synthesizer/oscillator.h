@@ -17,7 +17,7 @@ class Oscillator {
         float getSampleRate();
         void setSamplerate(float samplerate);
 
-        void tick();
+        virtual void tick();
 
     protected:
         float samplerate;

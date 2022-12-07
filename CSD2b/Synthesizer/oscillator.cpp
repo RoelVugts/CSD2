@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Oscillator::Oscillator() : Oscillator(440, 0.5)
+Oscillator::Oscillator() : Oscillator(1000, 1.0)
 {
     std::cout << "Concstructed default oscillator" << std::endl;
 }
