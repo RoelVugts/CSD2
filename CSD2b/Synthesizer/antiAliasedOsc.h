@@ -7,6 +7,7 @@
 class AntiAliasedOsc : public Oscillator {
     public:
         AntiAliasedOsc();
+        AntiAliasedOsc(float frequency, float amplitude);
         ~AntiAliasedOsc();
 
         void tick();

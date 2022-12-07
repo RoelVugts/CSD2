@@ -9,6 +9,7 @@
 #include "organSynth.h"
 #include "antiAliasedOsc.h"
 #include "antiAliasedSquare.h"
+#include "antiAliasedSaw.h"
 
 class CustomCallback : public AudioCallback {
 public:
@@ -17,11 +18,12 @@ public:
 
 
 private:
-  float samplerate = 44100;
-  AntiAliasedSquare aSquare = AntiAliasedSquare();
-  Sine sine = Sine(500, 0.5);
+  float samplerate = 48000;
+  // AntiAliasedSquare aSquare = AntiAliasedSquare();
+  // Sine sine = Sine(500, 0.5);
   // Sawtooth saw = Sawtooth(500, 0.5);
   // Square square = Square(500, 0.5); 
+  AntiAliasedSaw aSaw = AntiAliasedSaw(1000, 1.0);
 };
 
 

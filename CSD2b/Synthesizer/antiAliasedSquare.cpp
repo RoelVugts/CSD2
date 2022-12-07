@@ -4,9 +4,8 @@
 #include <vector>
 #include <numeric>
 
-AntiAliasedSquare::AntiAliasedSquare() : AntiAliasedOsc()
+void AntiAliasedSquare::createPartials()
 {
-    std::cout << " Anti Aliased Square constructor" << std::endl;
     numHarmonics = ((samplerate/2) / frequency);
     for(int i = 1; i <= numHarmonics; i += 2)
     {
@@ -14,6 +13,20 @@ AntiAliasedSquare::AntiAliasedSquare() : AntiAliasedOsc()
         partialSamples.push_back(0);
     }
 }
+
+AntiAliasedSquare::AntiAliasedSquare() : AntiAliasedOsc()
+{
+    std::cout << " Anti Aliased Square constructor" << std::endl;
+    createPartials();
+}
+
+AntiAliasedSquare::AntiAliasedSquare(float frequency, float amplitude) 
+: AntiAliasedOsc(frequency, amplitude)
+{
+    std::cout << " Anti Aliased Square constructor" << std::endl;
+    createPartials();
+}
+
 
 AntiAliasedSquare::~AntiAliasedSquare()
 {

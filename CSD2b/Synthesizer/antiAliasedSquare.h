@@ -9,6 +9,8 @@ class AntiAliasedSquare : public AntiAliasedOsc {
         ~AntiAliasedSquare();
 
     void calculate();
-    protected:
+
+    private:
+    void createPartials();
 
 };
