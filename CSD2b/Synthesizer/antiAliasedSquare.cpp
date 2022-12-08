@@ -7,10 +7,10 @@
 void AntiAliasedSquare::createPartials()
 {
     numHarmonics = ((samplerate/2) / frequency);
-    for(int i = 1; i <= numHarmonics; i += 2)
+    for(int i = 1; i <= numHarmonics; i += 2) //i += 2 to only create uneven harmonics
     {
         partials.push_back(Sine(frequency*i, amplitude/i));
-        partialSamples.push_back(0);
+        partialSamples.push_back(0); //initialize samples vector with 0
     }
 }
 
@@ -38,7 +38,7 @@ void AntiAliasedSquare::calculate()
     for(int i = 0; i < int(partials.size()); i++)
     {
         partials[i].tick(); //calculate sine sample values
-        partialSamples[i] = partials[i].getSample();
+        partialSamples[i] = partials[i].getSample(); //push smaple values in vector
     }
     sample = std::accumulate(partialSamples.begin(), partialSamples.end(), 0.0f); //add all sample values
 }

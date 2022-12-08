@@ -1,7 +1,7 @@
 #include "melGen.h"
 #include <iostream>
 #include <cstdlib>
-
+#include <time.h>
 #include <math.h>
 
 using namespace std;
@@ -9,18 +9,20 @@ using namespace std;
 Melody::Melody()  //default constructor
 {
     writePointer = 0;
+    readPointer = 0;
 }
 
-void Melody::addNote(int numNotes, int minimum, int maximum)
+void Melody::addNote(int numNotes)
 {
-     int range = maximum - minimum;   
-
+    int range = 8;   
+    srand(clock());
+    int aMinor[8] = {57, 59, 60, 62, 64, 65, 67, 69};
 
     for(int i = 0; i < numNotes; i++)
     {
-        srand(i);
-        int randomNote = (rand() % range) + minimum;
-        freq = 440 * pow(2, (randomNote - 69)/12.0f); //convert midiNote to Frequency
+
+        int randomNote = (rand() % range);
+        freq = 440.0f * pow(2, (aMinor[randomNote] - 69)/12.0f); //convert midiNote to Frequency
         notes.push_back(freq);
         // cout << "Added: " << notes[i] << endl;
     }
@@ -48,18 +50,18 @@ void Melody::clear()
 
 
 
-// void changeFreq() {
-//     while (playing) {
-//     timer1.start();
-//     if (fmod(timer1.getTime(), 250) == 0)
-//     {
-//       sine.setFrequency(melody1.getNote(readPointer));
-//       std::cout << "Freq: " << melody1.getNote(readPointer++) << std::endl;
+void Melody::play(int BPM, Sawtooth& target) {
+    float tempoMS = 60000.0f / BPM; //calculate tempo in MS
+    timer.start();
+    // std::cout << "melTimer: " << timer.getTime() << std::endl;
+    if (fmod(timer.getTime(), tempoMS) == 0)
+    {
+        std::cout << "Freq: " << notes[readPointer] << std::endl;
+        target.setFrequency(notes[readPointer++]);
 
-//       if (readPointer == melody1.getSize())
-//       {
-//         readPointer = 0;
-//       }
-//     }
-//   }
-// }
+      if (readPointer == int(notes.size()))
+      {
+        readPointer = 0;
+      }
+  }
+}

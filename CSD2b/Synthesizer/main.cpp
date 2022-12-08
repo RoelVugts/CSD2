@@ -14,6 +14,7 @@
 #include "audioToFile.h"
 #include "antiAliasedSquare.h"
 #include "antiAliasedOsc.h"
+#include "antiAliasedSaw.h"
 
 #define SOUND 0
 #define WRITE_TO_FILE 1
@@ -30,19 +31,26 @@
 int main(int argc,char **argv)
 {
 
-  // AntiAliasedSquare highSquare = AntiAliasedSquare();
-  // highSquare.showMe();
+  Melody melody = Melody();
+  melody.addNote(8);
 
   auto callback = CustomCallback {};
   auto jackModule = JackModule { callback };
-
+  
   jackModule.init(0, 1);
+  bool playing = true;
+  
+  while (playing) {
+    melody.play(120, callback.saw);
+  }
 
   bool running = true;
   while (running) {
       switch (std::cin.get()) {
           case 'q':
               running = false;
+              playing = false;
+              
       }
   }
 

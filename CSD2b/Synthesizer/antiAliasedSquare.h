@@ -11,6 +11,6 @@ class AntiAliasedSquare : public AntiAliasedOsc {
     void calculate();
 
     private:
-    void createPartials();
+        void createPartials();
 
 };

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-SuperSynth::SuperSynth() : Synth(500, 0.5)
+SuperSynth::SuperSynth()
 {
     std::cout << "Supersynth constructor" << std::endl;
     voices = 5;

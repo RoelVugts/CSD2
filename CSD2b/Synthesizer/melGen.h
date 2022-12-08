@@ -1,21 +1,29 @@
-
+#pragma once
 #include <vector>
 
-#pragma once
+#include "timer.h"
+#include "sine.h"
+#include "antiAliasedSaw.h"
+#include "sawtooth.h"
+
 
 class Melody {
     public:
 
     Melody();
     
-    void addNote(int numNotes, int minimum, int maximum);
+    void addNote(int numNotes);
     float getNote(int readPointer);
     int getSize();
 
     void clear();
+    void play(int BPM, Sawtooth& target);
+
+    Timer timer;
 
     protected:
-        std::vector<int> notes;
+        std::vector<float> notes;
         float freq;
         int writePointer;
+        int readPointer;
 };
