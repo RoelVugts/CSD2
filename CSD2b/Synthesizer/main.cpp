@@ -31,8 +31,8 @@
 int main(int argc,char **argv)
 {
 
-  Melody melody = Melody();
-  melody.addNote(8);
+  // Melody melody = Melody();
+  // melody.addNote(8);
 
   auto callback = CustomCallback {};
   auto jackModule = JackModule { callback };
@@ -40,9 +40,9 @@ int main(int argc,char **argv)
   jackModule.init(0, 1);
   bool playing = true;
   
-  while (playing) {
-    melody.play(120, callback.saw);
-  }
+  // while (playing) {
+  //   melody.play(200, &(callback.aSaw));
+  // }
 
   bool running = true;
   while (running) {

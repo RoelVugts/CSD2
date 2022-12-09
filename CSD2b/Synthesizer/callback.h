@@ -9,6 +9,7 @@
 #include "antiAliasedOsc.h"
 #include "antiAliasedSquare.h"
 #include "antiAliasedSaw.h"
+#include "superSynth.h"
 
 class CustomCallback : public AudioCallback {
 public:
@@ -16,8 +17,10 @@ public:
   void process(AudioBuffer buffer) override;
 
   // Sine sine = Sine(500, 0.5);
-    // AntiAliasedSaw aSaw = AntiAliasedSaw(100, 1.0);
-    Sawtooth saw = Sawtooth(500, 0.5);
+    AntiAliasedSaw aSaw = AntiAliasedSaw();
+    Sawtooth saw1 = Sawtooth(500, 0.5);
+    SuperSynth superDik = SuperSynth();
+    AntiAliasedSquare aSquare = AntiAliasedSquare(500, 1.0);
 private:
   float samplerate = 48000;
   // AntiAliasedSquare aSquare = AntiAliasedSquare();

@@ -1,15 +1,23 @@
+#pragma once
+
 #include "synth.h"
 #include "oscillator.h"
+#include "square.h"
+#include "sawtooth.h"
+#include "antiAliasedSquare.h"
+#include "antiAliasedSaw.h"
 
-class SuperSynth : virtual public Oscillator, Synth {
+class SuperSynth : public Synth {
     public:
         SuperSynth();
+        SuperSynth(float frequency, float amplitude);
         ~SuperSynth();
+
+        virtual void tick();
+        float getSample();
     
     protected:
-        float detune;
-        int voices;
-        float phase2, phase3, phase4, phase5;
-        void calculate();
+        AntiAliasedSquare square = AntiAliasedSquare();
+        AntiAliasedSaw saw = AntiAliasedSaw();
 
 };

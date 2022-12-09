@@ -26,5 +26,5 @@ void AntiAliasedOsc::tick()
 void AntiAliasedOsc::setFrequency(float frequency)
 {
     this->frequency = frequency;
-    createPartials();
+    calculatePartials(); //recalculate frequency for each partial
 }

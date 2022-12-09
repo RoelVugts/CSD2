@@ -11,8 +11,9 @@ class Oscillator {
         ~Oscillator();
 
         //getters and setters
-        void setFrequency(float frequency);
+        virtual void setFrequency(float frequency); //virtual because we override function in AntiAliasedOsc
         float getFrequency();
+        void setAmplitude(float amplitude);
         float getSample();
         float getSampleRate();
         void setSamplerate(float samplerate);
@@ -29,4 +30,5 @@ class Oscillator {
         double pi = acos(-1);
 
         virtual void calculate() = 0;
+
 };

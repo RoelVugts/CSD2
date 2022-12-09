@@ -13,4 +13,5 @@ class AntiAliasedSaw : public AntiAliasedOsc {
 
     private:
         void createPartials();
+        void calculatePartials();
 };

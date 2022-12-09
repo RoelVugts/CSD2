@@ -6,6 +6,8 @@
 
 void AntiAliasedSquare::createPartials()
 {
+    partials.clear();
+    partialSamples.clear();
     numHarmonics = ((samplerate/2) / frequency);
     for(int i = 1; i <= numHarmonics; i += 2) //i += 2 to only create uneven harmonics
     {
@@ -41,4 +43,12 @@ void AntiAliasedSquare::calculate()
         partialSamples[i] = partials[i].getSample(); //push smaple values in vector
     }
     sample = std::accumulate(partialSamples.begin(), partialSamples.end(), 0.0f); //add all sample values
+}
+
+void AntiAliasedSquare::calculatePartials()
+{
+        for(float i = 0.0f; i < int(partials.size()); i += 1.0f)
+    {
+        partials[i].setFrequency(frequency*(i*2.0f+1.0f));
+    }
 }

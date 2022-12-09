@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Oscillator::Oscillator() : Oscillator(1000, 1.0)
+Oscillator::Oscillator() : Oscillator(500, 1.0)
 {
     std::cout << "Concstructed default oscillator" << std::endl;
 }
@@ -44,6 +44,11 @@ float Oscillator::getSampleRate()
 void Oscillator::setSamplerate(float samplerate) 
 {
     this->samplerate = samplerate;
+}
+
+void Oscillator::setAmplitude(float amplitude)
+{
+    this->amplitude = amplitude;
 }
 
 

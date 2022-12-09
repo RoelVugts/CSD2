@@ -3,6 +3,7 @@
 #include "sawtooth.h"
 #include "square.h"
 #include "synth.h"
+#include "superSynth.h"
 
 
 #include <iostream>
@@ -16,7 +17,7 @@ void CustomCallback::prepare(int rate) {
 void CustomCallback::process(AudioBuffer buffer) {
   for (int i = 0; i < buffer.numFrames; ++i) {
     // write sample to buffer at channel 0, amp = 0.25
-    buffer.outputChannels[0][i] = saw.getSample();
-    saw.tick();
+    buffer.outputChannels[0][i] = aSaw.getSample();
+    aSaw.tick();
   }
 }

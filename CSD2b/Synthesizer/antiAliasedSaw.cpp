@@ -4,10 +4,10 @@
 #include <vector>
 #include <numeric>
 
-void AntiAliasedSaw::createPartials() //Gok dat hier iets mis gaat bij het spelen van een melodie
+void AntiAliasedSaw::createPartials()
 {   
-    partials.clear();
-    partialSamples.clear();
+    // partials.clear();
+    // partialSamples.clear();
     numHarmonics = (samplerate/2) / frequency;
     for(int i = 1; i <= numHarmonics; i++)
     {
@@ -43,6 +43,14 @@ void AntiAliasedSaw::calculate()
     }
 
     sample = std::accumulate(partialSamples.begin(), partialSamples.end(), 0.0f);
+}
+
+void AntiAliasedSaw::calculatePartials()
+{
+        for(float i = 0.0f; i < int(partials.size()); i += 1.0f)
+    {
+        partials[i].setFrequency(frequency*(i+1.0f));
+    }
 }
 
 

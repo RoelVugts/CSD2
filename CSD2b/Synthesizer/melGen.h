@@ -5,6 +5,7 @@
 #include "sine.h"
 #include "antiAliasedSaw.h"
 #include "sawtooth.h"
+#include "oscillator.h"
 
 
 class Melody {
@@ -17,7 +18,7 @@ class Melody {
     int getSize();
 
     void clear();
-    void play(int BPM, Sawtooth& target);
+    void play(int BPM, Oscillator* target); //Kan ik hier de class ook variabel maken?
 
     Timer timer;
 

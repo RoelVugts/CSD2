@@ -2,12 +2,20 @@
 
 #include <iostream>
 
-SuperSynth::SuperSynth()
+SuperSynth::SuperSynth() : Synth(400, 1.0)
 {
     std::cout << "Supersynth constructor" << std::endl;
-    voices = 5;
-    detune = 0.5;
+    // square.setFrequency(frequency);
+    // saw.setFrequency(frequency*2.0f);
+    // saw.setAmplitude(0.0f);  
+    // square.setAmplitude(0.0f);
+}
 
+SuperSynth::SuperSynth(float frequency, float amplitude) : Synth(frequency, amplitude)
+{
+    std::cout << "Supersynth constructor" << std::endl;
+    square.setFrequency(frequency);
+    saw.setFrequency(frequency);
 }
 
 SuperSynth::~SuperSynth()
@@ -15,18 +23,14 @@ SuperSynth::~SuperSynth()
     std::cout << "Supersynth destructor" << std::endl;
 }
 
-void SuperSynth::calculate()
+void SuperSynth::tick()
 {
-    phase2 += (frequency * 1.02) / samplerate;
-    phase3 += (frequency * 0.98) / samplerate;
-    phase4 += (frequency * 1.04) / samplerate;
-    phase5 += (frequency * 0.96) / samplerate;
-    
+    square.tick();
+    saw.tick();
+}
 
-
-    sample =    ((amplitude/voices) * phase * 2 - 1) +
-                ((amplitude/voices) * phase2 * 2 -1) +
-                ((amplitude/voices) * phase3 * 2 -1) +
-                ((amplitude/voices) * phase4 * 2 -1) +
-                ((amplitude/voices) * phase5 * 2 -1); 
+float SuperSynth::getSample()
+{
+    sample = square.getSample(); // + square.getSample();
+    return sample;
 }
