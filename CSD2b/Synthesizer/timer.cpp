@@ -19,7 +19,7 @@ void Timer::start()
     {
         startTime = clock(); //set startTime
         started = true;
-    } else 
+    } else
     {
         timer = (clock() - startTime) / 1000; //running the timer
     }

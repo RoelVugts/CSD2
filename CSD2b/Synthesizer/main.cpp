@@ -31,26 +31,30 @@
 int main(int argc,char **argv)
 {
 
-  // Melody melody = Melody();
-  // melody.addNote(8);
+  Melody melody = Melody();
+  melody.addNote(16);
+
+  for(int i = 0; i < melody.getSize(); i++)
+  {
+    // std::cout << "Note: " << i << melody.notes[i] << std::endl;
+    // std::cout << "Freq: " << i << melody.getNote(i) << std::endl;
+  }
 
   auto callback = CustomCallback {};
   auto jackModule = JackModule { callback };
   
   jackModule.init(0, 1);
-  bool playing = true;
-  
-  // while (playing) {
-  //   melody.play(200, &(callback.aSaw));
-  // }
+
 
   bool running = true;
+  
+  melody.play(200, &callback.aSaw);
+
   while (running) {
       switch (std::cin.get()) {
           case 'q':
-              running = false;
-              playing = false;
-              
+              melody.stop();
+              running = false;    
       }
   }
 

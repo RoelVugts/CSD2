@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <thread>
 
 #include "timer.h"
 #include "sine.h"
@@ -18,13 +19,15 @@ class Melody {
     int getSize();
 
     void clear();
-    void play(int BPM, Oscillator* target); //Kan ik hier de class ook variabel maken?
+    void play(int BPM, Oscillator* target); //function to call from main
+    void playInThread(int BPM, Oscillator* target); //gets executed in a thread by play()
+    void stop(); //joins the thread
 
-    Timer timer;
 
     protected:
         std::vector<float> notes;
-        float freq;
-        int writePointer;
+        Timer timer;
         int readPointer;
+        bool playing{false};
+        std::thread t;
 };
