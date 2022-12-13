@@ -20,10 +20,12 @@ class Oscillator {
 
         virtual void tick();
 
+        float frequency; //public becauase we need to acces this in superSynth
+        float amplitude; //public becauase we need to acces this in superSynth
+
     protected:
         float samplerate;
-        float frequency;
-        float amplitude;
+
         float phase;
         float sample;
         int voices;

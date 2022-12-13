@@ -75,6 +75,7 @@ float Melody::getNote(int readPointer)
     if (notes[readPointer] == -1)
     {
         cout << "Note is empty" << endl;
+        return -1;
     } else {
         return notes[readPointer];
     }

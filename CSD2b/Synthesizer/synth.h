@@ -11,11 +11,13 @@ class Synth {
         ~Synth();
 
         virtual float getSample() = 0;
-        virtual void setPitch(int pitch) = 0;
+        virtual void setPitch(int pitch);
         float mtof(int midiNote);
 
     protected:
         float frequency;
         float amplitude;
         float sample;
+
+
 };

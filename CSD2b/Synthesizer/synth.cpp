@@ -23,3 +23,8 @@ float Synth::mtof(int midiNote) //converts midi to frequency
     freq = 440.0f * pow(2.0f, (midiNote - 57.0f)/12.0f);\
     return freq;
 }
+
+void Synth::setPitch(int pitch)
+{
+    this->frequency = mtof(pitch);
+}

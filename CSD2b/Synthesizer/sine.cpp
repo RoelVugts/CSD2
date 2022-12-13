@@ -5,18 +5,18 @@
 
 Sine::Sine() : Oscillator()
 {
-  std::cout << "Constructed default sine" << std::endl;
+  // std::cout << "Constructed default sine" << std::endl;
 }
 
 Sine::Sine(float frequency, float amplitude) : Oscillator(frequency, amplitude)
 {
-  std::cout << "Constructed sine with frequency: " << frequency << " and amplitude: " << amplitude << std::endl;
+  // std::cout << "Constructed sine with frequency: " << frequency << " and amplitude: " << amplitude << std::endl;
 }
 
 
 Sine::~Sine() 
 {
-  std::cout << "Sine - destructor\n";
+  // std::cout << "Sine - destructor\n";
 }
 
 void Sine::calculate() 

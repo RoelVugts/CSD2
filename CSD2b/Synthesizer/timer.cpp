@@ -23,7 +23,6 @@ void Timer::start()
     {
         timer = (clock() - startTime) / 1000; //running the timer
     }
-    // std::cout << "Timer: " << timer << std::endl;
 }
 
 double Timer::getTime()
@@ -35,7 +34,7 @@ void Timer::stop()
 {   
     if (started)
     {
-            started = false;
+        started = false;
     }
 
 }

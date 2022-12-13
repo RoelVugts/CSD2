@@ -5,7 +5,7 @@
 
 Oscillator::Oscillator() : Oscillator(500, 1.0)
 {
-    std::cout << "Concstructed default oscillator" << std::endl;
+    // std::cout << "Concstructed default oscillator" << std::endl;
 }
 
 Oscillator::Oscillator(float frequency, float amplitude) : frequency(frequency), amplitude(amplitude)
@@ -17,7 +17,7 @@ Oscillator::Oscillator(float frequency, float amplitude) : frequency(frequency),
 
 Oscillator::~Oscillator()
 {
-    std::cout << "Oscillator destructor" << std::endl;
+    // std::cout << "Oscillator destructor" << std::endl;
 }
 
 
