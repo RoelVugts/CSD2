@@ -15,6 +15,7 @@ class SuperSynth : public Synth {
 
         virtual void tick();
         float getSample();
+        void setPitch(int pitch);
     
     protected:
         AntiAliasedSquare square = AntiAliasedSquare();

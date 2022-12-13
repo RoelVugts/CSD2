@@ -4,7 +4,6 @@
 #include <time.h>
 #include <math.h>
 #include <thread>
-#include <functional>
 
 using namespace std;
 
@@ -17,7 +16,7 @@ void Melody::addNote(int numNotes)
 { 
     int newNote = 0;
     int pitch = 8;
-    float freq;
+    // float freq;
 
     int aMinor[15] = {45, 47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69};
         srand(clock()); //seeds the random
@@ -62,13 +61,12 @@ void Melody::addNote(int numNotes)
             pitch += (newNote *-1);
         }
 
-        freq = 440.0f * pow(2.0f, (aMinor[pitch] - 57.0f)/12.0f); //convert midiNote to Frequency
+        // freq = 440.0f * pow(2.0f, (aMinor[pitch] - 57.0f)/12.0f); //convert midiNote to Frequency
         std::cout << "Note: " << newNote << std::endl;
-        std::cout << "Freq: " << freq << std::endl;
         std::cout << "random: " << randomNum << std::endl;
         std::cout << "randomNeg: " << randomNeg << std::endl;
         std::cout << "\n" << std::endl;
-        notes.push_back(freq);
+        notes.push_back(aMinor[pitch]);
     }
 }
 
@@ -92,9 +90,7 @@ void Melody::clear()
     notes.clear();
 }
 
-//TODO --> Do play() function in thread
-
-void Melody::playInThread(int BPM, Oscillator* target) {
+void Melody::playInThread(int BPM, Synth* target) {
 
         float tempoMS = 60000.0f / BPM; //calculate tempo in MS
         while (playing)
@@ -103,21 +99,19 @@ void Melody::playInThread(int BPM, Oscillator* target) {
             if (fmod(timer.getTime(), tempoMS) == 0)
             {
                 std::cout << "Note: " << readPointer + 1 << "   Freq: " << notes[readPointer] << std::endl;
-                target->setFrequency(notes[readPointer++]);
+                target->setPitch(notes[readPointer++]);
 
                 if (readPointer == int(notes.size()))
                 {
                     readPointer = 0;
-                    // playing = false;
                 }
             }
         }
     
 }
 
-void Melody::play(int BPM, Oscillator* target)
+void Melody::play(int BPM, Synth* target)
 {
-    // auto boundFunction = std::bind(&Melody::play, this, BPM, target);
     playing = true;
 
     t = std::thread(&Melody::playInThread, this, BPM, target);
@@ -128,4 +122,3 @@ void Melody::stop()
     playing = false;
     t.join();
 }
-

@@ -7,6 +7,7 @@
 #include "antiAliasedSaw.h"
 #include "sawtooth.h"
 #include "oscillator.h"
+#include "synth.h"
 
 
 class Melody {
@@ -19,8 +20,8 @@ class Melody {
     int getSize();
 
     void clear();
-    void play(int BPM, Oscillator* target); //function to call from main
-    void playInThread(int BPM, Oscillator* target); //gets executed in a thread by play()
+    void play(int BPM, Synth* target); //function to call from main
+    void playInThread(int BPM, Synth* target); //gets executed in a thread by play()
     void stop(); //joins the thread
 
 

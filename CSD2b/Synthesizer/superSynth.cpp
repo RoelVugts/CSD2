@@ -31,6 +31,12 @@ void SuperSynth::tick()
 
 float SuperSynth::getSample()
 {
-    sample = square.getSample(); // + square.getSample();
+    sample = square.getSample() + saw.getSample();
     return sample;
+}
+
+void SuperSynth::setPitch(int pitch)
+{
+    square.setFrequency(mtof(pitch));
+    saw.setFrequency(mtof(pitch));
 }

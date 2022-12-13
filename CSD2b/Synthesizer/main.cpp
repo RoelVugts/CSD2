@@ -48,7 +48,7 @@ int main(int argc,char **argv)
 
   bool running = true;
   
-  melody.play(200, &callback.aSaw);
+  melody.play(200, &callback.superSynth);
 
   while (running) {
       switch (std::cin.get()) {

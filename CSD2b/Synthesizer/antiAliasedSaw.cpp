@@ -50,6 +50,7 @@ void AntiAliasedSaw::calculatePartials()
         for(float i = 0.0f; i < int(partials.size()); i += 1.0f)
     {
         partials[i].setFrequency(frequency*(i+1.0f));
+        partials[i].setAmplitude(amplitude/(i+1.0f));
     }
 }
 

@@ -10,7 +10,8 @@ class AntiAliasedOsc : public Oscillator {
         AntiAliasedOsc(float frequency, float amplitude);
         ~AntiAliasedOsc();
 
-        void setFrequency(float frequency); //override function becasuse in the antiAliasedOsc we need to recalculate partials
+        void setFrequency(float frequency); //override function of base class becasuse in the antiAliasedOsc we need to recalculate partials
+        void setAmplitude(float amplitude);
         void tick();
 
 
@@ -21,7 +22,7 @@ class AntiAliasedOsc : public Oscillator {
 
         virtual void calculate() = 0; //Abstract method
         virtual void createPartials() = 0; //Create elements of partials in vector
-        virtual void calculatePartials() = 0; //recalculate frequency of partials
+        virtual void calculatePartials() = 0; //recalculate frequency and amplitude of partials
 
 
 };

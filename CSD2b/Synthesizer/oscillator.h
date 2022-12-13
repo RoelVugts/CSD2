@@ -13,7 +13,7 @@ class Oscillator {
         //getters and setters
         virtual void setFrequency(float frequency); //virtual because we override function in AntiAliasedOsc
         float getFrequency();
-        void setAmplitude(float amplitude);
+        virtual void setAmplitude(float amplitude);
         float getSample();
         float getSampleRate();
         void setSamplerate(float samplerate);

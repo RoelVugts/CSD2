@@ -28,3 +28,9 @@ void AntiAliasedOsc::setFrequency(float frequency)
     this->frequency = frequency;
     calculatePartials(); //recalculate frequency for each partial
 }
+
+void AntiAliasedOsc::setAmplitude(float amplitude)
+{
+    this->amplitude = amplitude;
+    calculatePartials();
+}
