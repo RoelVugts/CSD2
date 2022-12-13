@@ -15,6 +15,7 @@
 #include "antiAliasedSquare.h"
 #include "antiAliasedOsc.h"
 #include "antiAliasedSaw.h"
+#include "FmSynth.h"
 
 #define SOUND 0
 #define WRITE_TO_FILE 1
@@ -48,7 +49,7 @@ int main(int argc,char **argv)
 
   bool running = true;
   
-  melody.play(500, &callback.superSynth);
+  // melody.play(500, &callback.superSynth);
 
   while (running) {
       switch (std::cin.get()) {

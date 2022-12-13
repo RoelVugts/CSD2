@@ -4,6 +4,7 @@
 #include "square.h"
 #include "synth.h"
 #include "superSynth.h"
+#include "FmSynth.h"
 
 
 #include <iostream>
@@ -17,7 +18,7 @@ void CustomCallback::prepare(int rate) {
 void CustomCallback::process(AudioBuffer buffer) {
   for (int i = 0; i < buffer.numFrames; ++i) {
     // write sample to buffer at channel 0, amp = 0.25
-    buffer.outputChannels[0][i] = superSynth.getSample();
-    superSynth.tick();
+    buffer.outputChannels[0][i] = fmSynth.getSample();
+    fmSynth.tick();
   }
 }

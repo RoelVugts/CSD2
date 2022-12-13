@@ -10,6 +10,7 @@
 #include "antiAliasedSquare.h"
 #include "antiAliasedSaw.h"
 #include "superSynth.h"
+#include "FmSynth.h"
 
 class CustomCallback : public AudioCallback {
 public:
@@ -21,6 +22,7 @@ public:
     // Sawtooth saw1 = Sawtooth(500, 0.5);
     SuperSynth superSynth = SuperSynth(800, 1.0, 5, 50);
     // AntiAliasedSquare aSquare = AntiAliasedSquare(500, 1.0);
+    FmSynth fmSynth = FmSynth(1000, 1.0);
 private:
   float samplerate = 48000;
   // AntiAliasedSquare aSquare = AntiAliasedSquare();
