@@ -17,15 +17,19 @@ class Synth {
         Synth(int note, float amplitude);
         ~Synth();
 
+
         virtual float getSample() = 0;
         virtual void tick() = 0;
         virtual void setPitch(int note);
         float mtof(int midiNote); //convert midi to frequency
+        void setLFO(std::string waveform, float freqLFO, float depthLFO);
 
     protected:
         float frequency;
         float amplitude;
         float sample;
-
+        bool activeLFO = false; //defaults to false so LFO is only active when set
+        Oscillator* LFO;
+        Oscillator* LFOwave[3] = {new Sine, new AntiAliasedSquare, new AntiAliasedSaw};
 
 };

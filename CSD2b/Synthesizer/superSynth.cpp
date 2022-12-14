@@ -54,6 +54,11 @@ void SuperSynth::tick() //Move phase of oscillators 1 step further
     // std::cout << "Voice amount: " << int(squares.size());
     for(int i = 0; i < numVoices; i++) 
     {
+        if (activeLFO) {
+            squares[i].setFrequency(frequency*LFO->getSample());
+            saws[i].setFrequency(frequency*LFO->getSample());
+            LFO->tick();
+        }
         squares[i].tick();
         saws[i].tick();
     }

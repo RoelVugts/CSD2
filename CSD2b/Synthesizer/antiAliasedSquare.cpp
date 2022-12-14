@@ -45,7 +45,8 @@ void AntiAliasedSquare::calculate()
     sample = std::accumulate(partialSamples.begin(), partialSamples.end(), 0.0f); //add all sample values
 }
 
-void AntiAliasedSquare::calculatePartials() //function to recaluclate partials freq and amp when pitch has changed
+//function to recaluclate partials freq and amp when pitch has changed
+void AntiAliasedSquare::calculatePartials() 
 {
         for(float i = 0.0f; i < int(partials.size()); i += 1.0f)
     {

@@ -4,28 +4,45 @@
 #include <time.h>
 #include <math.h>
 #include <thread>
+#include <algorithm>
 
-using namespace std;
 
 Melody::Melody()  //default constructor
 {
     readPointer = 0;
 }
 
-void Melody::addNote(int numNotes) //random melody generation based on probability
+void Melody::addNote(int numNotes, int startNote) //random melody generation based on probability
 { 
-    int newNote = 0;
-    int pitch = 8;
-    // float freq;
 
     int aMinor[22] = {45, 47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81};
-        srand(clock()); //seeds the random
+
+    int pitch; //var that selects the element in the aMinor array
+    int newNote = 0; //amount that will be added to pitch after each iteration
+
+    if (startNote > aMinor[21]) 
+    {
+        startNote = 81;
+        pitch = 21;
+    } else if (startNote < aMinor[0]) {
+        startNote = 45;
+        pitch = 0;
+    } else if (std::find(std::begin(aMinor), std::end(aMinor), startNote) != std::end(aMinor)) {
+        //search startNote in array and set pitch to index of the found element
+        pitch = std::distance(aMinor, std::find(std::begin(aMinor), std::end(aMinor), startNote));
+    } else {
+        pitch = 14; //if not found set pitch to midinote 69
+    }
+    notes.push_back(startNote); //add first note to begin of notes array
+
+    std::srand(clock()); //seeds the random
     
-    for(int i = 0; i < numNotes; i++)
+    for(int i = 0; i < numNotes-1; i++)
     {
 
-        int randomNum = rand() % 100;
-        int randomNeg = rand() % 100;
+        int randomNum = rand() % 100; //create randomNum
+        int randomNeg = rand() % 100; //create randomNum for going up or down
+
         if (randomNeg < 50)
         {
             randomNeg = 1;
@@ -35,36 +52,34 @@ void Melody::addNote(int numNotes) //random melody generation based on probabili
 
         if (randomNum < 70)
         {
-            newNote = 2;
-            pitch += (newNote * randomNeg);
+            newNote = 2 * randomNeg; //do a minor/major third
         } else if (randomNum > 70 && randomNum < 80)
         {
-            newNote = 1;
-            pitch += (newNote * randomNeg);
+            newNote = 1 * randomNeg; //do a minor/major second
         } else if (randomNum > 80 && randomNum < 90)
         {
-            newNote = 0;
-            pitch += newNote;
-        } else if (randomNum > 90)
+            newNote = 0; //do unisono
+        } else if (randomNum > 90 && randomNum < 95)
         {
-            newNote = 3;
-            pitch += (newNote * randomNeg);
+            newNote = 3 * randomNeg; //do a perfect fourth/diminished fifth
+        } else if (randomNum > 95)
+        {
+            newNote = 4 * randomNeg; //do a perfect fifth/minor sixth
         }
 
-        if (pitch < 0)
-        {
-            pitch *= -1;
-        }
-
-        if (pitch > 21)
+        //check if pitch goes out of range of the aMinor array
+        if ((pitch + newNote) > 21 || (pitch + newNote) < 0)
         {
             pitch += (newNote *-1);
+        } else {
+            pitch += newNote;
         }
 
-        std::cout << "Note: " << newNote << std::endl;
-        std::cout << "random: " << randomNum << std::endl;
-        std::cout << "randomNeg: " << randomNeg << std::endl;
-        std::cout << "\n" << std::endl;
+        // std::cout << "Note: " << pitch << std::endl;
+        // std::cout << "newNote: " << newNote << std::endl;
+        // std::cout << "random: " << randomNum << std::endl;
+        // std::cout << "randomNeg: " << randomNeg << std::endl;
+        // std::cout << "\n" << std::endl;
         notes.push_back(aMinor[pitch]);
     }
 }

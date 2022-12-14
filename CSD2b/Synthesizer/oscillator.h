@@ -29,8 +29,7 @@ class Oscillator {
         float phase;
         float sample;
         int voices;
-        double pi = acos(-1);
-
+        double pi = acos(-1); //create a constant for pi
         virtual void calculate() = 0;
 
 };

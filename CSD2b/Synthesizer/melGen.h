@@ -15,7 +15,7 @@ class Melody {
 
     Melody();
     
-    void addNote(int numNotes);
+    void addNote(int numNotes, int startNote);
     float getNote(int readPointer);
     int getSize();
 

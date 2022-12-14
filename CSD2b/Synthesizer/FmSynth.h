@@ -18,10 +18,7 @@ class FmSynth : public Synth {
     protected:
         Sine carrier = Sine(frequency, amplitude);
         Oscillator* modulator;
-        Oscillator* waveforms[3] = {new Sine, new AntiAliasedSquare, new AntiAliasedSaw};
-        Oscillator* LFO;
-        Oscillator* LFOwave[3] = {new Sine, new AntiAliasedSquare, new AntiAliasedSaw};
         float modFrequency;
         float modAmount;
-        bool activeLFO = false;
+        Oscillator* waveforms[3] = {new Sine, new AntiAliasedSquare, new AntiAliasedSaw};
 };

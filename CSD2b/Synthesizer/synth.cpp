@@ -34,3 +34,18 @@ void Synth::setPitch(int note)
 {
     this->frequency = mtof(note);
 }
+
+void Synth::setLFO(std::string waveform, float freqLFO, float depthLFO)
+{
+    if (waveform == "Sine" || "sine") {
+        LFO = LFOwave[0];
+    } else if (waveform == "Square" || "square") {
+        LFO = LFOwave[1];
+    } else if (waveform == "Saw" || "saw") {
+        LFO = LFOwave[2];
+    }
+
+    LFO->setFrequency(freqLFO);
+    LFO->setAmplitude(depthLFO);
+    activeLFO = true;
+}

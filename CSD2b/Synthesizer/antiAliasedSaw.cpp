@@ -45,7 +45,8 @@ void AntiAliasedSaw::calculate()
     sample = std::accumulate(partialSamples.begin(), partialSamples.end(), 0.0f); //sum all sample values
 }
 
-void AntiAliasedSaw::calculatePartials() //function to recalculate partials freq and amp when pitch has changed
+//function to recalculate partials freq and amp when pitch has changed
+void AntiAliasedSaw::calculatePartials() 
 {
         for(float i = 0.0f; i < int(partials.size()); i += 1.0f)
     {

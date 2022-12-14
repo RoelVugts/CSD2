@@ -51,7 +51,7 @@ void Oscillator::setAmplitude(float amplitude)
     this->amplitude = amplitude;
 }
 
-
+//increment phase of oscillator
 void Oscillator::tick()
 {
     phase += frequency / samplerate;

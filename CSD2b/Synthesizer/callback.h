@@ -18,18 +18,12 @@ public:
   void prepare(int rate) override;
   void process(AudioBuffer buffer) override;
 
-
   void setSynth(Synth* synth);
+  Synth* synth;
 private:
   float samplerate = 48000;
-  // AntiAliasedSquare aSquare = AntiAliasedSquare();
-  Synth* synth;
 
-  // Square square = Square(500, 0.5); 
-  
 };
-
-
 
 #endif //CALLBACK_H
 

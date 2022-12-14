@@ -20,6 +20,7 @@ Square::~Square()
 
 }
 
+//Square with aliasing
 void Square::calculate()
 {
     if(phase < 0.5)
