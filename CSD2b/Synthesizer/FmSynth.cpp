@@ -1,26 +1,34 @@
 #include "FmSynth.h"
 
-FmSynth::FmSynth() : FmSynth(100, 1.0, "Sine", 10, 1.0)
+FmSynth::FmSynth() : FmSynth(100, 1.0, 0, 10, 1.0)
 {
 
 }
 
-FmSynth::FmSynth(float frequency, float amplitude, std::string waveform, float modFrequency, float modAmount)
+FmSynth::FmSynth(float frequency, float amplitude, int waveform, float modFrequency, float modAmount)
 : Synth(frequency, amplitude)
 {
-    if (waveform == "Sine" || "sine") {
-        modulator = waveforms[0];
-    } else if (waveform == "Square" || "square") {
-        modulator = waveforms[1];
-    } else if (waveform == "Saw" || "saw") {
-        modulator = waveforms[2];
-    }
+    // if (waveform == "Sine" || "sine") {
+    //     modulator = waveforms[0];
+    // } else if (waveform == "Square" || "square") {
+    //     modulator = waveforms[1];
+    // } else if (waveform == "Saw" || "saw") {
+    //     modulator = waveforms[2];
+    // }
+
+    modulator = waveforms[waveform];
 
     this->modFrequency = modFrequency;
     this->modAmount = modAmount;
 
     modulator->setFrequency(modFrequency);
     modulator->setAmplitude(modAmount);
+}
+
+FmSynth::FmSynth(int note, float amplitude, int waveform, float modFrequency, float modAmount)
+: FmSynth(mtof(note), amplitude, waveform, modFrequency, modAmount)
+{
+
 }
 
 FmSynth::~FmSynth()

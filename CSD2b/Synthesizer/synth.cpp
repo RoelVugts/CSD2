@@ -12,6 +12,12 @@ Synth::Synth(float frequency, float amplitude) : frequency(frequency), amplitude
     
 }
 
+Synth::Synth(int note, float amplitude)
+{
+    frequency = mtof(note);
+    this->amplitude = amplitude;
+}
+
 Synth::~Synth()
 {
     std::cout << "Synth destructor" << std::endl;
@@ -24,7 +30,7 @@ float Synth::mtof(int midiNote) //converts midi to frequency
     return freq;
 }
 
-void Synth::setPitch(int pitch)
+void Synth::setPitch(int note)
 {
-    this->frequency = mtof(pitch);
+    this->frequency = mtof(note);
 }

@@ -9,6 +9,8 @@ SuperSynth::SuperSynth() : Synth(400, 1.0)
     std::cout << "Supersynth constructor" << std::endl;
 }
 
+
+
 SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage) 
 : Synth(frequency, amplitude), numVoices(numVoices), detunePercentage(detunePercentage)
 {
@@ -34,6 +36,12 @@ SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detu
         // saws[i].setAmplitude(0.0f);  
         // squares[i].setAmplitude(amplitude/2.0f);
     }
+}
+
+SuperSynth::SuperSynth(int note, float amplitude, int numVoices, int detunePercentage) 
+: SuperSynth(mtof(note), amplitude, numVoices, detunePercentage)
+{
+
 }
 
 SuperSynth::~SuperSynth()

@@ -14,10 +14,12 @@ class Synth {
     public:
         Synth();
         Synth(float frequency, float ampltitude);
+        Synth(int note, float amplitude);
         ~Synth();
 
         virtual float getSample() = 0;
-        virtual void setPitch(int pitch); //pitch = midiNote
+        virtual void tick() = 0;
+        virtual void setPitch(int note);
         float mtof(int midiNote); //convert midi to frequency
 
     protected:

@@ -12,13 +12,14 @@ class SuperSynth : public Synth {
     public:
         SuperSynth();
         SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage);
+        SuperSynth(int note, float amplitude, int numVoices, int detunePercentage);
         ~SuperSynth();
 
         virtual void tick();
         float getSample();
         void setPitch(int pitch);
-        int numVoices = 6;
-        int detunePercentage = 50;
+        int numVoices;
+        int detunePercentage;
         float detuneDepth;
     
     protected:

@@ -15,19 +15,19 @@ std::string toLowerCase(std::string inputString) {//converts a whole string to l
     return inputString;
 }
 
-bool validateSelection(std::string selection, std::vector<std::string> selectionOptions)
+int validateSelection(std::string selection, std::vector<std::string> selectionOptions)
 {
     
     for (int i = 0; i < int(selectionOptions.size()); i++) {
         if(toLowerCase(selection) == toLowerCase(selectionOptions[i])) {
-            return true;
+            return i;
         }
     }
     // selection does not occur in options --> return false
-    return false;
+    return -1;
 }
 
-std::string askQuestion(std::string question, std::vector<std::string> options, bool allowEmpty, unsigned int max)
+int askQuestion(std::string question, std::vector<std::string> options, bool allowEmpty, unsigned int max)
 
 {
 
@@ -40,28 +40,23 @@ std::string askQuestion(std::string question, std::vector<std::string> options, 
     std::cout << std::endl;
 
     std::string result;
-    std::getline(std::cin, result); //get user input
+    bool isError = true; //initialize error to true to stay in while loop
 
-    bool isError = false; //initialize error to false
+    while (isError) {
+        std::getline(std::cin, result); //get user input
 
-    if (!allowEmpty && result == "") {
-        std::cout << "Value cannot be empty" << std::endl;
-        isError = true;
-    } else if (result.length() > max) {
-        std::cout << "Value cannot be longer than " << max << " characters" << std::endl;
-        isError = true;
-    } 
-
-    if (isError) {
-        return askQuestion(question, options, allowEmpty, max); //ask question again if error
-    } else {
-        if (validateSelection(result, options)) { //if no error of above type then validate answer
-            return result; //return answer if validated
-        } else {
-            std::cout << "Not a valid option" << std::endl;
-            return askQuestion(question, options, allowEmpty, max); //ask question again
-        }
-    }
+        if (!allowEmpty && result == "") {
+            std::cout << "Value cannot be empty" << "\n" << std::endl;
+        } else if (result.length() > max) {
+            std::cout << "Value cannot be longer than " << max << " characters" << "\n" << std::endl;
+        } 
+            if (validateSelection(result, options) != -1) { //if no error of above type then validate answer
+                return validateSelection(result, options); //return answer if validated
+            } else {
+                std::cout << "Not a valid option\n" << std::endl;
+            }
+    } //while (isError)
+    return -1; //should never be reached
 }
 
 float askQuestion(std::string question, float min, float max)
@@ -69,29 +64,28 @@ float askQuestion(std::string question, float min, float max)
     std::cout << question << std::endl; //print question to console
 
     std::string result;
-    std::getline(std::cin, result); //get user input
+
 
     float value;
-    
-    bool isError = false;
-    try {
-        value = stof(result);
-    
-        if(value < min) {
-            std::cout << "Value must be at least " << min << std::endl;
-            isError = true;
-        } else if (value > max) {
-            std::cout << "Value must be lower than " << max << std::endl;
-            isError = true;
-        }
-    } catch (const std::exception& e) {
-        std::cout << "Value must be a number" << std::endl;
-    }
-    if (isError) {
-        return askQuestion(question, min, max); //ask question again
-    }
+    bool isError = true;
 
-    return value;
+    while (isError) {
+        std::getline(std::cin, result); //get user input
+        try {
+            value = stof(result); //check if string can be converted to float
+        
+            if(value < min) {
+                std::cout << "Value must be at least " << min << "\n" << std::endl;
+            } else if (value > max) {
+                std::cout << "Value must be lower than " << max << "\n" <<std::endl;
+            } else {
+                return value; //return value if value is between range
+            }
+        } catch (const std::exception& e) {
+            std::cout << "Value must be a number\n" << std::endl;
+        }
+    }
+    return -1; //should never be reached
 }
 
 bool askQuestion(std::string question)
@@ -103,19 +97,22 @@ bool askQuestion(std::string question)
     std::cout << question << std::endl; //print question to console
 
     std::string result;
-    std::getline(std::cin, result); //get user input
-
     bool value;
+    bool isError = true;
 
-    if (std::find(std::begin(trueOptions), std::end(trueOptions), result) != std::end(trueOptions))
-    {
-        value = true;
-        return value;
-    } else if (std::find(std::begin(falseOptions), std::end(falseOptions), result) != std::end(falseOptions)) {
-        value = false;
-        return value;
-    } else {
-        std::cout << "Invalid input" << std::endl;
-        return askQuestion(question);
-    }
+    while (isError) {
+        std::getline(std::cin, result); //get user input
+
+        if (std::find(std::begin(trueOptions), std::end(trueOptions), result) != std::end(trueOptions))
+        {
+            value = true;
+            return value;
+        } else if (std::find(std::begin(falseOptions), std::end(falseOptions), result) != std::end(falseOptions)) {
+            value = false;
+            return value;
+        } else {
+            std::cout << "Invalid input\n" << std::endl;
+        }
+    } //while (isError)
+    return false; //should never be reached
 }

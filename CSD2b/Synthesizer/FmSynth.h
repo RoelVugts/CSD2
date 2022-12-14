@@ -5,7 +5,8 @@
 class FmSynth : public Synth {
     public:
         FmSynth();
-        FmSynth(float frequency, float amplitude, std::string waveform, float modFrequency, float modAmount);
+        FmSynth(float frequency, float amplitude, int waveform, float modFrequency, float modAmount);
+        FmSynth(int note, float amplitude, int waveform, float modFrequency, float modAmount);
         ~FmSynth();
     
     void tick();

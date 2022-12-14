@@ -11,22 +11,19 @@
 #include "antiAliasedSaw.h"
 #include "superSynth.h"
 #include "FmSynth.h"
+#include "synth.h"
 
 class CustomCallback : public AudioCallback {
 public:
   void prepare(int rate) override;
   void process(AudioBuffer buffer) override;
 
-  // Sine sine = Sine(500, 0.5);
-    // AntiAliasedSaw aSaw = AntiAliasedSaw();
-    // Sawtooth saw1 = Sawtooth(500, 0.5);
-    SuperSynth superSynth = SuperSynth(100, 1.0, 5, 50);
-    // AntiAliasedSquare aSquare = AntiAliasedSquare(500, 1.0);
-    FmSynth fmSynth = FmSynth(100, 1.0, "Sine", 400, 5.0);
+
+  void setSynth(Synth* synth);
 private:
   float samplerate = 48000;
   // AntiAliasedSquare aSquare = AntiAliasedSquare();
-
+  Synth* synth;
 
   // Square square = Square(500, 0.5); 
   
