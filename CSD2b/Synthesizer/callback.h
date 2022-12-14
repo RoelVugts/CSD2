@@ -20,9 +20,9 @@ public:
   // Sine sine = Sine(500, 0.5);
     // AntiAliasedSaw aSaw = AntiAliasedSaw();
     // Sawtooth saw1 = Sawtooth(500, 0.5);
-    SuperSynth superSynth = SuperSynth(800, 1.0, 5, 50);
+    SuperSynth superSynth = SuperSynth(100, 1.0, 5, 50);
     // AntiAliasedSquare aSquare = AntiAliasedSquare(500, 1.0);
-    FmSynth fmSynth = FmSynth(1000, 1.0);
+    FmSynth fmSynth = FmSynth(100, 1.0, "Sine", 400, 5.0);
 private:
   float samplerate = 48000;
   // AntiAliasedSquare aSquare = AntiAliasedSquare();

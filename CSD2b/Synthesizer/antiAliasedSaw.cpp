@@ -8,11 +8,11 @@ void AntiAliasedSaw::createPartials()
 {   
     // partials.clear();
     // partialSamples.clear();
-    numHarmonics = (samplerate/2) / frequency;
+    numHarmonics = (samplerate/2) / frequency; //calculate amount of harmonics till nyquist
     for(int i = 1; i <= numHarmonics; i++)
     {
-        partials.push_back(Sine(frequency*i, amplitude/i));
-        partialSamples.push_back(0);
+        partials.push_back(Sine(frequency*i, amplitude/i)); //Saw has all harmonics and amplitude gradually decreases with every harmonic
+        partialSamples.push_back(0); //Initialize sample values to 0
     }
 }
 
@@ -38,14 +38,14 @@ void AntiAliasedSaw::calculate()
 {
     for(int i = 0; i < int(partials.size()); i++)
     {
-        partials[i].tick();
-        partialSamples[i] = partials[i].getSample();
+        partials[i].tick(); //Increment phase of all sine waves and calculate sample value
+        partialSamples[i] = partials[i].getSample(); //get the sample value and store in seperate vector
     }
 
-    sample = std::accumulate(partialSamples.begin(), partialSamples.end(), 0.0f);
+    sample = std::accumulate(partialSamples.begin(), partialSamples.end(), 0.0f); //sum all sample values
 }
 
-void AntiAliasedSaw::calculatePartials()
+void AntiAliasedSaw::calculatePartials() //function to recalculate partials freq and amp when pitch has changed
 {
         for(float i = 0.0f; i < int(partials.size()); i += 1.0f)
     {

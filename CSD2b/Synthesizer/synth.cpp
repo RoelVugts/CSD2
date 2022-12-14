@@ -20,7 +20,7 @@ Synth::~Synth()
 float Synth::mtof(int midiNote) //converts midi to frequency
 {
     float freq;
-    freq = 440.0f * pow(2.0f, (midiNote - 57.0f)/12.0f);\
+    freq = 440.0f * pow(2.0f, (midiNote - 69.0f)/12.0f); //convert midi to Freq
     return freq;
 }
 

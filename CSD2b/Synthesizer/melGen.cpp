@@ -12,13 +12,13 @@ Melody::Melody()  //default constructor
     readPointer = 0;
 }
 
-void Melody::addNote(int numNotes)
+void Melody::addNote(int numNotes) //random melody generation based on probability
 { 
     int newNote = 0;
     int pitch = 8;
     // float freq;
 
-    int aMinor[15] = {45, 47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69};
+    int aMinor[22] = {45, 47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81};
         srand(clock()); //seeds the random
     
     for(int i = 0; i < numNotes; i++)
@@ -56,12 +56,11 @@ void Melody::addNote(int numNotes)
             pitch *= -1;
         }
 
-        if (pitch > 14)
+        if (pitch > 21)
         {
             pitch += (newNote *-1);
         }
 
-        // freq = 440.0f * pow(2.0f, (aMinor[pitch] - 57.0f)/12.0f); //convert midiNote to Frequency
         std::cout << "Note: " << newNote << std::endl;
         std::cout << "random: " << randomNum << std::endl;
         std::cout << "randomNeg: " << randomNeg << std::endl;
@@ -91,7 +90,7 @@ void Melody::clear()
     notes.clear();
 }
 
-void Melody::playInThread(int BPM, Synth* target) {
+void Melody::playInThread(int BPM, Synth* target) { //function that actually plays the melody
 
         float tempoMS = 60000.0f / BPM; //calculate tempo in MS
         while (playing)
@@ -99,19 +98,19 @@ void Melody::playInThread(int BPM, Synth* target) {
             timer.start();
             if (fmod(timer.getTime(), tempoMS) == 0)
             {
-                std::cout << "Note: " << readPointer + 1 << "   Freq: " << notes[readPointer] << std::endl;
+                std::cout << "Note: " << readPointer + 1 << "   Pitch: " << notes[readPointer] << std::endl;
                 target->setPitch(notes[readPointer++]);
 
                 if (readPointer == int(notes.size()))
                 {
-                    readPointer = 0;
+                    readPointer = 0; //repeat melody
                 }
             }
         }
     
 }
 
-void Melody::play(int BPM, Synth* target)
+void Melody::play(int BPM, Synth* target) //function that plays the melody in a thread
 {
     playing = true;
 

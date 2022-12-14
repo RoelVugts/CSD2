@@ -17,7 +17,7 @@ SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detu
     if (numVoices != 1) { 
         detuneDepth = (0.1 * (detunePercentage/100.0f)) / (numVoices-1); //Scale 0.1 (max detune) based on detunePercentage
     } else {
-        detuneDepth = 0.0f; //if only 1 voice than there can't be detune so depth = 0
+        detuneDepth = 0.0f; //if there is only 1 voice than there can't be detune so depth = 0
     }
 
     float detuneValue;
@@ -25,7 +25,7 @@ SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detu
     for(int i = 0; i < numVoices; i++) 
     {   
         // std::cout << "DetuneDepth: " << detuneDepth << std::endl;
-        detuneValue = (1.0f - detuneDepth*int((numVoices/2)) + detuneDepth * i);
+        detuneValue = (1.0f - detuneDepth*int((numVoices/2)) + detuneDepth * i); //calculate detune value per voice
         // std::cout << "Detune Value: " << detuneValue << std::endl;
         squares.push_back(AntiAliasedSquare((frequency/2)*detuneValue, amplitude));
         saws.push_back(AntiAliasedSaw(frequency*detuneValue, amplitude));
@@ -41,7 +41,7 @@ SuperSynth::~SuperSynth()
     std::cout << "Supersynth destructor" << std::endl;
 }
 
-void SuperSynth::tick()
+void SuperSynth::tick() //Move phase of oscillators 1 step further
 {
     // std::cout << "Voice amount: " << int(squares.size());
     for(int i = 0; i < numVoices; i++) 
@@ -56,10 +56,10 @@ float SuperSynth::getSample()
     for(int i = 0; i < numVoices; i++)
     {
         voiceSamples[i] = squares[i].getSample();
-        voiceSamples[i+numVoices] = saws[i].getSample();
+        voiceSamples[i+numVoices] = saws[i].getSample(); //push sample values in seperate vector
     }
-    sample = std::accumulate(voiceSamples.begin(), voiceSamples.end(), 0.0f);
-    sample /= numVoices*2;
+    sample = std::accumulate(voiceSamples.begin(), voiceSamples.end(), 0.0f); //add all sample values
+    sample /= numVoices*2; //divide so the amplitude won't clip
     return sample;
 }
 

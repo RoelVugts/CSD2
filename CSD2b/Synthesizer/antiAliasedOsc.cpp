@@ -20,7 +20,7 @@ AntiAliasedOsc::~AntiAliasedOsc()
 
 void AntiAliasedOsc::tick()
 {
-    calculate();
+    calculate(); //calculate sample value in sub class
 }
 
 void AntiAliasedOsc::setFrequency(float frequency)
@@ -32,5 +32,5 @@ void AntiAliasedOsc::setFrequency(float frequency)
 void AntiAliasedOsc::setAmplitude(float amplitude)
 {
     this->amplitude = amplitude;
-    calculatePartials();
+    calculatePartials(); //recalculate frequency for each partial
 }

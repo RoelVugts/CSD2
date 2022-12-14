@@ -58,5 +58,5 @@ void Oscillator::tick()
     if(phase > 1.0f){
         phase -= 1.0f;
     }
-    calculate();
+    calculate(); //call calculate() from subclass
 }

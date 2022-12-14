@@ -3,6 +3,8 @@
 #include <fstream>
 #include <cmath>
 #include <thread>
+#include <algorithm>
+
 #include "jack_module.h"
 #include "math.h"
 #include "sine.h"
@@ -16,6 +18,7 @@
 #include "antiAliasedOsc.h"
 #include "antiAliasedSaw.h"
 #include "FmSynth.h"
+#include "UI.h"
 
 #define SOUND 0
 #define WRITE_TO_FILE 1
@@ -31,9 +34,15 @@
 
 int main(int argc,char **argv)
 {
+  UI question;
+  question.askQuestion("What synth you want to play?", {"Sine","Square","Saw"}, false, 15);
+  question.askQuestion("Give a number", 1, 10);
+  question.askQuestion("True or false? [Y/n]");
+
+
 
   Melody melody = Melody();
-  melody.addNote(16);
+  melody.addNote(32);
 
   for(int i = 0; i < melody.getSize(); i++)
   {
@@ -49,7 +58,8 @@ int main(int argc,char **argv)
 
   bool running = true;
   
-  // melody.play(500, &callback.superSynth);
+  melody.play(200, &callback.fmSynth);
+  callback.fmSynth.setLFO("Square", 0.1, 5.0);
 
   while (running) {
       switch (std::cin.get()) {
