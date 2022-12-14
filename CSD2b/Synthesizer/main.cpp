@@ -34,10 +34,8 @@
 
 int main(int argc,char **argv)
 {
-  UI question;
-  question.askQuestion("What synth you want to play?", {"Sine","Square","Saw"}, false, 15);
-  question.askQuestion("Give a number", 1, 10);
-  question.askQuestion("True or false? [Y/n]");
+
+  askQuestion("What synth you want to play?", {"FmSynth", "SuperSynth"}, false, 15);
 
 
 

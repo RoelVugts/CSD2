@@ -8,11 +8,18 @@
 
 #include "UI.h"
 
-bool UI::validateSelection(std::string selection, std::vector<std::string> selectionOptions)
+std::string toLowerCase(std::string inputString) {//converts a whole string to lowerCase
+    for (uint i = 0; i < inputString.length(); i++) {
+        inputString[i] = tolower(inputString[i]);
+    }
+    return inputString;
+}
+
+bool validateSelection(std::string selection, std::vector<std::string> selectionOptions)
 {
-    // check if the selection occurs inside the options, if so, return true
+    
     for (int i = 0; i < int(selectionOptions.size()); i++) {
-        if(selection == selectionOptions[i]) {
+        if(toLowerCase(selection) == toLowerCase(selectionOptions[i])) {
             return true;
         }
     }
@@ -20,8 +27,10 @@ bool UI::validateSelection(std::string selection, std::vector<std::string> selec
     return false;
 }
 
-std::string UI::askQuestion(std::string question, std::vector<std::string> options, bool allowEmpty, unsigned int max)
+std::string askQuestion(std::string question, std::vector<std::string> options, bool allowEmpty, unsigned int max)
+
 {
+
     std::cout << question << std::endl; //print question to console
     std::cout << "Options are:\n" << std::endl;
 
@@ -55,7 +64,7 @@ std::string UI::askQuestion(std::string question, std::vector<std::string> optio
     }
 }
 
-float UI::askQuestion(std::string question, float min, float max)
+float askQuestion(std::string question, float min, float max)
 {
     std::cout << question << std::endl; //print question to console
 
@@ -85,7 +94,7 @@ float UI::askQuestion(std::string question, float min, float max)
     return value;
 }
 
-bool UI::askQuestion(std::string question)
+bool askQuestion(std::string question)
 {
     std::string trueOptions[8] = {"y", "Y", "yes", "ja",  "j", "true",  "True",  "TRUE"};
 
