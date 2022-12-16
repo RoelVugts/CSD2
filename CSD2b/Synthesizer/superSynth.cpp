@@ -51,14 +51,20 @@ SuperSynth::~SuperSynth()
 
 void SuperSynth::tick() //Move phase of oscillators 1 step further
 {
-    // std::cout << "Voice amount: " << int(squares.size());
+    // std::cout << "Env: " << env.getLevel() << std::endl;
     for(int i = 0; i < numVoices; i++) 
     {
         if (activeLFO) {
-            squares[i].setFrequency(frequency*LFO->getSample());
-            saws[i].setFrequency(frequency*LFO->getSample());
+            squares[i].setFrequency(frequency*(LFO->getSample()+1));
+            saws[i].setFrequency(frequency*(LFO->getSample()+1));
             LFO->tick();
         }
+        if (activeEnv) {
+            squares[i].setAmplitude(amplitude*env.getLevel());
+            saws[i].setAmplitude(amplitude*env.getLevel());
+        }
+
+
         squares[i].tick();
         saws[i].tick();
     }
@@ -76,16 +82,16 @@ float SuperSynth::getSample()
     return sample;
 }
 
-void SuperSynth::setPitch(int pitch)
+void SuperSynth::calculatePitch()
 {
     float detuneValue;
-    frequency = mtof(pitch);
-    // std::cout << "DetuneDepth: " << detuneDepth << std::endl;
     for(int i = 0; i < numVoices; i++)
     {
         detuneValue = (1.0f - detuneDepth*int((numVoices/2)) + detuneDepth * i);
         // std::cout << "Detune Value: " << detuneValue << std::endl;
         squares[i].setFrequency(frequency*detuneValue);
         saws[i].setFrequency(frequency*detuneValue);
+ 
     }
+    
 }

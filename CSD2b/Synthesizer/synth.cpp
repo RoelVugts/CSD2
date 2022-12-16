@@ -16,6 +16,7 @@ Synth::Synth(int note, float amplitude)
 {
     frequency = mtof(note);
     this->amplitude = amplitude;
+    std::cout << "Amp synth constr" << amplitude << std::endl;
 }
 
 Synth::~Synth()
@@ -33,19 +34,32 @@ float Synth::mtof(int midiNote) //converts midi to frequency
 void Synth::setPitch(int note)
 {
     this->frequency = mtof(note);
+    // std::cout << "Env level: " << std::endl;
+    calculatePitch();
+    env.trigger();
 }
 
-void Synth::setLFO(std::string waveform, float freqLFO, float depthLFO)
+void Synth::setLFO(int waveform, float freqLFO, float depthLFO)
 {
-    if (waveform == "Sine" || "sine") {
-        LFO = LFOwave[0];
-    } else if (waveform == "Square" || "square") {
-        LFO = LFOwave[1];
-    } else if (waveform == "Saw" || "saw") {
-        LFO = LFOwave[2];
-    }
+    LFO = LFOwave[waveform];
 
     LFO->setFrequency(freqLFO);
     LFO->setAmplitude(depthLFO);
     activeLFO = true;
+}
+
+void Synth::setEnv(float attack, float decay, float sustain, float release)
+{
+    env.setADSR(attack, decay, sustain, release);
+    activeEnv = true;
+}
+
+void Synth::setAmplitude(float amplitude)
+{
+    this->amplitude = amplitude;
+}
+
+float Synth::getAmplitude()
+{
+    return amplitude;
 }

@@ -108,11 +108,13 @@ void Melody::clear()
 void Melody::playInThread(int BPM, Synth* target) { //function that actually plays the melody
 
         float tempoMS = 60000.0f / BPM; //calculate tempo in MS
-        while (playing)
-        {
+        bool onebang = true;
+        while (playing) {
+        int modTimer = int(timer.getTime()) % int(tempoMS);
             timer.start();
-            if (fmod(timer.getTime(), tempoMS) == 0)
+            if (modTimer > 0 && modTimer < 50 && onebang) //check if it is in a range because it skipped a note sometimes
             {
+                onebang = false; //close gate so notes can't fire rapidly after each other
                 std::cout << "Note: " << readPointer + 1 << "   Pitch: " << notes[readPointer] << std::endl;
                 target->setPitch(notes[readPointer++]);
 
@@ -120,7 +122,9 @@ void Melody::playInThread(int BPM, Synth* target) { //function that actually pla
                 {
                     readPointer = 0; //repeat melody
                 }
-            }
+            } else if (modTimer > 50) {
+                onebang = true; //Gate for next note is open
+            } 
         }
     
 }

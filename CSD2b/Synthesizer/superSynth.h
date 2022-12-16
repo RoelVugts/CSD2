@@ -15,9 +15,9 @@ class SuperSynth : public Synth {
         SuperSynth(int note, float amplitude, int numVoices, int detunePercentage);
         ~SuperSynth();
 
-        virtual void tick();
+        void tick();
         float getSample();
-        void setPitch(int pitch);
+        void calculatePitch();
         int numVoices;
         int detunePercentage;
         float detuneDepth;

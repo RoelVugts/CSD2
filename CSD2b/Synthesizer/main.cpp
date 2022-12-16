@@ -19,6 +19,7 @@
 #include "antiAliasedSaw.h"
 #include "FmSynth.h"
 #include "UI.h"
+#include "env.h"
 
 #define SOUND 0
 #define WRITE_TO_FILE 1
@@ -46,9 +47,13 @@ int main(int argc,char **argv)
 
   //Supersynth properties
   int note = 60;
-  int amplitude = 1.0;
+  float amplitude = 1.0;
   int numVoices = 3;
   int detunePercentage = 20;
+
+  // Envelope env = Envelope();
+  // env.trigger();
+  // std::cout << "Drol: " << env.getLevel() << std::endl;
 
   if (synthChoice == 0) { //if user selects the FmSynth
     carrierFreq = askQuestion("What should be the frequency for the carrier?", 20, 20000);
@@ -73,6 +78,17 @@ int main(int argc,char **argv)
 
   callback.setSynth(chosenSynth); //set selected synth
 
+  bool enableLFO = askQuestion("Would you like some LFO on your pitch?");
+
+  if (enableLFO) {
+    int waveform = askQuestion("What should be the waveform of the LFO?", {"Sine", "Square", "Saw"}, false, 15);
+    float LFOfreq = askQuestion("What should be the frequency of the LFO?", 1, 20);
+    float LFOdepth = askQuestion("What should be the depth of the LFO?", 0.0, 1.0);    
+    callback.synth->setLFO(waveform, LFOfreq, LFOdepth);
+  }
+
+  chosenSynth->setEnv(10, 300, 0.0, 10);
+
   bool playMelody;
 
   playMelody = askQuestion("Do you want to play a melody?"); //returns true or false
@@ -82,15 +98,13 @@ int main(int argc,char **argv)
       melody = new Melody();
       int numNotes = askQuestion("How many notes should the melody have?", 1, 100);
       melody->addNote(numNotes, note);
-    melody->play(200, chosenSynth); //BPM, synth
+      int BPM = askQuestion("What should be the BPM of the melody?", 1, 800);
+    melody->play(BPM, chosenSynth); //BPM, synth
   }
 
   jackModule.init(0, 1);
 
   bool running = true;
-  
-  callback.synth->setLFO("Sine", 1, 1.0);
-
   while (running) {
       switch (std::cin.get()) {
           case 'q':

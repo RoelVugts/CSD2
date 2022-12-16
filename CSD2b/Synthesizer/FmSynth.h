@@ -11,8 +11,7 @@ class FmSynth : public Synth {
     
     void tick();
     float getSample();
-
-    void setLFO(std::string waveform, float freqLFO, float depthLFO);
+    void calculatePitch();
 
 
     protected:

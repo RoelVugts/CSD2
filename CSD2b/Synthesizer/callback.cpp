@@ -23,6 +23,7 @@ void CustomCallback::process(AudioBuffer buffer) {
   }
 }
 
+//function to set the synth the user chose
 void CustomCallback::setSynth(Synth* synth)
 {
   this->synth = synth;

@@ -35,6 +35,7 @@ void Timer::stop()
     if (started)
     {
         started = false;
+        timer = 0;
     }
 
 }
