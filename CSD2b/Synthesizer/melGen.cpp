@@ -109,9 +109,11 @@ void Melody::playInThread(int BPM, Synth* target) { //function that actually pla
 
         float tempoMS = 60000.0f / BPM; //calculate tempo in MS
         bool onebang = true;
+        int modTimer;
         while (playing) {
-        int modTimer = int(timer.getTime()) % int(tempoMS);
             timer.start();
+            modTimer = int(timer.getTime()) % int(tempoMS);
+
             if (modTimer > 0 && modTimer < 50 && onebang) //check if it is in a range because it skipped a note sometimes
             {
                 onebang = false; //close gate so notes can't fire rapidly after each other

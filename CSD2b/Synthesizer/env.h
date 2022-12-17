@@ -2,6 +2,7 @@
 
 
 #include <thread>
+#include <vector>
 #include "timer.h"
 
 class Envelope {
@@ -9,23 +10,23 @@ class Envelope {
         Envelope();
         Envelope(float attack, float decay, float sustain, float release);
 
-
-        void setADSR(float attack, float decay, float sustain, float release);
-        void trigger();
         void triggerInThread();
+        void setADSR(float attack, float decay, float sustain, float release);
+        void trigger();;
         float getLevel();
     
     protected:
         float attack;
         float decay;
         float sustain;
-        float noteOnTime{50}; //Imagined 'note on' time
+        float noteOnTime{1}; //Imagined 'note on' time
         float release;
 
-        bool triggered;
+        bool triggered{false};
         double elapsedTime;
 
         Timer envTimer;
         float level{1.0};
-        std::thread t;
+
+        std::thread t1;
 };

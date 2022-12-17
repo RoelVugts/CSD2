@@ -21,9 +21,8 @@
 #include "UI.h"
 #include "env.h"
 
-#define SOUND 0
 #define WRITE_TO_FILE 1
-#define FREQ 5
+#define UI 1
 
 /*
  * NOTE: jack2 needs to be installed
@@ -37,23 +36,21 @@ int main(int argc,char **argv)
 {
 
   int synthChoice = askQuestion("What synth you want to play?", {"FmSynth", "SuperSynth"}, false, 15);
-  
-  //FmSynth properties
-  float carrierFreq = 0;
-  float carrierAmp = 0;
-  float modulatorFreq = 0;
-  float modulatorAmp = 0;
+
+  //FmSynth properties default values
+  float carrierFreq = 500;
+  float carrierAmp = 1.0;
+  float modulatorFreq = 250;
+  float modulatorAmp = 1.0;
   int waveform = 0;
 
-  //Supersynth properties
-  int note = 60;
+  //Supersynth properties default values
+  int note = 69;
   float amplitude = 1.0;
-  int numVoices = 3;
-  int detunePercentage = 20;
+  int numVoices = 1;
+  int detunePercentage = 5;
 
-  // Envelope env = Envelope();
-  // env.trigger();
-  // std::cout << "Drol: " << env.getLevel() << std::endl;
+  #if UI
 
   if (synthChoice == 0) { //if user selects the FmSynth
     carrierFreq = askQuestion("What should be the frequency for the carrier?", 20, 20000);
@@ -68,6 +65,8 @@ int main(int argc,char **argv)
       detunePercentage = askQuestion("How much detune do you want? (0 - 100%)", 0, 100);
   }
 
+  #endif
+
   //possible synth options
   Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorFreq, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage)};
 
@@ -78,16 +77,28 @@ int main(int argc,char **argv)
 
   callback.setSynth(chosenSynth); //set selected synth
 
+  #if UI
+
   bool enableLFO = askQuestion("Would you like some LFO on your pitch?");
 
   if (enableLFO) {
     int waveform = askQuestion("What should be the waveform of the LFO?", {"Sine", "Square", "Saw"}, false, 15);
     float LFOfreq = askQuestion("What should be the frequency of the LFO?", 1, 20);
     float LFOdepth = askQuestion("What should be the depth of the LFO?", 0.0, 1.0);    
-    callback.synth->setLFO(waveform, LFOfreq, LFOdepth);
+    chosenSynth->setLFO(waveform, LFOfreq, LFOdepth);
+  }
+  
+  bool enableEnv = askQuestion("Would you like an envelope on the amplitude?");
+  
+  if (enableEnv) {
+    float attack = askQuestion("What should be the attack time?", 1, 10000);
+    float decay = askQuestion("What should be the decay time?", 1, 10000);
+    float sustain = askQuestion("What should be the sustain level?", 0.0, 1.0);
+    float release = askQuestion("What should be the release time?", 1, 10000);
+    chosenSynth->setEnv(attack, decay, sustain, release);
   }
 
-  chosenSynth->setEnv(10, 300, 0.0, 10);
+  #endif
 
   bool playMelody;
 

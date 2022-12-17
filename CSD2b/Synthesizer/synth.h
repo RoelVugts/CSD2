@@ -27,7 +27,7 @@ class Synth {
         float mtof(int midiNote); //convert midi to frequency
         void setLFO(int waveform, float freqLFO, float depthLFO);
         void setEnv(float attack, float decay, float sustain, float release);
-        Envelope env = Envelope();
+
 
     protected:
         float frequency;
@@ -37,6 +37,6 @@ class Synth {
         bool activeEnv = false;
         Oscillator* LFO;
         Oscillator* LFOwave[3] = {new Sine, new AntiAliasedSquare, new AntiAliasedSaw};
-        
+        Envelope env = Envelope();
 
 };
