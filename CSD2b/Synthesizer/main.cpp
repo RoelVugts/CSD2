@@ -6,24 +6,17 @@
 #include <algorithm>
 
 #include "jack_module.h"
-#include "math.h"
-#include "sine.h"
-#include "square.h"
-#include "sawtooth.h"
+#include "oscillator.h"
 #include "melGen.h"
 #include "timer.h"
 #include "callback.h"
 #include "audioToFile.h"
-#include "antiAliasedSquare.h"
-#include "antiAliasedOsc.h"
-#include "antiAliasedSaw.h"
-#include "FmSynth.h"
 #include "UI.h"
 #include "env.h"
+#include "synth.h"
 
 #define WRITE_TO_FILE 1
 #define UI 1
-
 /*
  * NOTE: jack2 needs to be installed
  * jackd invokes the JACK audio server daemon
@@ -60,7 +53,7 @@ int main(int argc,char **argv)
     waveform = askQuestion("What should be the waveform of the modulator?", {"Sine", "Square", "Saw"}, false, 15);
   } else if (synthChoice == 1) { //if user selects the superSynth
       note = askQuestion("What note do you want the synth to play?", 24, 96);
-      amplitude = askQuestion("What amplitude do you want thet synth to play?", 0.0, 1.0);
+      amplitude = askQuestion("What amplitude do you want the synth to play?", 0.0, 1.0);
       numVoices = askQuestion("How many voices do you want?", 1, 6);
       detunePercentage = askQuestion("How much detune do you want? (0 - 100%)", 0, 100);
   }

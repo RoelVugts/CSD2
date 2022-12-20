@@ -66,8 +66,8 @@ void Envelope::trigger()
         std::cout << "Envelope stopped" << std::endl;
     }
     t1 = std::thread(&Envelope::triggerInThread, this); //trigger envelope
-    // std::cout << "Envelope started" << std::endl;
     t1.join(); //join when envelope has finished
+    std::cout << "Env started" << std::endl;
 
 }
 

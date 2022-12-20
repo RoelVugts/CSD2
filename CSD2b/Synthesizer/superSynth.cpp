@@ -49,24 +49,22 @@ SuperSynth::~SuperSynth()
     std::cout << "Supersynth destructor" << std::endl;
 }
 
-void SuperSynth::tick() //Move phase of oscillators 1 step further
+void SuperSynth::tick() 
 {
-    // std::cout << "Env: " << env.getLevel() << std::endl;
     for(int i = 0; i < numVoices; i++) 
     {
         if (activeLFO) {
-            squares[i].setFrequency(frequency*(LFO->getSample()+1));
-            saws[i].setFrequency(frequency*(LFO->getSample()+1));
+            squares[i].setFrequency(frequency*(LFO->getSample()+1)); //Modulate pitch with LFO
+            saws[i].setFrequency(frequency*(LFO->getSample()+1)); //Modulate pitch with LFO
             LFO->tick();
         }
         if (activeEnv) {
-            squares[i].setAmplitude(amplitude*env.getLevel());
-            saws[i].setAmplitude(amplitude*env.getLevel());
+            squares[i].setAmplitude(amplitude*env.getLevel()); //Modulate amp with Env
+            saws[i].setAmplitude(amplitude*env.getLevel()); //Modulate amp with Env
         }
 
-
-        squares[i].tick();
-        saws[i].tick();
+        squares[i].tick(); //Move phase of oscillators 1 step further
+        saws[i].tick(); //Move phase of oscillators 1 step further
     }
 }
 
