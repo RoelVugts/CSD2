@@ -1,4 +1,32 @@
-//JSON file for saving presets
+{
+"FmSynth":
+    {   "carrierFreq":500, 
+        "carrierAmp":1.0, 
+        "modulatorFreq": 250, 
+        "modulatorAmp":1.0,
+        "waveform": 0
+    },
 
-"x":"hallo"
-
+"SuperSynth":
+    {   
+        "note":69,
+        "amplitude":1.0,
+        "numVoices":5,
+        "detunePercentage":20
+    },
+"LFO":
+    {
+        "active":0,
+        "waveform":0,
+        "LFOfreq":2,
+        "LFOdepth":0.0
+    },
+"Env":
+    {
+        "active":0,
+        "attack":5,
+        "decay":500,
+        "sustain":0.5,
+        "release":10
+    }
+}

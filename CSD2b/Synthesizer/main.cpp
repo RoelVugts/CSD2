@@ -5,6 +5,8 @@
 #include <thread>
 #include <algorithm>
 #include <jsoncpp/json/json.h>
+#include <jsoncpp/json/value.h>
+#include <string>
 
 #include "jack_module.h"
 #include "oscillator.h"
@@ -29,13 +31,6 @@
 
 int main(int argc,char **argv)
 {
-
-  // std::ifstream ifs("presets.json", std::ifstream::binary);
-  // ifs >> xvar;
-  // std::cout << "x: " << xvar << std::endl;
-
-  int synthChoice = askQuestion("What synth you want to play?", {"FmSynth", "SuperSynth"}, false, 15);
-
   //FmSynth properties default values
   float carrierFreq = 500;
   float carrierAmp = 1.0;
@@ -49,56 +44,118 @@ int main(int argc,char **argv)
   int numVoices = 1;
   int detunePercentage = 5;
 
-  #if UI
+  //LFO settings
+  int LFOwaveform = 0;
+  float LFOfreq = 1;
+  float LFOdepth = 1.0;
 
-  if (synthChoice == 0) { //if user selects the FmSynth
-    carrierFreq = askQuestion("What should be the frequency for the carrier? (20 - 20.000 HZ)", 20, 20000);
-    carrierAmp = askQuestion("What should be the amplitude of the carrier? (0.0 - 1.0)", 0.0, 1.0);
-    modulatorFreq = askQuestion("What should be the frequency for the modulator? (1 - 20.000 HZ)", 1, 20000);
-    modulatorAmp = askQuestion("What should be the amplitude of the modulator? (0.0 - 1.0)", 0.0, 1.0);\
-    waveform = askQuestion("What should be the waveform of the modulator?", {"Sine", "Square", "Saw"}, false, 15);
-  } else if (synthChoice == 1) { //if user selects the superSynth
-      note = askQuestion("What midi note do you want the synth to play? (24 - 96)", 24, 96);
-      amplitude = askQuestion("What amplitude do you want the synth to play? (0.0 - 1.0)", 0.0, 1.0);
-      numVoices = askQuestion("How many voices do you want? (1 - 6)", 1, 6);
-      detunePercentage = askQuestion("How much detune do you want? (0 - 100%)", 0, 100);
+  //Envelope settings
+  float attack = 10;
+  float decay = 500;
+  float sustain = 0.8;
+  float release= 20;
+
+  int synthChoice = askQuestion("What synth you want to play?", {"FmSynth", "SuperSynth"}, false, 15);
+  bool defaultPreset = askQuestion("Would you like to load the default preset?");
+
+
+  //Read default synth preset from JSON file
+  //-------------------------------------------------
+  std::ifstream file("presets.json");
+  Json::Reader reader;
+  Json::Value settings;
+
+  reader.parse(file, settings);
+
+  if (defaultPreset && synthChoice == 0)
+  {
+    carrierFreq = settings["FmSynth"]["carrierFreq"].asFloat();
+    carrierAmp = settings["FmSynth"]["carrierAmp"].asFloat();
+    modulatorFreq = settings["FmSynth"]["modulatorFreq"].asFloat();
+    modulatorAmp = settings["FmSynth"]["modulatorAmp"].asFloat();
+    waveform = settings["FmSynth"]["waveform"].asInt();
   }
 
-  #endif
+  if (defaultPreset && synthChoice == 1)
+  {
+    note = settings["SuperSynth"]["note"].asInt();
+    amplitude = settings["SuperSynth"]["amplitude"].asFloat();
+    numVoices = settings["SuperSynth"]["numVoices"].asInt();
+    detunePercentage = settings["SuperSynth"]["detunePercentage"].asInt();
+  }
+  //--------------------------------------------------
+
 
   //possible synth options
   Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorFreq, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage, false)};
+  Synth* chosenSynth = synths[synthChoice]; //create the synth
 
-  Synth* chosenSynth = synths[synthChoice];
-  
-  auto callback = CustomCallback {};
-  auto jackModule = JackModule { callback };
 
-  callback.setSynth(chosenSynth); //set selected synth
+  //Load default LFO and Envelope presets from JSON file
+  //---------------------------------------------------
+  if (defaultPreset) 
+  {
+    if (settings["LFO"]["active"].asBool())
+    {
+      LFOwaveform = settings["LFO"]["waveform"].asInt();
+      LFOfreq = settings["LFO"]["LFOfreq"].asFloat();
+      LFOdepth = settings["LFO"]["LFOdepth"].asFloat();
+      chosenSynth->setLFO(LFOwaveform, LFOfreq, LFOdepth);
+    }
+    if (settings["Env"]["active"].asBool()) 
+    {
+      attack = settings["Env"]["attack"].asFloat();
+      decay = settings["Env"]["decay"].asFloat();
+      sustain = settings["Env"]["sustain"].asFloat();
+      release = settings["Env"]["release"].asFloat();
+      chosenSynth->setEnv(attack, decay, sustain, release);
+    }
+  }
+  //---------------------------------------------------------
 
-  #if UI
 
-  bool enableLFO = askQuestion("Would you like some LFO on your pitch? (y/n)");
-
-  if (enableLFO) {
-    int waveform = askQuestion("What should be the waveform of the LFO?", {"Sine", "Square", "Saw"}, false, 15);
-    float LFOfreq = askQuestion("What should be the frequency of the LFO? (1 - 20)", 1, 20);
-    float LFOdepth = askQuestion("What should be the depth of the LFO? (0.0 - 1.0)", 0.0, 1.0);    
-    chosenSynth->setLFO(waveform, LFOfreq, LFOdepth);
+  //if user wants to manually adjust parameters
+  //----------------------------------------------------------
+  if (!defaultPreset) {
+    if (synthChoice == 0) { //if user selects the FmSynth
+      carrierFreq = askQuestion("What should be the frequency for the carrier? (20 - 20.000 HZ)", 20, 20000);
+      carrierAmp = askQuestion("What should be the amplitude of the carrier? (0.0 - 1.0)", 0.0, 1.0);
+      modulatorFreq = askQuestion("What should be the frequency for the modulator? (1 - 20.000 HZ)", 1, 20000);
+      modulatorAmp = askQuestion("What should be the amplitude of the modulator? (0.0 - 1.0)", 0.0, 1.0);\
+      waveform = askQuestion("What should be the waveform of the modulator?", {"Sine", "Square", "Saw"}, false, 15);
+    } else if (synthChoice == 1) { //if user selects the superSynth
+        note = askQuestion("What midi note do you want the synth to play? (24 - 96)", 24, 96);
+        amplitude = askQuestion("What amplitude do you want the synth to play? (0.0 - 1.0)", 0.0, 1.0);
+        numVoices = askQuestion("How many voices do you want? (1 - 6)", 1, 6);
+        detunePercentage = askQuestion("How much detune do you want? (0 - 100%)", 0, 100);
+    }
   }
   
-  bool enableEnv = askQuestion("Would you like an envelope on the amplitude? (y/n)");
-  
-  if (enableEnv) {
-    float attack = askQuestion("What should be the attack time? (1- 10.000 ms)", 1, 10000);
-    float decay = askQuestion("What should be the decay time? (1 - 10.000 ms)", 1, 10000);
-    float sustain = askQuestion("What should be the sustain level? (0.0 - 1.0)", 0.0, 1.0);
-    float release = askQuestion("What should be the release time? (1- 10.000 ms)", 1, 10000);
-    chosenSynth->setEnv(attack, decay, sustain, release);
+  if (!defaultPreset) {
+    bool enableLFO = askQuestion("Would you like some LFO on your pitch? (y/n)");
+
+    if (enableLFO) {
+      int waveform = askQuestion("What should be the waveform of the LFO?", {"Sine", "Square", "Saw"}, false, 15);
+      float LFOfreq = askQuestion("What should be the frequency of the LFO? (1 - 20)", 1, 20);
+      float LFOdepth = askQuestion("What should be the depth of the LFO? (0.0 - 1.0)", 0.0, 1.0);    
+      chosenSynth->setLFO(waveform, LFOfreq, LFOdepth);
+    }
+    
+    bool enableEnv = askQuestion("Would you like an envelope on the amplitude? (y/n)");
+    
+    if (enableEnv) {
+      float attack = askQuestion("What should be the attack time? (1- 10.000 ms)", 1, 10000);
+      float decay = askQuestion("What should be the decay time? (1 - 10.000 ms)", 1, 10000);
+      float sustain = askQuestion("What should be the sustain level? (0.0 - 1.0)", 0.0, 1.0);
+      float release = askQuestion("What should be the release time? (1- 10.000 ms)", 1, 10000);
+      chosenSynth->setEnv(attack, decay, sustain, release);
+    }
   }
+  //---------------------------------------------------------
 
-  #endif
 
+  //Ask user if melody needs to be played
+  //---------------------------------------------------------
   bool playMelody;
 
   playMelody = askQuestion("Do you want to play a melody? (y/n)"); //returns true or false
@@ -111,6 +168,14 @@ int main(int argc,char **argv)
       int BPM = askQuestion("What should be the BPM of the melody? (1 - 800)", 1, 800);
     melody->play(BPM, chosenSynth); //BPM, synth
   }
+  //---------------------------------------------------------
+
+
+  //create callback
+  auto callback = CustomCallback {};
+  auto jackModule = JackModule { callback };
+
+  callback.setSynth(chosenSynth); //set selected synth
 
   jackModule.init(0, 1);
 

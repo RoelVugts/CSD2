@@ -51,28 +51,32 @@ void AntiAliasedSquare::calculatePartials()
 
     numHarmonics = ((samplerate/2) / frequency) / 2; //calculate amount of uneven harmonics till nyquist
 
-    for (int i =  0 ; i < int(partials.size()); i++) {
-        if (partials[i].getFrequency() > samplerate/2) 
-        {
-        partials.erase(partials.begin()+i); //delete partials above nyquist
-        partialSamples.erase(partialSamples.begin()+i);
-        }
-    }
+    int partialDelta = numHarmonics - int(partials.size()); //calculate excess/shortage of partials
 
-    if (int(partials.size()) < numHarmonics) {
-        for (int i = 1; i <= (numHarmonics - int(partials.size())); i++) {
-            partials.push_back(Sine(frequency*(i*2), amplitude/(i*2))); //add partials if below nyquist
+    if (partialDelta > 0) 
+    {
+        for (int i = 1; i <= partialDelta; i += 2) 
+        {
+            partials.push_back(Sine(frequency*i, amplitude/i)); //add partials if below nyquist
             partialSamples.push_back(0);
         }
+    } else if (partialDelta < 0) 
+    {
+        for (int i = 0; i < partialDelta; i ++) 
+        {
+            partials.pop_back();
+        }
     }
-   
+    
+    //update pitch for all partials
         for(float i = 0.0f; i < int(partials.size()); i += 1.0f)
     {
         partials[i].setFrequency(frequency*(i*2.0f+1.0f));
-        if (partials[i].getFrequency() < samplerate/2) {
+        if (partials[i].getFrequency() < samplerate/2) 
+        {
             partials[i].setAmplitude(amplitude/(i*2.0f+1.0f));
         } else {
-            partials[i].setAmplitude(0.0f); //all partials above nyquist are 0
+            partials[i].setAmplitude(0.0f); //all partials above nyquist are 0 (just in case)
         }
 
     }
