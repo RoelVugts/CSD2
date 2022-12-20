@@ -36,7 +36,7 @@ class Synth {
         bool activeLFO = false; //defaults to false so LFO is only active when set
         bool activeEnv = false;
         Oscillator* LFO;
-        Oscillator* LFOwave[3] = {new Sine, new AntiAliasedSquare, new AntiAliasedSaw};
+        Oscillator* LFOwave[3] = {new Sine, new Square, new Sawtooth};
         Envelope env = Envelope();
 
 };

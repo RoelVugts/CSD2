@@ -12,7 +12,7 @@ class Envelope {
 
         void triggerInThread();
         void setADSR(float attack, float decay, float sustain, float release);
-        void trigger();;
+        void trigger();
         float getLevel();
     
     protected:

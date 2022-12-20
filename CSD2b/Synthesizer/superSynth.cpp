@@ -11,8 +11,8 @@ SuperSynth::SuperSynth() : Synth(400, 1.0)
 
 
 
-SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage) 
-: Synth(frequency, amplitude), numVoices(numVoices), detunePercentage(detunePercentage)
+SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage, bool antiAliasing) 
+: Synth(frequency, amplitude), numVoices(numVoices), detunePercentage(detunePercentage), antiAliasing(antiAliasing)
 {
     std::cout << "Supersynth constructor" << std::endl;
 
@@ -26,20 +26,16 @@ SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detu
 
     for(int i = 0; i < numVoices; i++) 
     {   
-        // std::cout << "DetuneDepth: " << detuneDepth << std::endl;
         detuneValue = (1.0f - detuneDepth*int((numVoices/2)) + detuneDepth * i); //calculate detune value per voice
-        // std::cout << "Detune Value: " << detuneValue << std::endl;
-        squares.push_back(AntiAliasedSquare((frequency/2)*detuneValue, amplitude));
-        saws.push_back(AntiAliasedSaw(frequency*detuneValue, amplitude));
+        squares.push_back(Square((frequency/2)*detuneValue, amplitude));
+        saws.push_back(Sawtooth(frequency*detuneValue, amplitude));
         voiceSamples.push_back(0);
         voiceSamples.push_back(0); //create numVoices * 2 amount of empty sample elements
-        // saws[i].setAmplitude(0.0f);  
-        // squares[i].setAmplitude(amplitude/2.0f);
     }
 }
 
-SuperSynth::SuperSynth(int note, float amplitude, int numVoices, int detunePercentage) 
-: SuperSynth(mtof(note), amplitude, numVoices, detunePercentage)
+SuperSynth::SuperSynth(int note, float amplitude, int numVoices, int detunePercentage, bool antiAliasing) 
+: SuperSynth(mtof(note), amplitude, numVoices, detunePercentage, antiAliasing)
 {
 
 }

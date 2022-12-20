@@ -52,10 +52,10 @@ void Melody::addNote(int numNotes, int startNote) //random melody generation bas
 
         if (randomNum < 70)
         {
-            newNote = 2 * randomNeg; //do a minor/major third
+            newNote = 2 * randomNeg; //do a minor/major second
         } else if (randomNum > 70 && randomNum < 80)
         {
-            newNote = 1 * randomNeg; //do a minor/major second
+            newNote = 1 * randomNeg; //do a minor/major third
         } else if (randomNum > 80 && randomNum < 90)
         {
             newNote = 0; //do unisono

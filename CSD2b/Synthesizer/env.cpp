@@ -24,7 +24,6 @@ void Envelope::setADSR(float attack, float decay, float sustain, float release)
 
 void Envelope::triggerInThread()
 {
-    triggered = true;
     level = 0.0f;
     envTimer.stop();
     while (triggered) {
@@ -51,22 +50,26 @@ void Envelope::triggerInThread()
             // std::cout << "Release" << std::endl;
         }
         if (elapsedTime > (attack + decay + noteOnTime + release)) {
-            // std::cout << "Env end" << std::endl;
+            std::cout << "Env end" << std::endl;
             triggered = false;
-            elapsedTime = 0;
+            // elapsedTime = 0;
         }
     } //while (triggered)
 }
 
 void Envelope::trigger()
 {
-    if (triggered) {
+    if (triggered) { 
         triggered = false; //stop envelope
         t1.join(); //join when envelope stopped
         std::cout << "Envelope stopped" << std::endl;
+        t1 = std::thread(&Envelope::triggerInThread, this); //trigger envelope
+        t1.join(); //join when envelope has finished
+    } else {
+        triggered = true;
+        t1 = std::thread(&Envelope::triggerInThread, this); //trigger envelope
     }
-    t1 = std::thread(&Envelope::triggerInThread, this); //trigger envelope
-    t1.join(); //join when envelope has finished
+
     std::cout << "Env started" << std::endl;
 
 }

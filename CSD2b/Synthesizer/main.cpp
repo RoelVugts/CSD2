@@ -4,6 +4,7 @@
 #include <cmath>
 #include <thread>
 #include <algorithm>
+#include <jsoncpp/json/json.h>
 
 #include "jack_module.h"
 #include "oscillator.h"
@@ -16,7 +17,8 @@
 #include "synth.h"
 
 #define WRITE_TO_FILE 1
-#define UI 1
+#define UI 0
+
 /*
  * NOTE: jack2 needs to be installed
  * jackd invokes the JACK audio server daemon
@@ -27,6 +29,10 @@
 
 int main(int argc,char **argv)
 {
+
+  // std::ifstream ifs("presets.json", std::ifstream::binary);
+  // ifs >> xvar;
+  // std::cout << "x: " << xvar << std::endl;
 
   int synthChoice = askQuestion("What synth you want to play?", {"FmSynth", "SuperSynth"}, false, 15);
 
@@ -46,22 +52,22 @@ int main(int argc,char **argv)
   #if UI
 
   if (synthChoice == 0) { //if user selects the FmSynth
-    carrierFreq = askQuestion("What should be the frequency for the carrier?", 20, 20000);
-    carrierAmp = askQuestion("What should be the amplitude of the carrier?", 0.0, 1.0);
-    modulatorFreq = askQuestion("What should be the frequency for the modulator?", 1, 20000);
-    modulatorAmp = askQuestion("What should be the amplitude of the modulator?", 0.0, 1.0);\
+    carrierFreq = askQuestion("What should be the frequency for the carrier? (20 - 20.000 HZ)", 20, 20000);
+    carrierAmp = askQuestion("What should be the amplitude of the carrier? (0.0 - 1.0)", 0.0, 1.0);
+    modulatorFreq = askQuestion("What should be the frequency for the modulator? (1 - 20.000 HZ)", 1, 20000);
+    modulatorAmp = askQuestion("What should be the amplitude of the modulator? (0.0 - 1.0)", 0.0, 1.0);\
     waveform = askQuestion("What should be the waveform of the modulator?", {"Sine", "Square", "Saw"}, false, 15);
   } else if (synthChoice == 1) { //if user selects the superSynth
-      note = askQuestion("What note do you want the synth to play?", 24, 96);
-      amplitude = askQuestion("What amplitude do you want the synth to play?", 0.0, 1.0);
-      numVoices = askQuestion("How many voices do you want?", 1, 6);
+      note = askQuestion("What midi note do you want the synth to play? (24 - 96)", 24, 96);
+      amplitude = askQuestion("What amplitude do you want the synth to play? (0.0 - 1.0)", 0.0, 1.0);
+      numVoices = askQuestion("How many voices do you want? (1 - 6)", 1, 6);
       detunePercentage = askQuestion("How much detune do you want? (0 - 100%)", 0, 100);
   }
 
   #endif
 
   //possible synth options
-  Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorFreq, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage)};
+  Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorFreq, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage, false)};
 
   Synth* chosenSynth = synths[synthChoice];
   
@@ -72,22 +78,22 @@ int main(int argc,char **argv)
 
   #if UI
 
-  bool enableLFO = askQuestion("Would you like some LFO on your pitch?");
+  bool enableLFO = askQuestion("Would you like some LFO on your pitch? (y/n)");
 
   if (enableLFO) {
     int waveform = askQuestion("What should be the waveform of the LFO?", {"Sine", "Square", "Saw"}, false, 15);
-    float LFOfreq = askQuestion("What should be the frequency of the LFO?", 1, 20);
-    float LFOdepth = askQuestion("What should be the depth of the LFO?", 0.0, 1.0);    
+    float LFOfreq = askQuestion("What should be the frequency of the LFO? (1 - 20)", 1, 20);
+    float LFOdepth = askQuestion("What should be the depth of the LFO? (0.0 - 1.0)", 0.0, 1.0);    
     chosenSynth->setLFO(waveform, LFOfreq, LFOdepth);
   }
   
-  bool enableEnv = askQuestion("Would you like an envelope on the amplitude?");
+  bool enableEnv = askQuestion("Would you like an envelope on the amplitude? (y/n)");
   
   if (enableEnv) {
-    float attack = askQuestion("What should be the attack time?", 1, 10000);
-    float decay = askQuestion("What should be the decay time?", 1, 10000);
-    float sustain = askQuestion("What should be the sustain level?", 0.0, 1.0);
-    float release = askQuestion("What should be the release time?", 1, 10000);
+    float attack = askQuestion("What should be the attack time? (1- 10.000 ms)", 1, 10000);
+    float decay = askQuestion("What should be the decay time? (1 - 10.000 ms)", 1, 10000);
+    float sustain = askQuestion("What should be the sustain level? (0.0 - 1.0)", 0.0, 1.0);
+    float release = askQuestion("What should be the release time? (1- 10.000 ms)", 1, 10000);
     chosenSynth->setEnv(attack, decay, sustain, release);
   }
 
@@ -95,14 +101,14 @@ int main(int argc,char **argv)
 
   bool playMelody;
 
-  playMelody = askQuestion("Do you want to play a melody?"); //returns true or false
+  playMelody = askQuestion("Do you want to play a melody? (y/n)"); //returns true or false
   Melody* melody;
 
   if (playMelody) {
       melody = new Melody();
-      int numNotes = askQuestion("How many notes should the melody have?", 1, 100);
+      int numNotes = askQuestion("How many notes should the melody have? (1 - 100)", 1, 100);
       melody->addNote(numNotes, note);
-      int BPM = askQuestion("What should be the BPM of the melody?", 1, 800);
+      int BPM = askQuestion("What should be the BPM of the melody? (1 - 800)", 1, 800);
     melody->play(BPM, chosenSynth); //BPM, synth
   }
 

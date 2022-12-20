@@ -34,9 +34,11 @@ float Synth::mtof(int midiNote) //converts midi to frequency
 void Synth::setPitch(int note)
 {
     this->frequency = mtof(note);
-    // std::cout << "Env level: " << std::endl;
     calculatePitch();
-    env.trigger();
+    if (activeEnv) 
+    {
+        env.trigger();
+    }
 }
 
 void Synth::setLFO(int waveform, float freqLFO, float depthLFO)

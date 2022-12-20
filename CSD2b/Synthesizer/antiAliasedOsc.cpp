@@ -26,11 +26,11 @@ void AntiAliasedOsc::tick()
 void AntiAliasedOsc::setFrequency(float frequency)
 {
     this->frequency = frequency;
-    calculatePartials(); //recalculate frequency for each partial
+    calculatePartials(); //recalculate amp & freq for each partial
 }
 
 void AntiAliasedOsc::setAmplitude(float amplitude)
 {
     this->amplitude = amplitude;
-    calculatePartials(); //recalculate frequency for each partial
+    calculatePartials(); //recalculate amp & freq for each partial
 }

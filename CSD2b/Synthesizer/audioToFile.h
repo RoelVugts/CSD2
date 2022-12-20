@@ -24,7 +24,7 @@ public:
   // add functionality to set numFrames and channels
   AudioToFile (int numInputchannels = 1,
                int numOutputChannels = 1,
-               int numFrames = 256);
+               int numFrames = 48000*5);
   ~AudioToFile();
   // TODO
   // add functionality to write a given range to file
@@ -37,7 +37,7 @@ private:
 
   int numInputChannels = 1;
   int numOutputChannels = 1;
-  int numFrames = 256;
+  int numFrames = 48000*5;
   float** inputChannel;
   float** outputChannel;
 };

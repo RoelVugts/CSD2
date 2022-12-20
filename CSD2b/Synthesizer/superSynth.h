@@ -11,8 +11,8 @@
 class SuperSynth : public Synth {
     public:
         SuperSynth();
-        SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage);
-        SuperSynth(int note, float amplitude, int numVoices, int detunePercentage);
+        SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage, bool antiAliasing);
+        SuperSynth(int note, float amplitude, int numVoices, int detunePercentage, bool antiAliasing);
         ~SuperSynth();
 
         void tick();
@@ -21,10 +21,11 @@ class SuperSynth : public Synth {
         int numVoices;
         int detunePercentage;
         float detuneDepth;
+        bool antiAliasing;
     
     protected:
-        std::vector<AntiAliasedSquare> squares;
-        std::vector<AntiAliasedSaw> saws;
+        std::vector<Square> squares;
+        std::vector<Sawtooth> saws;
         std::vector<float> voiceSamples;
 
 };
