@@ -4,6 +4,10 @@
 #include "oscillator.h"
 #include "sine.h"
 
+
+//The Anti-Aliased Oscillators work but have a lot of clicks/cracks/pops.
+//So the oscillators used in 'SuperSynth' are with aliasing
+
 class AntiAliasedOsc : public Oscillator {
     public:
         AntiAliasedOsc();

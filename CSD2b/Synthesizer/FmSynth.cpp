@@ -32,7 +32,8 @@ FmSynth::~FmSynth()
 void FmSynth::tick()
 {
     if (activeLFO) {
-        modulator->setAmplitude(modAmount*(LFO->getSample()+1)); //Modulate the FM amount with the LFO
+        modulator->setFrequency(frequency*(LFO->getSample()+1)); //Modulate the FM amount with the LFO
+
         LFO->tick();
     }
 
@@ -45,7 +46,7 @@ void FmSynth::tick()
     
     carrier.tick();
     modulator->tick();
-
+    std::cout << carrier.getFrequency() << std::endl;
 }
 
 float FmSynth::getSample()
@@ -56,5 +57,6 @@ float FmSynth::getSample()
 
 void FmSynth::calculatePitch()
 {
-    //empty function because we made this abstract in 
+    //empty function because we made this abstract in the base class. 
+    //It only needs to be implementend by SuperSynth
 }

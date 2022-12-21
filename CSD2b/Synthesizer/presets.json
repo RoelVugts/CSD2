@@ -1,32 +1,32 @@
 {
-"FmSynth":
-    {   "carrierFreq":500, 
-        "carrierAmp":1.0, 
-        "modulatorFreq": 250, 
-        "modulatorAmp":1.0,
-        "waveform": 0
-    },
-
-"SuperSynth":
-    {   
-        "note":69,
-        "amplitude":1.0,
-        "numVoices":5,
-        "detunePercentage":20
-    },
-"LFO":
-    {
-        "active":0,
-        "waveform":0,
-        "LFOfreq":2,
-        "LFOdepth":0.0
-    },
-"Env":
-    {
-        "active":0,
-        "attack":5,
-        "decay":500,
-        "sustain":0.5,
-        "release":10
-    }
+	"Env" : 
+	{
+		"active" : false,
+		"attack" : 10.0,
+		"decay" : 500.0,
+		"release" : 20.0,
+		"sustain" : 0.0
+	},
+	"FmSynth" : 
+	{
+		"carrierAmp" : 1.0,
+		"carrierFreq" : 1000.0,
+		"modulatorAmp" : 1.0,
+		"modulatorFreq" : 500.0,
+		"waveform" : 0
+	},
+	"LFO" : 
+	{
+		"LFOdepth" : 1.0,
+		"LFOfreq" : 5.0,
+		"active" : true,
+		"waveform" : 0
+	},
+	"SuperSynth" : 
+	{
+		"amplitude" : 1.0,
+		"detunePercentage" : 100,
+		"note" : 69,
+		"numVoices" : 6
+	}
 }

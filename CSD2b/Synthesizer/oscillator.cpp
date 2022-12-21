@@ -12,7 +12,7 @@ Oscillator::Oscillator(float frequency, float amplitude) : frequency(frequency),
 {
     phase = 0.0f;
     sample = 0.0f;
-    samplerate = 48000;
+    samplerate = 48000; //default samplerate
 }
 
 Oscillator::~Oscillator()

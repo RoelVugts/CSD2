@@ -18,20 +18,20 @@ void AntiAliasedSaw::createPartials()
 
 AntiAliasedSaw::AntiAliasedSaw() : AntiAliasedOsc()
 {
-    std::cout << "Anti Aliased Saw Constructor" << std::endl;
+    // std::cout << "Anti Aliased Saw Constructor" << std::endl;
     createPartials();
 }
 
 AntiAliasedSaw::AntiAliasedSaw(float frequency, float amplitude)
 :   AntiAliasedOsc(frequency, amplitude)
 {
-    std::cout << "Anti Aliased Saw Constructor" << std::endl;
+    // std::cout << "Anti Aliased Saw Constructor" << std::endl;
     createPartials();
 }
 
 AntiAliasedSaw::~AntiAliasedSaw()
 {
-    std::cout << "Anti Aliased Saw Destructor" << std::endl;
+    // std::cout << "Anti Aliased Saw Destructor" << std::endl;
 }
 
 void AntiAliasedSaw::calculate()

@@ -15,6 +15,7 @@ std::string toLowerCase(std::string inputString) {//converts a whole string to l
     return inputString;
 }
 
+//Checks if user input is one of the available options and returns option index
 int validateSelection(std::string selection, std::vector<std::string> selectionOptions)
 {
     
@@ -35,7 +36,7 @@ int askQuestion(std::string question, std::vector<std::string> options, bool all
     std::cout << "Options are:\n" << std::endl;
 
     for (auto i = options.begin(); i != options.end(); ++i) { //iterate through options
-        std::cout << *i << std::endl; 
+        std::cout << *i << std::endl; //print options to console
     }
     std::cout << std::endl;
 
@@ -64,7 +65,6 @@ float askQuestion(std::string question, float min, float max)
     std::cout << question << std::endl; //print question to console
 
     std::string result;
-
 
     float value;
     bool isError = true;

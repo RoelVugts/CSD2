@@ -45,11 +45,13 @@ int main(int argc,char **argv)
   int detunePercentage = 5;
 
   //LFO settings
+  bool activeLFO = false;
   int LFOwaveform = 0;
   float LFOfreq = 1;
   float LFOdepth = 1.0;
 
   //Envelope settings
+  bool activeEnv = false;
   float attack = 10;
   float decay = 500;
   float sustain = 0.8;
@@ -61,11 +63,11 @@ int main(int argc,char **argv)
 
   //Read default synth preset from JSON file
   //-------------------------------------------------
-  std::ifstream file("presets.json");
+  std::ifstream inputFile("presets.json");
   Json::Reader reader;
   Json::Value settings;
 
-  reader.parse(file, settings);
+  reader.parse(inputFile, settings);
 
   if (defaultPreset && synthChoice == 0)
   {
@@ -85,12 +87,6 @@ int main(int argc,char **argv)
   }
   //--------------------------------------------------
 
-
-  //possible synth options
-  Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorFreq, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage, false)};
-  Synth* chosenSynth = synths[synthChoice]; //create the synth
-
-
   //Load default LFO and Envelope presets from JSON file
   //---------------------------------------------------
   if (defaultPreset) 
@@ -100,7 +96,7 @@ int main(int argc,char **argv)
       LFOwaveform = settings["LFO"]["waveform"].asInt();
       LFOfreq = settings["LFO"]["LFOfreq"].asFloat();
       LFOdepth = settings["LFO"]["LFOdepth"].asFloat();
-      chosenSynth->setLFO(LFOwaveform, LFOfreq, LFOdepth);
+      std::cout << "Set LFO freq: " << LFOfreq << std::endl;
     }
     if (settings["Env"]["active"].asBool()) 
     {
@@ -108,11 +104,9 @@ int main(int argc,char **argv)
       decay = settings["Env"]["decay"].asFloat();
       sustain = settings["Env"]["sustain"].asFloat();
       release = settings["Env"]["release"].asFloat();
-      chosenSynth->setEnv(attack, decay, sustain, release);
     }
   }
   //---------------------------------------------------------
-
 
   //if user wants to manually adjust parameters
   //----------------------------------------------------------
@@ -132,27 +126,37 @@ int main(int argc,char **argv)
   }
   
   if (!defaultPreset) {
-    bool enableLFO = askQuestion("Would you like some LFO on your pitch? (y/n)");
+    activeLFO = askQuestion("Would you like some LFO on your pitch? (y/n)");
 
-    if (enableLFO) {
-      int waveform = askQuestion("What should be the waveform of the LFO?", {"Sine", "Square", "Saw"}, false, 15);
-      float LFOfreq = askQuestion("What should be the frequency of the LFO? (1 - 20)", 1, 20);
-      float LFOdepth = askQuestion("What should be the depth of the LFO? (0.0 - 1.0)", 0.0, 1.0);    
-      chosenSynth->setLFO(waveform, LFOfreq, LFOdepth);
+    if (activeLFO) {
+      LFOwaveform = askQuestion("What should be the waveform of the LFO?", {"Sine", "Square", "Saw"}, false, 15);
+      LFOfreq = askQuestion("What should be the frequency of the LFO? (1 - 20)", 1, 20);
+      LFOdepth = askQuestion("What should be the depth of the LFO? (0.0 - 1.0)", 0.0, 1.0);    
     }
     
-    bool enableEnv = askQuestion("Would you like an envelope on the amplitude? (y/n)");
+    activeEnv = askQuestion("Would you like an envelope on the amplitude? (y/n)");
     
-    if (enableEnv) {
-      float attack = askQuestion("What should be the attack time? (1- 10.000 ms)", 1, 10000);
-      float decay = askQuestion("What should be the decay time? (1 - 10.000 ms)", 1, 10000);
-      float sustain = askQuestion("What should be the sustain level? (0.0 - 1.0)", 0.0, 1.0);
-      float release = askQuestion("What should be the release time? (1- 10.000 ms)", 1, 10000);
-      chosenSynth->setEnv(attack, decay, sustain, release);
+    if (activeEnv) {
+      attack = askQuestion("What should be the attack time? (1- 10.000 ms)", 1, 10000);
+      decay = askQuestion("What should be the decay time? (1 - 10.000 ms)", 1, 10000);
+      sustain = askQuestion("What should be the sustain level? (0.0 - 1.0)", 0.0, 1.0);
+      release = askQuestion("What should be the release time? (1- 10.000 ms)", 1, 10000);
     }
   }
   //---------------------------------------------------------
 
+  //possible synth options
+  Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorFreq, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage, false)};
+  Synth* chosenSynth = synths[synthChoice]; //create the synth
+  
+  if (activeLFO) 
+  {
+  chosenSynth->setLFO(LFOwaveform, LFOfreq, LFOdepth);
+  }
+  if (activeEnv) 
+  {
+  chosenSynth->setEnv(attack, decay, sustain, release);
+  }
 
   //Ask user if melody needs to be played
   //---------------------------------------------------------
@@ -191,8 +195,39 @@ int main(int argc,char **argv)
       }
   }
 
+  //Write audio to file
   AudioToFile audioFile = AudioToFile();
   audioFile.write(callback);
+
+
+  //Store current settings in JSON object
+  settings["FmSynth"]["carrierFreq"] = carrierFreq;
+  settings["FmSynth"]["carrierAmp"] = carrierAmp;
+  settings["FmSynth"]["modulatorFreq"] = modulatorFreq;
+  settings["FmSynth"]["modulatorAmp"] = modulatorAmp;
+  settings["FmSynth"]["waveform"] = waveform;
+  
+  settings["SuperSynth"]["note"] = note;
+  settings["SuperSynth"]["amplitude"] = amplitude;
+  settings["SuperSynth"]["numVoices"] = numVoices;
+  settings["SuperSynth"]["detunePercentage"] = detunePercentage;
+
+  settings["LFO"]["active"] = activeLFO;
+  settings["LFO"]["waveform"] = LFOwaveform;
+  settings["LFO"]["LFOfreq"] = LFOfreq;
+  settings["LFO"]["LFOdepth"] = LFOdepth;
+    
+  settings["Env"]["active"] = activeEnv;
+  settings["Env"]["attack"] = attack;
+  settings["Env"]["decay"] = decay;
+  settings["Env"]["sustain"] = sustain;
+  settings["Env"]["release"] = release;
+
+
+  if (askQuestion("Save current settings as default preset?")) {
+    std::ofstream outputFile("presets.json");
+    outputFile << settings << std::endl;
+  }
 
   //end the program
   return 0;

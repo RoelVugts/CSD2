@@ -4,7 +4,7 @@
 
 Synth::Synth()
 {
-    std::cout << "Constructed default synth" << std::endl;
+    // std::cout << "Constructed default synth" << std::endl;
 }
 
 Synth::Synth(float frequency, float amplitude) : frequency(frequency), amplitude(amplitude)
@@ -16,12 +16,12 @@ Synth::Synth(int note, float amplitude)
 {
     frequency = mtof(note);
     this->amplitude = amplitude;
-    std::cout << "Amp synth constr" << amplitude << std::endl;
+    // std::cout << "Amp synth constr" << amplitude << std::endl;
 }
 
 Synth::~Synth()
 {
-    std::cout << "Synth destructor" << std::endl;
+    // std::cout << "Synth destructor" << std::endl;
 }
 
 float Synth::mtof(int midiNote) //converts midi to frequency
@@ -31,6 +31,7 @@ float Synth::mtof(int midiNote) //converts midi to frequency
     return freq;
 }
 
+//fucction that changes the pitch when melody gives it a new note
 void Synth::setPitch(int note)
 {
     this->frequency = mtof(note);

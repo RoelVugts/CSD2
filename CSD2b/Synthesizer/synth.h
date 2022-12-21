@@ -24,7 +24,7 @@ class Synth {
         virtual void tick() = 0;
         virtual void setPitch(int note);
         virtual void calculatePitch() = 0;
-        float mtof(int midiNote); //convert midi to frequency
+        float mtof(int midiNote); 
         void setLFO(int waveform, float freqLFO, float depthLFO);
         void setEnv(float attack, float decay, float sustain, float release);
 
@@ -34,7 +34,7 @@ class Synth {
         float amplitude;
         float sample;
         bool activeLFO = false; //defaults to false so LFO is only active when set
-        bool activeEnv = false;
+        bool activeEnv = false; ///defaults to false so Env is only active when set
         Oscillator* LFO;
         Oscillator* LFOwave[3] = {new Sine, new Square, new Sawtooth};
         Envelope env = Envelope();

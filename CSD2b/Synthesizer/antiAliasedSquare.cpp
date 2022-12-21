@@ -16,21 +16,21 @@ void AntiAliasedSquare::createPartials()
 
 AntiAliasedSquare::AntiAliasedSquare() : AntiAliasedOsc()
 {
-    std::cout << " Anti Aliased Square constructor" << std::endl;
+    // std::cout << " Anti Aliased Square constructor" << std::endl;
     createPartials();
 }
 
 AntiAliasedSquare::AntiAliasedSquare(float frequency, float amplitude) 
 : AntiAliasedOsc(frequency, amplitude)
 {
-    std::cout << " Anti Aliased Square constructor" << std::endl;
+    // std::cout << " Anti Aliased Square constructor" << std::endl;
     createPartials();
 }
 
 
 AntiAliasedSquare::~AntiAliasedSquare()
 {
-    std::cout << " Anti Aliased Square constructor" << std::endl;
+    // std::cout << " Anti Aliased Square constructor" << std::endl;
 }
 
 void AntiAliasedSquare::calculate()
