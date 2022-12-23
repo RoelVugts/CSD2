@@ -24,7 +24,7 @@ class SuperSynth : public Synth {
         bool antiAliasing;
     
     protected:
-        std::vector<Oscillator*> squares; //Oscillator ptr so user can choose oscillators with or without aliasing
-        std::vector<Oscillator*> saws; //Oscillator ptr so user can choose oscillators with or without aliasing
+        std::vector<Oscillator*> squares;
+        std::vector<Oscillator*> saws; 
         std::vector<float> voiceSamples;
 };

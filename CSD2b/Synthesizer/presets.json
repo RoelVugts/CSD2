@@ -3,22 +3,22 @@
 	{
 		"active" : false,
 		"attack" : 10.0,
-		"decay" : 500.0,
+		"decay" : 200.0,
 		"release" : 20.0,
 		"sustain" : 0.0
 	},
 	"FmSynth" : 
 	{
 		"carrierAmp" : 1.0,
-		"carrierFreq" : 1000.0,
+		"carrierFreq" : 500.0,
 		"modulatorAmp" : 1.0,
-		"modulatorFreq" : 500.0,
+		"modulatorFreq" : 250.0,
 		"waveform" : 0
 	},
 	"LFO" : 
 	{
-		"LFOdepth" : 1.0,
-		"LFOfreq" : 5.0,
+		"LFOdepth" : 0.01,
+		"LFOfreq" : 1.0,
 		"active" : true,
 		"waveform" : 0
 	},

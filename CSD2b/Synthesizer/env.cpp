@@ -68,6 +68,7 @@ void Envelope::trigger()
     } else {
         triggered = true;
         t1 = std::thread(&Envelope::triggerInThread, this); //trigger envelope
+        t1.join();
     }
 
     std::cout << "Env started" << std::endl;

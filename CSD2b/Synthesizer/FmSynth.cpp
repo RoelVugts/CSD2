@@ -46,7 +46,6 @@ void FmSynth::tick()
     
     carrier.tick();
     modulator->tick();
-    std::cout << carrier.getFrequency() << std::endl;
 }
 
 float FmSynth::getSample()

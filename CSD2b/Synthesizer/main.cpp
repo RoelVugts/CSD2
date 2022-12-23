@@ -91,14 +91,16 @@ int main(int argc,char **argv)
   //---------------------------------------------------
   if (defaultPreset) 
   {
-    if (settings["LFO"]["active"].asBool())
+    activeLFO = settings["LFO"]["active"].asBool();
+    activeEnv = settings["Env"]["active"].asBool();
+    if (activeLFO)
     {
       LFOwaveform = settings["LFO"]["waveform"].asInt();
       LFOfreq = settings["LFO"]["LFOfreq"].asFloat();
       LFOdepth = settings["LFO"]["LFOdepth"].asFloat();
       std::cout << "Set LFO freq: " << LFOfreq << std::endl;
     }
-    if (settings["Env"]["active"].asBool()) 
+    if (activeEnv)
     {
       attack = settings["Env"]["attack"].asFloat();
       decay = settings["Env"]["decay"].asFloat();
@@ -126,7 +128,7 @@ int main(int argc,char **argv)
   }
   
   if (!defaultPreset) {
-    activeLFO = askQuestion("Would you like some LFO on your pitch? (y/n)");
+    activeLFO = askQuestion("Would you like some LFO on your pitch or FM depth? (y/n)");
 
     if (activeLFO) {
       LFOwaveform = askQuestion("What should be the waveform of the LFO?", {"Sine", "Square", "Saw"}, false, 15);

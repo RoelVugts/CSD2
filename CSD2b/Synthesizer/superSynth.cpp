@@ -27,13 +27,14 @@ SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detu
     for(int i = 0; i < numVoices; i++) 
     {   
         detuneValue = (1.0f - detuneDepth*int((numVoices/2)) + detuneDepth * i); //calculate detune value per voice
-        if (!antiAliasing) {
-            squares.push_back(new Square((frequency/2)*detuneValue, amplitude));
-            saws.push_back(new Sawtooth(frequency*detuneValue, amplitude));
-        } else {
+        if (antiAliasing) {
             squares.push_back(new AntiAliasedSquare((frequency/2)*detuneValue, amplitude));
             saws.push_back(new AntiAliasedSaw(frequency*detuneValue, amplitude));
+        } else {
+            squares.push_back(new Square((frequency/2)*detuneValue, amplitude));
+            saws.push_back(new Sawtooth(frequency*detuneValue, amplitude));
         }
+
         voiceSamples.push_back(0);
         voiceSamples.push_back(0); //create numVoices * 2 amount of empty sample elements
     }

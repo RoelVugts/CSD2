@@ -74,12 +74,7 @@ void Melody::addNote(int numNotes, int startNote) //random melody generation bas
         } else {
             pitch += newNote;
         }
-
-        // std::cout << "Note: " << pitch << std::endl;
-        // std::cout << "newNote: " << newNote << std::endl;
-        // std::cout << "random: " << randomNum << std::endl;
-        // std::cout << "randomNeg: " << randomNeg << std::endl;
-        // std::cout << "\n" << std::endl;
+        
         notes.push_back(aMinor[pitch]);
     }
 }
