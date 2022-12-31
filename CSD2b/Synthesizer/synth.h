@@ -4,9 +4,6 @@
 #include "sine.h"
 #include "square.h"
 #include "sawtooth.h"
-#include "antiAliasedOsc.h"
-#include "antiAliasedSquare.h"
-#include "antiAliasedSaw.h"
 #include "env.h"
 
 //This header file contains the base class of the synthesizer

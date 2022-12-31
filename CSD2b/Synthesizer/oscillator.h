@@ -14,18 +14,20 @@ class Oscillator {
         virtual void setFrequency(float frequency); //virtual because we override function in AntiAliasedOsc
         float getFrequency();
         virtual void setAmplitude(float amplitude);
+        float getAmplitude();
         float getSample();
         float getSampleRate();
         void setSamplerate(float samplerate);
 
         virtual void tick();
+        float polyBLEP(float t);
 
         float frequency; //public becauase we need to acces this in superSynth
         float amplitude; //public becauase we need to acces this in superSynth
 
     protected:
         float samplerate;
-
+        float phaseDelta;
         float phase;
         float sample;
         double pi = acos(-1); //create a constant for pi

@@ -11,8 +11,8 @@ SuperSynth::SuperSynth() : Synth(400, 1.0)
 
 
 
-SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage, bool antiAliasing) 
-: Synth(frequency, amplitude), numVoices(numVoices), detunePercentage(detunePercentage), antiAliasing(antiAliasing)
+SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage) 
+: Synth(frequency, amplitude), numVoices(numVoices), detunePercentage(detunePercentage)
 {
     // std::cout << "Supersynth constructor" << std::endl;
 
@@ -22,26 +22,20 @@ SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detu
         detuneDepth = 0.0f; //if there is only 1 voice than there can't be detune so depth = 0
     }
 
-    float detuneValue;
-
     for(int i = 0; i < numVoices; i++) 
     {   
-        detuneValue = (1.0f - detuneDepth*int((numVoices/2)) + detuneDepth * i); //calculate detune value per voice
-        if (antiAliasing) {
-            squares.push_back(new AntiAliasedSquare((frequency/2)*detuneValue, amplitude));
-            saws.push_back(new AntiAliasedSaw(frequency*detuneValue, amplitude));
-        } else {
-            squares.push_back(new Square((frequency/2)*detuneValue, amplitude));
-            saws.push_back(new Sawtooth(frequency*detuneValue, amplitude));
-        }
+        detuneValue[i] = (1.0f - detuneDepth*int((numVoices/2)) + detuneDepth * i); //calculate detune value per voice
+        squares.push_back(new Square((frequency/2)*detuneValue[i], amplitude));
+        saws.push_back(new Sawtooth(frequency*detuneValue[i], amplitude));
+        
 
         voiceSamples.push_back(0);
         voiceSamples.push_back(0); //create numVoices * 2 amount of empty sample elements
     }
 }
 
-SuperSynth::SuperSynth(int note, float amplitude, int numVoices, int detunePercentage, bool antiAliasing) 
-: SuperSynth(mtof(note), amplitude, numVoices, detunePercentage, antiAliasing)
+SuperSynth::SuperSynth(int note, float amplitude, int numVoices, int detunePercentage) 
+: SuperSynth(mtof(note), amplitude, numVoices, detunePercentage)
 {
 
 }
@@ -56,8 +50,8 @@ void SuperSynth::tick()
     for(int i = 0; i < numVoices; i++) 
     {
         if (activeLFO) {
-            squares[i]->setFrequency(frequency*(LFO->getSample()+1)); //Modulate pitch with LFO
-            saws[i]->setFrequency(frequency*(LFO->getSample()+1)); //Modulate pitch with LFO
+            squares[i]->setFrequency(frequency*(LFO->getSample()+1)*detuneValue[i]); //Modulate pitch with LFO
+            saws[i]->setFrequency(frequency*(LFO->getSample()+1)*detuneValue[i]); //Modulate pitch with LFO
             LFO->tick();
         }
         if (activeEnv) {
@@ -67,7 +61,9 @@ void SuperSynth::tick()
 
         squares[i]->tick(); //Move phase of oscillators 1 step further
         saws[i]->tick(); //Move phase of oscillators 1 step further
+
     }
+
 }
 
 float SuperSynth::getSample()

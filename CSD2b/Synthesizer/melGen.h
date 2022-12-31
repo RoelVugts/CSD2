@@ -4,7 +4,6 @@
 
 #include "timer.h"
 #include "sine.h"
-#include "antiAliasedSaw.h"
 #include "sawtooth.h"
 #include "oscillator.h"
 #include "synth.h"

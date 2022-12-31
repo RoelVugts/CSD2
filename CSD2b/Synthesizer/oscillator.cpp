@@ -13,6 +13,7 @@ Oscillator::Oscillator(float frequency, float amplitude) : frequency(frequency),
     phase = 0.0f;
     sample = 0.0f;
     samplerate = 48000; //default samplerate
+    phaseDelta = frequency / samplerate;
 }
 
 Oscillator::~Oscillator()
@@ -34,6 +35,11 @@ void Oscillator::setFrequency(float frequency)
 float Oscillator::getFrequency()
 {
     return frequency;
+}
+
+float Oscillator::getAmplitude()
+{
+    return amplitude;
 }
 
 float Oscillator::getSampleRate()
@@ -59,4 +65,22 @@ void Oscillator::tick()
         phase -= 1.0f;
     }
     calculate(); //call calculate() from subclass
+}
+
+//Anti-aliasing method that smoothes steep edges in the waveform
+float Oscillator::polyBLEP(float t)
+{
+    float dt = phaseDelta;
+    if (t < dt) 
+    {
+        t /= dt;
+        return t+t - t*t - 1.0;
+    }
+    else if (t > 1.0 - dt) 
+    {
+        t = (t - 1.0) / dt;
+        return t*t + t+t + 1.0;
+    }
+    else return 0.0;
+
 }

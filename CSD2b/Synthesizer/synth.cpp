@@ -36,6 +36,8 @@ void Synth::setPitch(int note)
 {
     this->frequency = mtof(note);
     calculatePitch();
+    
+    //trigger envelope when new note is received
     if (activeEnv) 
     {
         env.trigger();

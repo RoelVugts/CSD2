@@ -29,4 +29,7 @@ void Square::calculate()
     } else {
         sample = amplitude*-1.0f;
     }
+    //anti-alias the waveform
+    sample += polyBLEP(phase);
+    sample -= polyBLEP(fmod(phase + 0.5, 1.0));
 }

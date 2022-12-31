@@ -3,9 +3,9 @@
 	{
 		"active" : false,
 		"attack" : 10.0,
-		"decay" : 200.0,
+		"decay" : 500.0,
 		"release" : 20.0,
-		"sustain" : 0.0
+		"sustain" : 0.80000001192092896
 	},
 	"FmSynth" : 
 	{
@@ -17,16 +17,16 @@
 	},
 	"LFO" : 
 	{
-		"LFOdepth" : 0.01,
+		"LFOdepth" : 1.0,
 		"LFOfreq" : 1.0,
-		"active" : true,
+		"active" : false,
 		"waveform" : 0
 	},
 	"SuperSynth" : 
 	{
 		"amplitude" : 1.0,
-		"detunePercentage" : 100,
-		"note" : 69,
-		"numVoices" : 6
+		"detunePercentage" : 0,
+		"note" : 96,
+		"numVoices" : 1
 	}
 }

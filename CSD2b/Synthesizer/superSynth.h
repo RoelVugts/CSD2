@@ -5,14 +5,12 @@
 #include "oscillator.h"
 #include "square.h"
 #include "sawtooth.h"
-#include "antiAliasedSquare.h"
-#include "antiAliasedSaw.h"
 
 class SuperSynth : public Synth {
     public:
         SuperSynth();
-        SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage, bool antiAliasing);
-        SuperSynth(int note, float amplitude, int numVoices, int detunePercentage, bool antiAliasing);
+        SuperSynth(float frequency, float amplitude, int numVoices, int detunePercentage);
+        SuperSynth(int note, float amplitude, int numVoices, int detunePercentage);
         ~SuperSynth();
 
         void tick();
@@ -22,6 +20,7 @@ class SuperSynth : public Synth {
         int detunePercentage;
         float detuneDepth;
         bool antiAliasing;
+        float detuneValue[6]; //array for storing detuneValue per voice
     
     protected:
         std::vector<Oscillator*> squares;

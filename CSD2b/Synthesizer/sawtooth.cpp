@@ -19,4 +19,5 @@ Sawtooth::~Sawtooth()
 void Sawtooth::calculate()
 {
     sample = amplitude*2 * phase - amplitude;
+    sample -= polyBLEP(phase);
 }

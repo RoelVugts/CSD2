@@ -4,7 +4,6 @@
 
 NAME = main #enter name here
 
-
 CXX := g++
 CXXFLAGS := -Wall -g -std=c++14
 TARGET := Test
@@ -16,7 +15,7 @@ OBJS := $(patsubst %.cpp,%.o,$(SRCS))
 
 all: $(TARGET)
 $(TARGET): $(OBJS)
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ $(LDFLAGS)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 clean:

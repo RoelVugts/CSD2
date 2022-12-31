@@ -3,8 +3,7 @@
 #include <iostream>
 #include <ctime>
 #include <cmath>
-
-using namespace std;
+#include <chrono>
 
 class Timer {
     public:
@@ -13,10 +12,10 @@ class Timer {
 
     void start();
     void stop();
-    double getTime();
+    float getTime();
 
     private:
-        double startTime;
-        double timer;
+        float startTime;
+        float timer;
         bool started{false};
 };

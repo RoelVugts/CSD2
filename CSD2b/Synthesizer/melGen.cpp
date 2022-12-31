@@ -83,7 +83,7 @@ float Melody::getNote(int readPointer)
 {   
     if (notes[readPointer] == -1)
     {
-        cout << "Note is empty" << endl;
+        std::cout << "Note is empty" << std::endl;
         return -1;
     } else {
         return notes[readPointer];
@@ -108,7 +108,6 @@ void Melody::playInThread(int BPM, Synth* target) { //function that actually pla
         while (playing) {
             timer.start();
             modTimer = int(timer.getTime()) % int(tempoMS);
-
             if (modTimer > 0 && modTimer < 50 && onebang) //check if it is in a range because it skipped a note sometimes
             {
                 onebang = false; //close gate so notes can't fire rapidly after each other

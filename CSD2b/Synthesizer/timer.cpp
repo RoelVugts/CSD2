@@ -1,6 +1,7 @@
 #include "timer.h"
 
 #include <iostream>
+#include <chrono>
 
 Timer::Timer()
 {
@@ -9,7 +10,7 @@ Timer::Timer()
 
 Timer::~Timer()
 {
-    cout << "Timer terminated" << endl;
+    std::cout << "Timer terminated" << std::endl;
 }
 
 
@@ -25,7 +26,7 @@ void Timer::start()
     }
 }
 
-double Timer::getTime()
+float Timer::getTime()
 {
     return timer;
 }

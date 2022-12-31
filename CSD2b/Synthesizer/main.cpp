@@ -116,7 +116,7 @@ int main(int argc,char **argv)
     if (synthChoice == 0) { //if user selects the FmSynth
       carrierFreq = askQuestion("What should be the frequency for the carrier? (20 - 20.000 HZ)", 20, 20000);
       carrierAmp = askQuestion("What should be the amplitude of the carrier? (0.0 - 1.0)", 0.0, 1.0);
-      modulatorFreq = askQuestion("What should be the frequency for the modulator? (1 - 20.000 HZ)", 1, 20000);
+      modulatorFreq = askQuestion("What should be the ratio for the modulator? (0.01 - 10)", 0.01, 10);
       modulatorAmp = askQuestion("What should be the amplitude of the modulator? (0.0 - 1.0)", 0.0, 1.0);\
       waveform = askQuestion("What should be the waveform of the modulator?", {"Sine", "Square", "Saw"}, false, 15);
     } else if (synthChoice == 1) { //if user selects the superSynth
@@ -148,7 +148,7 @@ int main(int argc,char **argv)
   //---------------------------------------------------------
 
   //possible synth options
-  Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorFreq, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage, false)};
+  Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorFreq, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage)};
   Synth* chosenSynth = synths[synthChoice]; //create the synth
   
   if (activeLFO) 
