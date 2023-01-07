@@ -18,7 +18,7 @@ void CustomCallback::prepare(int rate) {
 void CustomCallback::process(AudioBuffer buffer) {
   for (int i = 0; i < buffer.numFrames; ++i) {
     // write sample to buffer at channel 0, amp = 0.25
-    buffer.outputChannels[0][i] = synth->getSample();
+    buffer.outputChannels[0][i] = synth->getSynthSample();
     // buffer.outputChannels[1][i] = synth->getSample();
     synth->tick();
   }

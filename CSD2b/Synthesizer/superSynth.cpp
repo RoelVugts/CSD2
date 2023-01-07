@@ -76,6 +76,8 @@ float SuperSynth::getSample()
     sample = std::accumulate(voiceSamples.begin(), voiceSamples.end(), 0.0f); //add all sample values
     sample /= numVoices*2; //divide so the amplitude won't clip
     return sample;
+
+
 }
 
 void SuperSynth::calculatePitch()

@@ -57,6 +57,11 @@ int main(int argc,char **argv)
   float sustain = 0.8;
   float release= 20;
 
+  //Filter settings
+  bool activeFilter = false;
+  int filterMode = 0; //default to lowpass
+  float cutoff = 20000;
+
   int synthChoice = askQuestion("What synth you want to play?", {"FmSynth", "SuperSynth"}, false, 15);
   bool defaultPreset = askQuestion("Would you like to load the default preset?");
 
@@ -93,12 +98,13 @@ int main(int argc,char **argv)
   {
     activeLFO = settings["LFO"]["active"].asBool();
     activeEnv = settings["Env"]["active"].asBool();
+    activeFilter = settings["Filter"]["active"].asBool();
+    
     if (activeLFO)
     {
       LFOwaveform = settings["LFO"]["waveform"].asInt();
       LFOfreq = settings["LFO"]["LFOfreq"].asFloat();
       LFOdepth = settings["LFO"]["LFOdepth"].asFloat();
-      std::cout << "Set LFO freq: " << LFOfreq << std::endl;
     }
     if (activeEnv)
     {
@@ -106,6 +112,11 @@ int main(int argc,char **argv)
       decay = settings["Env"]["decay"].asFloat();
       sustain = settings["Env"]["sustain"].asFloat();
       release = settings["Env"]["release"].asFloat();
+    }
+    if (activeFilter)
+    {
+      filterMode = settings["Filter"]["mode"].asInt();
+      cutoff = settings["Filter"]["cutoff"].asFloat();
     }
   }
   //---------------------------------------------------------
@@ -144,7 +155,15 @@ int main(int argc,char **argv)
       sustain = askQuestion("What should be the sustain level? (0.0 - 1.0)", 0.0, 1.0);
       release = askQuestion("What should be the release time? (1- 10.000 ms)", 1, 10000);
     }
+
+    activeFilter = askQuestion("Would you like to filter your synth? (y/n)");
+
+    if (activeFilter) {
+      filterMode = askQuestion("What should be the filter type?", {"Lowpass", "Highpass"}, false, 100);
+      cutoff = askQuestion("What should be the cutoff? (0 - 24000 HZ)", 0, 24000);
+    }
   }
+
   //---------------------------------------------------------
 
   //possible synth options
@@ -158,6 +177,10 @@ int main(int argc,char **argv)
   if (activeEnv) 
   {
   chosenSynth->setEnv(attack, decay, sustain, release);
+  }
+  if (activeFilter)
+  {
+    chosenSynth->setFilter(filterMode, cutoff);
   }
 
   //Ask user if melody needs to be played
@@ -224,6 +247,10 @@ int main(int argc,char **argv)
   settings["Env"]["decay"] = decay;
   settings["Env"]["sustain"] = sustain;
   settings["Env"]["release"] = release;
+
+  settings["Filter"]["active"] = activeFilter;
+  settings["Filter"]["mode"] = filterMode;
+  settings["Filter"]["cutoff"] = cutoff;
 
 
   if (askQuestion("Save current settings as default preset?")) {

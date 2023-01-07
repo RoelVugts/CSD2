@@ -68,3 +68,31 @@ float Synth::getAmplitude()
 {
     return amplitude;
 }
+
+void Synth::setFilter(int filterMode, float cutoff)
+{
+    this->filterMode = filterMode;
+    filter.setCutoff(cutoff);
+    activeFilter = true;
+    std::cout << "Cutoff: " << cutoff << std::endl;
+}
+
+
+float Synth::getSynthSample()
+{
+    if (activeFilter)
+    {
+        switch(filterMode) {
+            case 0:
+            return filter.lowpass(getSample());
+            break;
+            case 1:
+            return filter.highpass(getSample());
+            break;
+        }
+    } else 
+    {
+        return getSample();
+    }
+
+}

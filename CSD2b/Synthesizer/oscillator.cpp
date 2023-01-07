@@ -68,18 +68,20 @@ void Oscillator::tick()
 }
 
 //Anti-aliasing method that smoothes steep edges in the waveform
+//https://www.martin-finke.de/articles/audio-plugins-018-polyblep-oscillator/
 float Oscillator::polyBLEP(float t)
 {
     float dt = phaseDelta;
-    if (t < dt) 
+    
+    if (t < dt) //if phase is at begin
     {
-        t /= dt;
-        return t+t - t*t - 1.0;
+        t /= dt; //scale t
+        return t+t - t*t - 1.0; //2x - x^2 - 1.0 <-- return polynomial
     }
-    else if (t > 1.0 - dt) 
+    else if (t > 1.0 - dt) //if phase is at end
     {
-        t = (t - 1.0) / dt;
-        return t*t + t+t + 1.0;
+        t = (t - 1.0) / dt; //scale t
+        return t*t + t+t + 1.0; //x^2 + 2x + 1.0 <-- return polynomial
     }
     else return 0.0;
 
