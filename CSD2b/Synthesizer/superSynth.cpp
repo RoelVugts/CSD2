@@ -25,8 +25,8 @@ SuperSynth::SuperSynth(float frequency, float amplitude, int numVoices, int detu
     for(int i = 0; i < numVoices; i++) 
     {   
         detuneValue[i] = (1.0f - detuneDepth*int((numVoices/2)) + detuneDepth * i); //calculate detune value per voice
-        squares.push_back(new Square((frequency/2)*detuneValue[i], amplitude));
-        saws.push_back(new Sawtooth(frequency*detuneValue[i], amplitude));
+        squares.push_back(Square((frequency/2)*detuneValue[i], amplitude));
+        saws.push_back(Sawtooth(frequency*detuneValue[i], amplitude));
         
 
         voiceSamples.push_back(0);
@@ -50,17 +50,17 @@ void SuperSynth::tick()
     for(int i = 0; i < numVoices; i++) 
     {
         if (activeLFO) {
-            squares[i]->setFrequency(frequency*(LFO->getSample()+1)*detuneValue[i]); //Modulate pitch with LFO
-            saws[i]->setFrequency(frequency*(LFO->getSample()+1)*detuneValue[i]); //Modulate pitch with LFO
+            squares[i].setFrequency(frequency*(LFO->getSample()+1)*detuneValue[i]); //Modulate pitch with LFO
+            saws[i].setFrequency(frequency*(LFO->getSample()+1)*detuneValue[i]); //Modulate pitch with LFO
             LFO->tick();
         }
         if (activeEnv) {
-            squares[i]->setAmplitude(amplitude*env.getLevel()); //Modulate amp with Env
-            saws[i]->setAmplitude(amplitude*env.getLevel()); //Modulate amp with Env
+            squares[i].setAmplitude(amplitude*env.getLevel()); //Modulate amp with Env
+            saws[i].setAmplitude(amplitude*env.getLevel()); //Modulate amp with Env
         }
 
-        squares[i]->tick(); //Move phase of oscillators 1 step further
-        saws[i]->tick(); //Move phase of oscillators 1 step further
+        squares[i].tick(); //Move phase of oscillators 1 step further
+        saws[i].tick(); //Move phase of oscillators 1 step further
 
     }
 
@@ -70,8 +70,8 @@ float SuperSynth::getSample()
 {
     for(int i = 0; i < numVoices; i++)
     {
-        voiceSamples[i] = squares[i]->getSample();
-        voiceSamples[i+numVoices] = saws[i]->getSample(); //push sample values in seperate vector
+        voiceSamples[i] = squares[i].getSample();
+        voiceSamples[i+numVoices] = saws[i].getSample(); //push sample values in seperate vector
     }
     sample = std::accumulate(voiceSamples.begin(), voiceSamples.end(), 0.0f); //add all sample values
     sample /= numVoices*2; //divide so the amplitude won't clip
@@ -80,14 +80,14 @@ float SuperSynth::getSample()
 
 }
 
-void SuperSynth::calculatePitch()
+void SuperSynth::calculatePitch() //function that recalculates frequency for each voice when pitch is changed
 {
     float detuneValue;
     for(int i = 0; i < numVoices; i++)
     {
         detuneValue = (1.0f - detuneDepth*int((numVoices/2)) + detuneDepth * i);
-        squares[i]->setFrequency(frequency*detuneValue);
-        saws[i]->setFrequency(frequency*detuneValue);
+        squares[i].setFrequency(frequency*detuneValue);
+        saws[i].setFrequency(frequency*detuneValue);
  
     }
     

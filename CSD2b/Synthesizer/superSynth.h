@@ -19,11 +19,10 @@ class SuperSynth : public Synth {
         int numVoices;
         int detunePercentage;
         float detuneDepth;
-        bool antiAliasing;
         float detuneValue[6]; //array for storing detuneValue per voice
     
     protected:
-        std::vector<Oscillator*> squares;
-        std::vector<Oscillator*> saws; 
+        std::vector<Square> squares;
+        std::vector<Sawtooth> saws; 
         std::vector<float> voiceSamples;
 };

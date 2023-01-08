@@ -10,15 +10,15 @@
 	"Filter" : 
 	{
 		"active" : true,
-		"cutoff" : 5000.0,
-		"mode" : 2
+		"cutoff" : 500.0,
+		"mode" : 0
 	},
 	"FmSynth" : 
 	{
 		"carrierAmp" : 1.0,
-		"carrierFreq" : 500.0,
-		"modulatorAmp" : 1.0,
-		"modulatorFreq" : 250.0,
+		"carrierFreq" : 250.0,
+		"modulatorAmp" : 5.0,
+		"modulatorRatio" : 3.0,
 		"waveform" : 0
 	},
 	"LFO" : 
@@ -31,8 +31,8 @@
 	"SuperSynth" : 
 	{
 		"amplitude" : 1.0,
-		"detunePercentage" : 20,
+		"detunePercentage" : 25,
 		"note" : 69,
-		"numVoices" : 3
+		"numVoices" : 4
 	}
 }

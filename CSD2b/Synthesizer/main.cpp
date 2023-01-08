@@ -34,7 +34,7 @@ int main(int argc,char **argv)
   //FmSynth properties default values
   float carrierFreq = 500;
   float carrierAmp = 1.0;
-  float modulatorFreq = 250;
+  float modulatorRatio = 250;
   float modulatorAmp = 1.0;
   int waveform = 0;
 
@@ -78,7 +78,7 @@ int main(int argc,char **argv)
   {
     carrierFreq = settings["FmSynth"]["carrierFreq"].asFloat();
     carrierAmp = settings["FmSynth"]["carrierAmp"].asFloat();
-    modulatorFreq = settings["FmSynth"]["modulatorFreq"].asFloat();
+    modulatorRatio = settings["FmSynth"]["modulatorRatio"].asFloat();
     modulatorAmp = settings["FmSynth"]["modulatorAmp"].asFloat();
     waveform = settings["FmSynth"]["waveform"].asInt();
   }
@@ -127,7 +127,7 @@ int main(int argc,char **argv)
     if (synthChoice == 0) { //if user selects the FmSynth
       carrierFreq = askQuestion("What should be the frequency for the carrier? (20 - 20.000 HZ)", 20, 20000);
       carrierAmp = askQuestion("What should be the amplitude of the carrier? (0.0 - 1.0)", 0.0, 1.0);
-      modulatorFreq = askQuestion("What should be the ratio for the modulator? (0.01 - 10)", 0.01, 10);
+      modulatorRatio = askQuestion("What should be the ratio for the modulator? (0.01 - 10)", 0.01, 10);
       modulatorAmp = askQuestion("What should be the amplitude of the modulator? (0.0 - 1.0)", 0.0, 1.0);\
       waveform = askQuestion("What should be the waveform of the modulator?", {"Sine", "Square", "Saw"}, false, 15);
     } else if (synthChoice == 1) { //if user selects the superSynth
@@ -136,9 +136,7 @@ int main(int argc,char **argv)
         numVoices = askQuestion("How many voices do you want? (1 - 6)", 1, 6);
         detunePercentage = askQuestion("How much detune do you want? (0 - 100%)", 0, 100);
     }
-  }
-  
-  if (!defaultPreset) {
+
     activeLFO = askQuestion("Would you like some LFO on your pitch or FM depth? (y/n)");
 
     if (activeLFO) {
@@ -167,9 +165,10 @@ int main(int argc,char **argv)
   //---------------------------------------------------------
 
   //possible synth options
-  Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorFreq, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage)};
+  Synth* synths[2]= {new FmSynth(carrierFreq, carrierAmp, waveform, modulatorRatio, modulatorAmp), new SuperSynth(note, amplitude, numVoices, detunePercentage)};
   Synth* chosenSynth = synths[synthChoice]; //create the synth
   
+  //set LFO, Env and filter settings
   if (activeLFO) 
   {
   chosenSynth->setLFO(LFOwaveform, LFOfreq, LFOdepth);
@@ -228,7 +227,7 @@ int main(int argc,char **argv)
   //Store current settings in JSON object
   settings["FmSynth"]["carrierFreq"] = carrierFreq;
   settings["FmSynth"]["carrierAmp"] = carrierAmp;
-  settings["FmSynth"]["modulatorFreq"] = modulatorFreq;
+  settings["FmSynth"]["modulatorRatio"] = modulatorRatio;
   settings["FmSynth"]["modulatorAmp"] = modulatorAmp;
   settings["FmSynth"]["waveform"] = waveform;
   

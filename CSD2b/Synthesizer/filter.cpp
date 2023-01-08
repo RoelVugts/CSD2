@@ -18,5 +18,5 @@ float Filter::highpass(float inputValue) {
 
 void Filter::setCutoff(float cutoff)
 {
-    this->cutoff = sin(cutoff*(M_PI/24000/2)); //a_{0} = sin(f_c * (pi/nyquist)) https://docs.cycling74.com/max7/refpages/onepole~
+    this->cutoff = sin(cutoff*(M_PI/48000)); //calculate cutoff -> https://docs.cycling74.com/max7/refpages/onepole~
 }
