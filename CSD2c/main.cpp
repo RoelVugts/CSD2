@@ -4,8 +4,6 @@
 #include <cmath>
 #include <unistd.h>
 
-#include <thread>
-
 int main()
 {
     CircBuffer buffer(16);
@@ -53,7 +51,7 @@ int main()
 
         if (i == 50)
         {
-            std::cout << "newSize" << std::endl;
+            std::cout << "set new size\n" << std::endl;
             buffer.setSize(15);
         }
     }
