@@ -20,12 +20,21 @@ float CircBuffer::output()
 
 void CircBuffer::setDistance (uint distance) 
 {   
-    if (readHead > distance)
+    this->distance = distance;
+
+    if (!delayStarted)
+        readHead = 0;
+    else 
     {
-        readHead = currentSize - distance;
-    } else
-    {
-        readHead = currentSize - distance + readHead; //wrap readHead to end if it's in front of writeHead
+        if (writeHead > distance)
+        {
+        readHead = writeHead - distance;
+        } 
+        else
+        {
+        readHead = currentSize - distance + writeHead; //wrap readHead to end if it's in front of writeHead
+        // std::cout << "Readhead after distance: " << readHead << std::endl;
+        }
     }
 }
 
@@ -38,9 +47,12 @@ void CircBuffer::goToDistance(uint distance, int time)
         std::this_thread::sleep_for(std::chrono::milliseconds(time));
 
         if (delta > 0)
+        {
             readHead -= 1;
+            wrapReadHeader(readHead);
+        }
         else
-            readHead += 1;
+            incrementRead();
     }
 }
 
@@ -78,25 +90,42 @@ int CircBuffer::getWritePosition() const
     return writeHead;
 }
 
-inline void CircBuffer::wrapHeader (uint& head) 
+inline void CircBuffer::wrapReadHeader (uint& head) 
+{
+    if (head <= writeHead) 
+        oldSize = currentSize; //if buffer is resized when readHead is > writeHead then it wraps the readHead based on the old buffer size
+
+    if (head >= oldSize)
+        head -= oldSize;
+
+    // std::cout << "CurrentSize: " << currentSize << std::endl;
+    // std::cout << "OldSize: " << oldSize << std::endl;
+    // std::cout << "ReadHead: " << readHead << std::endl;
+}
+
+inline void CircBuffer::wrapWriteHeader(uint& head)
 {
     if (head >= currentSize)
         head -= currentSize;
     else if (head < 0)
-    {
         head = currentSize + head;
-    }
 }
 
 inline void CircBuffer::incrementWrite() 
 {
     writeHead++;
-    wrapHeader(writeHead);
+    wrapWriteHeader(writeHead);
+
+    if (writeHead > distance)
+        delayStarted = true; //start reading after distance (delay) had been reached
 }
 inline void CircBuffer::incrementRead() 
 {
-    readHead++;
-    wrapHeader(readHead);
+    if (delayStarted)
+    {
+        readHead++;
+        wrapReadHeader(readHead);
+    }
 }
 
 void CircBuffer::deleteBuffer() 
@@ -106,15 +135,26 @@ void CircBuffer::deleteBuffer()
 
 void CircBuffer::setSize(uint size)
 {
+
+    if (size == currentSize)
+        return; //exit function
+    
     float* newBuffer = new float[size];
-    std::copy(buffer, buffer+currentSize, newBuffer);
+    
+    if (size > currentSize)
+    {
+        std::copy(buffer, buffer+currentSize, newBuffer);
+    } 
+    else 
+    {
+        std::copy(buffer, buffer+size, newBuffer);
+    }
 
     deleteBuffer();
 
     buffer = newBuffer;
 
-    if (writeHead < readHead)
-        readHead += (size - currentSize); //reset the distance when buffer is resized
-
     currentSize = size;
+    
+    //TODO: Also check what to do when the new size is smaller than the distance --> change distance to new size-1 and then wait until write and read pointer are in the new small buffer and then resize
 }

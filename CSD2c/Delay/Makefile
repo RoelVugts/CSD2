@@ -1,7 +1,7 @@
 CXX= g++
 CXXFLAGS = -I/usr/local/include -Wall -g -std=c++17
 LDFLAGS= -ljack -ljsoncpp
-SOURCE=main.o EmptyCircBuffer.o
+SOURCE=main.o EmptyCircBuffer.o sawtooth.o oscillator.o
 TARGET=CircularBuffer
 
 $(TARGET) : $(SOURCE)
