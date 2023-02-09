@@ -20,32 +20,38 @@ float CircBuffer::output()
 
 void CircBuffer::setDistance (uint distance) 
 {   
-    this->distance = distance;
+    if (distance < currentSize) //if the new distance is greater than the buffer size
+        this->distance = distance;
+    else
+        this->distance = currentSize - 1;
+
 
     if (!delayStarted)
         readHead = 0;
     else 
     {
-        if (writeHead > distance)
+        if (writeHead > this->distance) //if true then the writehead is in front of the readhead in the buffer
         {
-        readHead = writeHead - distance;
+        readHead = writeHead - this->distance;
         } 
         else
         {
-        readHead = currentSize - distance + writeHead; //wrap readHead to end if it's in front of writeHead
-        // std::cout << "Readhead after distance: " << readHead << std::endl;
+        readHead = currentSize - this->distance + writeHead; //wrap readHead to end if it's in front of writeHead
+        
         }
     }
+    // std::cout << "Distance: " << this->distance << std::endl;
+    // std::cout << "readHead: " << getReadPosition() << std::endl;
+    // std::cout << "writeHead: " << getWritePosition() << std::endl;
 }
 
 void CircBuffer::goToDistance(uint distance, int time)
 {
     int delta = distance - calculateDistance(); //calculate difference between new distance and old distance
-
+    std::cout << "changing delay time" << std::endl;
     for (int i = 0; i < abs(delta); i++)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(time));
-
         if (delta > 0)
         {
             readHead -= 1;
@@ -59,6 +65,8 @@ void CircBuffer::goToDistance(uint distance, int time)
 void CircBuffer::setDistance(uint distance, int time)
 {
     t = std::thread(&CircBuffer::goToDistance, this, distance, time);
+    t.join();
+    std::cout << "Reached new delay time" << std::endl;
 }
 
 int CircBuffer::calculateDistance()

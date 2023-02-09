@@ -11,9 +11,10 @@ public:
     Delay() {}
     ~Delay() {}
     void prepareToPlay (int sampleRate) override {
-        circBuf.setSize(sampleRate*2);
-        circBuf.setDistance(sampleRate);
         this->sampleRate = sampleRate;
+        circBuf.setSize(sampleRate*2);
+        circBuf.setDistance(msToSamps(1000));
+
     }
 
     float input (float input) override {
@@ -33,11 +34,29 @@ public:
 
     void setDelayTime(int ms)
     {
+        circBuf.setDistance(msToSamps(ms));
+    }
 
+    void setMaxDelay(int maxDelay)
+    {
+        circBuf.setSize(msToSamps(maxDelay));
+    }
+
+    int getDelayTime()
+    {
+        return circBuf.calculateDistance();
     }
 
 
-private:
     CircBuffer circBuf = CircBuffer(1);
+
+private:
+
+    int msToSamps(int ms)
+    {
+        return (ms/1000.0f) * sampleRate;
+    }
+
+
     int sampleRate;
 };

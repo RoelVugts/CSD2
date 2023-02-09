@@ -50,11 +50,35 @@ int main() {
     jack.init (2, 2);
 
     bool running = true;
+    std::cout << "b = set new buffer size\nd = set new delay time\ns = get current buffer size\nt = get current delay time\nq= exit" << std::endl;
     while (running) {
         switch (std::cin.get()) {
             case 'q':
                 running = false;
                 break;
+            case 'b':
+                int maxDelay;
+                std::cout << "Enter new buffer size (ms): ";
+                std::cin >> maxDelay;
+                for (Delay& delay : callback.delays)
+                    delay.setMaxDelay(maxDelay);
+                std::cout << "Set max delay to: " << maxDelay << " ms" << std::endl;
+                continue;
+            case 's':
+                for (Delay& delay : callback.delays)
+                    std::cout << "Current max delay: " << delay.circBuf.getSize() << std::endl;
+                continue;
+            case 'd':
+                int delayTime;
+                std::cout << "Enter new delay time (ms): ";
+                std::cin >> delayTime;
+                for (Delay& delay : callback.delays)
+                    delay.setDelayTime(delayTime);
+                std::cout << "Set delay time to: " << delayTime << " ms" << std::endl;
+                continue;
+            case 't':
+                for (Delay& delay : callback.delays)
+                    std::cout << "Current delay time: " << delay.getDelayTime() << std::endl;
         }
     }
 

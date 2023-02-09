@@ -26,6 +26,7 @@ public:
     int getReadPosition() const;
     int getWritePosition() const;    
     std::thread t;
+    int calculateDistance();
 
 private:
     inline void wrapReadHeader (uint& head);
@@ -33,13 +34,14 @@ private:
     inline void incrementWrite();
     inline void incrementRead();
     void deleteBuffer();
-    int calculateDistance();
+
 
     float* buffer;
     float smoothOutput;
     bool delayStarted { false };
     int distance; 
     int oldSize;
+
     uint currentSize { 0 };
     uint writeHead { 0 }, readHead { 0 };
 };
