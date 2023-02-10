@@ -9,10 +9,9 @@
 
 class CircBuffer {
     using uint = unsigned int;
-
 public:
-    CircBuffer (uint size) : currentSize (size), buffer (new float[currentSize]) { oldSize = size; }
-    ~CircBuffer() { deleteBuffer(); std::cout << "buffer deleted" << std::endl; }
+    CircBuffer (uint size);
+    ~CircBuffer();
 
     void input (float value);
     float output();
@@ -37,11 +36,13 @@ private:
 
 
     float* buffer;
+    float* newBuffer;
     float smoothOutput;
-    bool delayStarted { false };
+    bool delayStarted { false }, waitingForResize { false };
     int distance; 
     int oldSize;
 
-    uint currentSize { 0 };
+    uint currentSize { 0 }, newSize { 0 };
     uint writeHead { 0 }, readHead { 0 };
+    uint writeMax { 0 }, readMax { 0 }; 
 };

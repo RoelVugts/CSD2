@@ -5,6 +5,22 @@
 #include <thread>
 #include <cmath>
 
+
+
+CircBuffer::CircBuffer(uint size) : currentSize (size), buffer (new float[currentSize]), newBuffer(nullptr)
+{ 
+    oldSize = size;
+    writeMax = size; readMax = size;
+
+}
+
+CircBuffer::~CircBuffer()
+{
+    delete[] buffer; 
+    std::cout << "buffer deleted" << std::endl;
+}
+
+
 void CircBuffer::input (float value) 
 {
     buffer[writeHead] = value;
@@ -101,10 +117,10 @@ int CircBuffer::getWritePosition() const
 inline void CircBuffer::wrapReadHeader (uint& head) 
 {
     if (head <= writeHead) 
-        oldSize = currentSize; //if buffer is resized when readHead is > writeHead then it wraps the readHead based on the old buffer size
+        readMax = currentSize; //if buffer is resized when readHead is > writeHead then it wraps the readHead based on the old buffer size
 
-    if (head >= oldSize)
-        head -= oldSize;
+    if (head >= readMax)
+        head -= readMax;
 
     // std::cout << "CurrentSize: " << currentSize << std::endl;
     // std::cout << "OldSize: " << oldSize << std::endl;
@@ -113,10 +129,8 @@ inline void CircBuffer::wrapReadHeader (uint& head)
 
 inline void CircBuffer::wrapWriteHeader(uint& head)
 {
-    if (head >= currentSize)
-        head -= currentSize;
-    else if (head < 0)
-        head = currentSize + head;
+    if (head >= writeMax)
+        head -= writeMax;
 }
 
 inline void CircBuffer::incrementWrite() 
@@ -134,6 +148,18 @@ inline void CircBuffer::incrementRead()
         readHead++;
         wrapReadHeader(readHead);
     }
+
+    if (waitingForResize)
+    {
+        if (readHead <= writeHead)
+        {
+            delete[] buffer;
+            buffer = newBuffer;
+            waitingForResize = false;
+            currentSize = newSize;
+            readMax = currentSize;
+        }
+    }
 }
 
 void CircBuffer::deleteBuffer() 
@@ -143,26 +169,65 @@ void CircBuffer::deleteBuffer()
 
 void CircBuffer::setSize(uint size)
 {
-
+    //----------------------------------------------------------------
+    //when new size equals old size
     if (size == currentSize)
         return; //exit function
     
-    float* newBuffer = new float[size];
+    //----------------------------------------------------------------
+    //when new size is bigger than old size
+    newBuffer = new float[size];
     
     if (size > currentSize)
     {
         std::copy(buffer, buffer+currentSize, newBuffer);
-    } 
+        delete[] buffer;
+        buffer = newBuffer;
+        currentSize = size;
+        writeMax = size;
+    }
     else 
-    {
         std::copy(buffer, buffer+size, newBuffer);
+
+    //----------------------------------------------------------------
+    //when new size is smaller than new size
+    if (size < currentSize)
+    {
+        if (distance > size)
+        {
+            setDistance(size-1); //decrease delay time when new bufferSize is smaller than the current delay time
+        }
+
+        if (writeHead > size && readHead < size || writeHead > size && readHead > size)
+        {
+            std::cout << "Writehead larger than newbufSize and/or readhead larger" << std::endl;
+            std::copy(buffer, buffer+size, newBuffer);
+            writeMax = writeHead+1;
+            readMax = writeMax;
+            waitingForResize = true;
+            newSize = size;
+        } else if (readHead > size && writeHead < size)
+        {
+            std::cout << "readhead larger than newbufSize and writehead smaller" << std::endl;
+            std::copy(buffer, buffer+size, newBuffer);
+            // delete[] buffer;
+            waitingForResize = true;
+            writeMax = size;
+            
+        } else if (readHead < size && writeHead < size)
+        {
+            std::cout << "readHead and writehead both smaller" << std::endl;
+            std::copy(buffer, buffer+size, newBuffer);
+            writeMax = size;
+            readMax = size;
+            delete[] buffer;
+            buffer = newBuffer;
+            currentSize = size; 
+        }
     }
 
-    deleteBuffer();
 
-    buffer = newBuffer;
 
-    currentSize = size;
     
     //TODO: Also check what to do when the new size is smaller than the distance --> change distance to new size-1 and then wait until write and read pointer are in the new small buffer and then resize
 }
