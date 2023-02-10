@@ -36,7 +36,6 @@ public:
     std::array<Delay, 2> delays;
 
 private:
-    Sawtooth saw = Sawtooth(500, 0.5f);
     
 };
 
@@ -77,8 +76,11 @@ int main() {
                 std::cout << "Set delay time to: " << delayTime << " ms" << std::endl;
                 continue;
             case 't':
-                for (Delay& delay : callback.delays)
-                    std::cout << "Current delay time: " << delay.getDelayTime() << std::endl;
+                    std::cout << "Current delay time: " << callback.delays[1].getDelayTime() << std::endl;
+                    std::cout << "readHead: " << callback.delays[1].circBuf.getReadPosition() << std::endl;
+                    std::cout << "writeHead: " << callback.delays[1].circBuf.getWritePosition() << std::endl;
+                    std::cout << "writeMax: " << callback.delays[1].circBuf.writeMax << std::endl;
+                    std::cout << "readMax: " << callback.delays[1].circBuf.readMax << std::endl;
         }
     }
 

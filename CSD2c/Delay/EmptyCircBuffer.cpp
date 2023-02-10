@@ -117,7 +117,7 @@ int CircBuffer::getWritePosition() const
 inline void CircBuffer::wrapReadHeader (uint& head) 
 {
     if (head <= writeHead) 
-        readMax = currentSize; //if buffer is resized when readHead is > writeHead then it wraps the readHead based on the old buffer size
+        readMax = currentSize; //if buffer is resized (larger than old buf) when readHead is > writeHead then it wraps the readHead based on the old buffer size
 
     if (head >= readMax)
         head -= readMax;
@@ -156,8 +156,9 @@ inline void CircBuffer::incrementRead()
             delete[] buffer;
             buffer = newBuffer;
             waitingForResize = false;
+            readMax = newSize;
+            writeMax = newSize;
             currentSize = newSize;
-            readMax = currentSize;
         }
     }
 }
@@ -186,8 +187,6 @@ void CircBuffer::setSize(uint size)
         currentSize = size;
         writeMax = size;
     }
-    else 
-        std::copy(buffer, buffer+size, newBuffer);
 
     //----------------------------------------------------------------
     //when new size is smaller than new size
@@ -198,23 +197,32 @@ void CircBuffer::setSize(uint size)
             setDistance(size-1); //decrease delay time when new bufferSize is smaller than the current delay time
         }
 
-        if (writeHead > size && readHead < size || writeHead > size && readHead > size)
+        if (writeHead > size && readHead < size)
         {
-            std::cout << "Writehead larger than newbufSize and/or readhead larger" << std::endl;
+            std::cout << "Writehead larger than newbufSize and readHead smaller" << std::endl;
             std::copy(buffer, buffer+size, newBuffer);
-            writeMax = writeHead+1;
+            writeHead = 0;
             readMax = writeMax;
+            writeMax = size;
             waitingForResize = true;
             newSize = size;
         } else if (readHead > size && writeHead < size)
         {
             std::cout << "readhead larger than newbufSize and writehead smaller" << std::endl;
             std::copy(buffer, buffer+size, newBuffer);
-            // delete[] buffer;
             waitingForResize = true;
             writeMax = size;
-            
-        } else if (readHead < size && writeHead < size)
+            newSize = size;
+        } else if (writeHead > size && readHead > size)
+        {
+            std::cout << "writeHead and readhead larger than newBufSize" << std::endl;
+            std::copy(buffer, buffer+size, newBuffer);
+            writeHead = 0;
+            writeMax = size;
+            waitingForResize = true;
+            newSize = size;
+        }
+        else if (readHead < size && writeHead < size)
         {
             std::cout << "readHead and writehead both smaller" << std::endl;
             std::copy(buffer, buffer+size, newBuffer);
@@ -222,7 +230,8 @@ void CircBuffer::setSize(uint size)
             readMax = size;
             delete[] buffer;
             buffer = newBuffer;
-            currentSize = size; 
+            currentSize = size;
+            newSize = size;
         }
     }
 

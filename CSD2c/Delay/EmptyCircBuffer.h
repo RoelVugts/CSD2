@@ -27,7 +27,7 @@ public:
     std::thread t;
     int calculateDistance();
 
-private:
+// private:
     inline void wrapReadHeader (uint& head);
     inline void wrapWriteHeader (uint& head);
     inline void incrementWrite();
