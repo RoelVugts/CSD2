@@ -1,22 +1,25 @@
 
-#include "complexMath.h"
+#include "filterResponse.h"
+
 #include <complex>
 #include <cmath>
 #include <iostream>
+#include <fstream>
+
+#define PI acos(-1)
+
 
 int main() 
 {
-
-    double pi = acos(-1);
+    Filter firstOrder;
     
-    ComplexSystem firstOrder;
     firstOrder.setCoefficients(0.5, 0.5);
 
-    // std::cout << "amplitude at half pi: " << firstOrder.amplitudeResponse(3*pi/4.0f, true) << " dB" << std::endl;
+    std::cout << "Amplitude response at angle pi/2 is: " << firstOrder.ampResponse(PI/2, true) << " dB" << std::endl;
+    std::cout << "Phase response at angle pi/6 is: " << firstOrder.phaseResponse(PI/6) << " radians" << std::endl;
 
-    double angle = pi/2;
-    firstOrder.ampResponse(angle);
-    firstOrder.phaseResponse(angle);
+    firstOrder.plotAmpResponse(10000);
+    firstOrder.plotPhaseResponse(10000);
 
     return 0;
 }
