@@ -9,12 +9,18 @@
 class Filter {
     public:
 
+        Filter() {a0 = 0.5; a1 = 0.5;}
+        Filter(double a0, double a1) : a0(a0), a1(a1) {}
+        ~Filter() {};
+
+        //Sets the filter coefficientes
         void setCoefficients(double a0, double a1)
         {
             this->a0 = a0;
             this->a1 = a1;
         }
 
+        //Returns the amplitude response of a given frequency 
         double ampResponse(double angle, bool dB = false)
         {
             std::complex<double> transfer = a0 + std::polar(a1, angle * -1); 
@@ -25,6 +31,7 @@ class Filter {
                 return amplitude;
         }
 
+        //Returns the phase response of a given frequency
         double phaseResponse(double angle)
         {
             std::complex<double> transfer = a0 + std::polar(a1, angle * -1);
@@ -32,10 +39,11 @@ class Filter {
             return phase;
         }
 
+        //Calculates amplitude response for numPoints from 0 to 2π and plots it on a graph
         void plotAmpResponse(int numPoints)
         {
             double angle = 0.0;
-            double angleDelta = pi/numPoints;
+            double angleDelta = 2*pi/numPoints;
             ampPlot.open("response.csv", std::ofstream::out | std::ofstream::trunc);
             for (int i = 0; i < numPoints; i++)
             {
@@ -48,6 +56,7 @@ class Filter {
             std::system(command.c_str());
         }
 
+        //Calculates phase response for numPoints from 0 to 2π and plots it on a graph
         void plotPhaseResponse(int numPoints)
         {
             double angle = 0.0;
@@ -82,12 +91,6 @@ class Filter {
         inline double complexMagnitude(std::complex<double> z)
         {   
             double magnitude = std::sqrt(pow(real(z),2.0) + pow(imag(z),2.0f));
-            return magnitude;
-        }
-
-        inline double calcMagnitude(double x, double y)
-        {   
-            double magnitude = std::sqrt(pow(x,2.0) + pow(y,2.0));
             return magnitude;
         }
 

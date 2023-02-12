@@ -1,5 +1,5 @@
 CXX= g++
-CXXFLAGS = -I/usr/local/include -Wall -g -std=c++17
+CXXFLAGS = -I/usr/local/include -Wall -std=c++17
 SOURCE=main.o
 TARGET=Complex
 
