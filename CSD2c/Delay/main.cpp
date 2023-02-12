@@ -81,6 +81,9 @@ int main() {
                     std::cout << "writeHead: " << callback.delays[1].circBuf.getWritePosition() << std::endl;
                     std::cout << "writeMax: " << callback.delays[1].circBuf.writeMax << std::endl;
                     std::cout << "readMax: " << callback.delays[1].circBuf.readMax << std::endl;
+                    std::cout << "Current max delay: " << callback.delays[1].circBuf.getSize() << std::endl;
+                    std::cout << "delayStarted: " << callback.delays[1].circBuf.delayStarted << std::endl;
+
         }
     }
 

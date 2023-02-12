@@ -24,8 +24,7 @@ public:
     int getSize() const;
     int getReadPosition() const;
     int getWritePosition() const;    
-    std::thread t;
-    int calculateDistance();
+    int getDistance();
 
 // private:
     inline void wrapReadHeader (uint& head);
@@ -39,10 +38,11 @@ public:
     float* newBuffer;
     float smoothOutput;
     bool delayStarted { false }, waitingForResize { false };
-    int distance; 
-    int oldSize;
+    bool changeDistance { false };
+    int distance, newDistance;
+    bool changeIncrement { false };
 
-    uint currentSize { 0 }, newSize { 0 };
+    uint currentSize { 0 }, newSize { 0 }; //newSize is a variable that stores the new bufferSize when the setSize() function is called
     uint writeHead { 0 }, readHead { 0 };
     uint writeMax { 0 }, readMax { 0 }; 
 };

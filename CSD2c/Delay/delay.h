@@ -34,7 +34,7 @@ public:
 
     void setDelayTime(int ms)
     {
-        circBuf.setDistance(msToSamps(ms));
+        circBuf.setDistance(msToSamps(ms), 100);
     }
 
     void setMaxDelay(int maxDelay)
@@ -44,7 +44,7 @@ public:
 
     int getDelayTime()
     {
-        return circBuf.calculateDistance();
+        return circBuf.getDistance();
     }
 
 
