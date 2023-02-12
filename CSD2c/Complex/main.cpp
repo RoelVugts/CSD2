@@ -5,22 +5,44 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <cstdio>
 
 #define PI acos(-1)
 
 int main() 
 {
-    Filter firstOrder;
+    Filter FIR;
+    std::vector<double> coefficients;
     
-    firstOrder.setCoefficients(0.5, 0.5);
+    std::cout << "Enter amount of coefficients (max delay): ";
+    int amount;
+    std::cin >> amount;
 
-    //Calculate amplitude and phase for a specific frequency
-    std::cout << "Amplitude response at angle pi/2 is: " << firstOrder.ampResponse(PI/2, true) << " dB" << std::endl;
-    std::cout << "Phase response at angle pi/6 is: " << firstOrder.phaseResponse(PI/6) << " radians" << std::endl;
+    for (int i = 0; i < amount; i++)
+    {
+        std::cout << "Enter value of coefficient " << i+1 << ": ";
+        std::string input;
+        std::cin >> input;
+        try {
+            double value = std::stod(input);
+            coefficients.push_back(value);
+        }
+        catch (const std::exception& e) 
+        {
+            std::cout << "Value must be a number\n" << std::endl;
+            i -= 1;
+        }
+
+    }
+
+    FIR.setCoefficients(coefficients);
 
     //Draw a graph showing amplitude and phase response
-    firstOrder.plotAmpResponse(10000);
-    firstOrder.plotPhaseResponse(10000);
+    FIR.plotAmpResponse(10000);
+    FIR.plotPhaseResponse(10000);
+
+    remove("response.csv");
 
     return 0;
 }

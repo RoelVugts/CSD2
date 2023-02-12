@@ -3,28 +3,45 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <vector>
 
 #pragma once
 
 class Filter {
     public:
 
-        Filter() {a0 = 0.5; a1 = 0.5;}
-        Filter(double a0, double a1) : a0(a0), a1(a1) {}
-        ~Filter() {};
+        Filter() {}
+        ~Filter() {}
 
-        //Sets the filter coefficientes
-        void setCoefficients(double a0, double a1)
+        //sets the filters coefficients
+        void setCoefficients(std::vector<double> values)
         {
-            this->a0 = a0;
-            this->a1 = a1;
+            coefficients.clear();
+            std::vector<double>::iterator i = values.begin();
+            while (i != values.end())
+            {
+                coefficients.push_back(*i);
+                i++;
+            }
         }
 
         //Returns the amplitude response of a given frequency 
         double ampResponse(double angle, bool dB = false)
         {
-            std::complex<double> transfer = a0 + std::polar(a1, angle * -1); 
-            double amplitude = complexMagnitude(transfer); 
+            std::complex<double> transferSum = {0.0, 0.0};
+            std::vector<double>::iterator i = coefficients.begin();
+            i++; //skip first coefficient since this is not a complex number
+            double n = 1.0; //Index for the nth sample delay in the filter (n-1) (n-2) etc...
+            while (i != coefficients.end())
+            {
+                transferSum += std::polar(*i, angle * -1 * n);
+                i++;
+                n++;
+            }
+
+            transferSum += coefficients[0];
+
+            double amplitude = complexMagnitude(transferSum);
             if (dB)
                 return gainToDecibels(amplitude);
             else
@@ -34,8 +51,21 @@ class Filter {
         //Returns the phase response of a given frequency
         double phaseResponse(double angle)
         {
-            std::complex<double> transfer = a0 + std::polar(a1, angle * -1);
-            double phase = complexAngle(transfer);
+
+            std::complex<double> transferSum = {0.0, 0.0};
+            std::vector<double>::iterator i = coefficients.begin();
+            i++;
+            double n = 1.0;
+
+            while (i != coefficients.end())
+            {
+                transferSum += std::polar(*i, angle * -1 * n);
+                i++;
+                n++;
+            }
+
+            transferSum += coefficients[0];
+            double phase = complexAngle(transferSum);
             return phase;
         }
 
@@ -99,8 +129,7 @@ class Filter {
             return 20.0f * log10(gain/1.0);
         }
 
-
-        double a0, a1; //a0 = x[n], a1 = x[n-1]
+        std::vector<double> coefficients;
         double e = exp(1);
         double pi = acos(-1);
         std::complex<double> i { 0.0, 1.0 };

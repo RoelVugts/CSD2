@@ -25,14 +25,17 @@ ax.plot(t, np_data)
 
 
 if type == "amplitude":
-    if min(data) > -80:
+    if min(data) > -78:
         min = round(min(data) - 6, -1)
         step = round(min / -7)
     else:
         min = -78
         plt.ylim(-78, 6)
         step = 6.
-    max = 6.
+    if (max(data) > 6.0):
+        max = max(data)
+    else:
+        max = 6.0
     yname = "Gain (dB)"
     name = "Amplitude Response"
 elif type == "phase":
