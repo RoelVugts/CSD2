@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <vector>
+#include <cstdio>
 
 #pragma once
 
@@ -11,7 +12,7 @@ class Filter {
     public:
 
         Filter() {}
-        ~Filter() {}
+        ~Filter() { remove("response.csv"); }
 
         //sets the filters coefficients
         void setCoefficients(std::vector<double> values)
@@ -73,7 +74,7 @@ class Filter {
         void plotAmpResponse(int numPoints)
         {
             double angle = 0.0;
-            double angleDelta = 2*pi/numPoints;
+            double angleDelta = (2*pi)/(numPoints-1);
             ampPlot.open("response.csv", std::ofstream::out | std::ofstream::trunc);
             for (int i = 0; i < numPoints; i++)
             {
@@ -90,7 +91,7 @@ class Filter {
         void plotPhaseResponse(int numPoints)
         {
             double angle = 0.0;
-            double angleDelta = 2*pi/numPoints;
+            double angleDelta = (2*pi)/(numPoints-1);
             phasePlot.open("response.csv", std::ofstream::out | std::ofstream::trunc);
             for (int i = 0; i < numPoints; i++)
             {

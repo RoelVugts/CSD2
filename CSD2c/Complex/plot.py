@@ -51,7 +51,8 @@ if type == "phase":
 elif type == "amplitude":
     plt.yticks(np.arange(min, max, step))
 
-plt.xticks([0, len(data)/8, len(data)/4, len(data)/8*3, len(data)/2, len(data)/8*5, len(data)/4*3, len(data)/8*7, len(data)], ["0", "0.25π", "0.5π", "0.75π", "π", "1.25π", "1.5π", "1.75π", "2π"])
+amount = len(data)-1
+plt.xticks([0, amount/8, amount/4, amount/8*3, amount/2, amount/8*5, amount/4*3, amount/8*7, amount], ["0", "0.25π", "0.5π", "0.75π", "π", "1.25π", "1.5π", "1.75π", "2π"])
 ax.set(xlabel='Frequency', ylabel=yname,
        title=name)
 ax.grid()

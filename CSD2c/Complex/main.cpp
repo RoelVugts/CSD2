@@ -6,7 +6,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <cstdio>
 
 #define PI acos(-1)
 
@@ -42,7 +41,7 @@ int main()
     FIR.plotAmpResponse(10000);
     FIR.plotPhaseResponse(10000);
 
-    remove("response.csv");
+
 
     return 0;
 }
