@@ -1,4 +1,5 @@
 #include "EmptyCircBuffer.h"
+#include "Util.h"
 
 #include <iostream>
 #include <unistd.h>
@@ -25,56 +26,59 @@ CircBuffer::~CircBuffer()
 void CircBuffer::input (float value) 
 {
     buffer[writeHead] = value;
+    
 }
 
 //Reads from the buffer
 float CircBuffer::output() 
 {
-    if (readHead > 0)
-        return buffer[readHead];
-    else
-        return 0.0f;
+    if (ceil(readHead) == readHead || floor(readHead) == readHead)
+    {
+        if (changeDistance)
+        {
+            std::cout << "readPos: " << readHead << std::endl;
+            std::cout << "writePos: " << writeHead << std::endl;
+            std::cout << "distance: " << distance << std::endl;
+            std::cout << "calculated: " << getDistance() << std::endl;
+            std::cout << "Sample: " << buffer[(int)readHead] << std::endl;
+            std::cout << "\n" << std::endl;
+        }
+        return buffer[(int)readHead];
+    } 
+    else 
+    {
+        double low = buffer[(int)readHead];
+        double high = buffer[readBuffer((int)readHead + 1)];
+        double fraction = readHead - (int)readHead;
+        double sample = Util::linearMap(fraction, low, high);
+        std::cout << "readPos: " << readHead << std::endl;
+        std::cout << "writePos: " << writeHead << std::endl;
+        std::cout << "distance: " << distance << std::endl;
+        std::cout << "calculated: " << getDistance() << std::endl;
+        std::cout << "newDistance: " << newDistance << std::endl;
+        std::cout << "Sample: " << sample << std::endl;
+        std::cout << "\n" << std::endl;
+        return sample;
+    }
+    
 }
 
+inline int CircBuffer::readBuffer(double head)
+{
+    if (head >= readMax)
+    head -= readMax;
+    return head;
+}
 
 //Setters
 //----------------------------------------------------------------------
 
 
-//Sets the delay instantly
-void CircBuffer::setDistance (uint distance) 
-{   
-    if (distance < currentSize) //if the new distance is greater than the buffer size
-        this->distance = distance;
-    else
-        this->distance = currentSize - 1;
 
 
-    if (!delayStarted)
-        readHead = 0;
-    else 
-    {
-        if (writeHead > this->distance) //if true then the writehead is in front of the readhead in the buffer
-        {
-        readHead = writeHead - this->distance;
-        } 
-        else
-        {
-        readHead = currentSize - this->distance + writeHead; //wrap readHead to end if it's in front of writeHead
-        }
-    }
-}
-
-//Sets the delay gradually
-void CircBuffer::setDistance(uint distance, int time)
-{
-    newDistance = distance;
-    changeDistance = true;
-    std::cout << "Reached new delay time" << std::endl;
-}
 
 //Returns the current delay time in samples
-int CircBuffer::getDistance()
+double CircBuffer::getDistance()
 {
     if (writeHead < readHead)
         return currentSize - readHead + writeHead;
@@ -87,12 +91,12 @@ int CircBuffer::getSize() const
     return currentSize;
 }
 
-int CircBuffer::getReadPosition() const
+double CircBuffer::getReadPosition() const
 {
     return readHead;
 }
 
-int CircBuffer::getWritePosition() const
+double CircBuffer::getWritePosition() const
 {
     return writeHead;
 }
@@ -110,7 +114,6 @@ void CircBuffer::setSize(uint size)
     
     if (size > currentSize)
     {
-
         std::copy(buffer, buffer+currentSize, newBuffer);
         delete[] buffer;
         buffer = newBuffer;
@@ -124,10 +127,10 @@ void CircBuffer::setSize(uint size)
     {
         if (distance > size)
         {
-            setDistance(size-1); //decrease delay time when new bufferSize is smaller than the current delay time
+            setDistance(size); //decrease delay time when new bufferSize is smaller than the current delay time
         }
 
-        if (writeHead > size && readHead < size || writeHead > size && readHead > size)
+        if ((writeHead > size && readHead < size) || (writeHead > size && readHead > size))
         {
             std::copy(buffer, buffer+size, newBuffer);
             readMax = writeHead;
@@ -156,6 +159,11 @@ void CircBuffer::setSize(uint size)
     }
 }
 
+void CircBuffer::deleteBuffer() 
+{
+        delete[] buffer;
+}
+
 //---------------------------------------------------------------------------------
 
 //Increments the heads 1 position further
@@ -166,40 +174,22 @@ void CircBuffer::incrementHeads()
 
     if (changeDistance)
     {
-        int increment = 1;
-
-        if (changeIncrement)
-        {
-            increment = 2;
-            changeIncrement = false;
-            std::cout << "Increment: " << increment << std::endl;
-        }
-        else if (!changeIncrement)
-        {
-            increment = 1;
-            changeIncrement = true;
-        }
-        
-
+        distance = getDistance();
         if (distance < newDistance) //if new distance is larger than old distance
-            setDistance(distance+increment);
+            readIncrement = 0.5;
         else if (distance > newDistance)
-            setDistance(distance-1);
-        else
+            readIncrement = 2.0;
+        else if (distance == newDistance)
+        {
+            readIncrement = 1.0;
             changeDistance = false;
+        }
     }
 }
 
-void CircBuffer::deleteBuffer() 
-{
-        delete[] buffer;
-}
-
-
-
 //Private functions
 //--------------------------------------------------------------------------------
-inline void CircBuffer::wrapReadHeader (uint& head) 
+inline void CircBuffer::wrapReadHeader (double& head) 
 {
     if (head <= writeHead) 
         readMax = currentSize; //if buffer is resized (larger than old buf) when readHead is > writeHead then it wraps the readHead based on the old buffer size
@@ -226,9 +216,7 @@ inline void CircBuffer::incrementRead()
 {
     if (delayStarted)
     {
-        // if (changeDistance && newDistance < distance)
-        readHead++;
-        // std::cout << "ReadHead: " << readHead << std::endl;
+        readHead += readIncrement;
         wrapReadHeader(readHead);
     }
 
@@ -244,6 +232,41 @@ inline void CircBuffer::incrementRead()
             currentSize = newSize;
         }
     }
+}
+
+//Sets the delay instantly
+void CircBuffer::setDistance (double distance) 
+{   
+    if (distance < currentSize) //if the new distance is greater than the buffer size
+    {
+        this->distance = distance;
+    }
+        
+    else
+        this->distance = currentSize;
+
+
+    if (!delayStarted)
+        readHead = 0.0;
+    else 
+    {
+        if (writeHead > distance) //if true then the writehead is in front of the readhead in the buffer
+        {
+        readHead = writeHead - this->distance;
+        } 
+        else
+        {
+        readHead = currentSize - this->distance + writeHead; //wrap readHead to end if it's in front of writeHead
+        }
+    }
+}
+
+//Sets the delay gradually
+void CircBuffer::setDistance(double distance, int time)
+{
+    newDistance = distance;
+    changeDistance = true;
+
 }
 
 

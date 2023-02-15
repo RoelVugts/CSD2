@@ -6,7 +6,7 @@
 #include "effect.h"
 #include "EmptyCircBuffer.h"
 
-class Delay : Effect {
+class Delay : public Effect {
 public:
     Delay() {}
     ~Delay() {}
@@ -17,18 +17,13 @@ public:
 
     }
 
-    float input (float input) override {
+    void input (float input) {
         circBuf.incrementHeads();
         circBuf.input(input);
-
-        // std::cout << "ReadPos: " << circBuf.getReadPosition() << std::endl;
-        // std::cout << "WritePos: " << circBuf.getWritePosition() << std::endl;
-        // std::cout << "input: " << input << std::endl; 
     }
 
     float output()
     {
-        // std::cout << "Output: " << circBuf.output() << std::endl;
         return circBuf.output();
     }
 
@@ -52,7 +47,7 @@ public:
 
 private:
 
-    int msToSamps(int ms)
+    float msToSamps(float ms)
     {
         return (ms/1000.0f) * sampleRate;
     }

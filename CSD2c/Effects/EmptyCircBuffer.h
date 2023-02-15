@@ -15,19 +15,19 @@ public:
 
     void input (float value);
     float output();
-    void setDistance (uint distance);
-    void goToDistance(uint distance, int time);
-    void setDistance(uint distance, int time);
+    void setDistance (double distance);
+    void setDistance(double distance, int time);
     void incrementHeads();
     void setSize(uint size);
 
     int getSize() const;
-    int getReadPosition() const;
-    int getWritePosition() const;    
-    int getDistance();
+    double getReadPosition() const;
+    double getWritePosition() const;    
+    double getDistance();
 
 // private:
-    inline void wrapReadHeader (uint& head);
+    inline void wrapReadHeader (double& head);
+    inline int readBuffer(double head);
     inline void wrapWriteHeader (uint& head);
     inline void incrementWrite();
     inline void incrementRead();
@@ -36,13 +36,16 @@ public:
 
     float* buffer;
     float* newBuffer;
-    float smoothOutput;
     bool delayStarted { false }, waitingForResize { false };
     bool changeDistance { false };
-    int distance, newDistance;
     bool changeIncrement { false };
 
+    double readIncrement { 1.0 };
+    double distance, newDistance;
     uint currentSize { 0 }, newSize { 0 }; //newSize is a variable that stores the new bufferSize when the setSize() function is called
-    uint writeHead { 0 }, readHead { 0 };
-    uint writeMax { 0 }, readMax { 0 }; 
+    uint writeHead { 0 };
+    double readHead { 0.0 };
+    uint writeMax { 0 };
+    double readMax { 0.0 };
+
 };

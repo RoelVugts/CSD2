@@ -1,6 +1,5 @@
 #include "EmptyCircBuffer.h"
 #include "jack_module.h"
-#include "sawtooth.h"
 #include "delay.h"
 
 #include <iostream>
@@ -26,8 +25,9 @@ public:
         
         for (int channel = 0u; channel < numOutputChannels; ++channel) {
             for (int sample = 0u; sample < numFrames; ++sample) {
-                delays[channel].input(inputChannels[channel][sample]);
                 outputChannels[channel][sample] = delays[channel].output();
+                delays[channel].input(inputChannels[channel][sample]);
+
                 // std::cout << delays[channel].output() << std::endl;
             }
         }
@@ -71,6 +71,13 @@ int main() {
                 int delayTime;
                 std::cout << "Enter new delay time (ms): ";
                 std::cin >> delayTime;
+                std::cout << "Current delay time: " << callback.delays[1].getDelayTime() << std::endl;
+                std::cout << "readHead: " << callback.delays[1].circBuf.getReadPosition() << std::endl;
+                std::cout << "writeHead: " << callback.delays[1].circBuf.getWritePosition() << std::endl;
+                std::cout << "writeMax: " << callback.delays[1].circBuf.writeMax << std::endl;
+                std::cout << "readMax: " << callback.delays[1].circBuf.readMax << std::endl;
+                std::cout << "Current max delay: " << callback.delays[1].circBuf.getSize() << std::endl;
+                std::cout << "delayStarted: " << callback.delays[1].circBuf.delayStarted << std::endl;
                 for (Delay& delay : callback.delays)
                     delay.setDelayTime(delayTime);
                 std::cout << "Set delay time to: " << delayTime << " ms" << std::endl;
