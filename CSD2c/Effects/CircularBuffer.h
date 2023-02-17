@@ -7,25 +7,29 @@
 
 #pragma once
 
+//TODO: When changing delay time to bufferSize changeDistance is never set to false again.
+
 class CircBuffer {
     using uint = unsigned int;
 public:
     CircBuffer (uint size);
     ~CircBuffer();
 
+    void setSize(uint size);
+    int getSize() const;
+
     void input (float value);
     float output();
-    void setDistance (double distance);
-    void setDistance(double distance, int time);
-    void incrementHeads();
-    void setSize(uint size);
 
-    int getSize() const;
-    double getReadPosition() const;
-    double getWritePosition() const;    
+    void setDistance(double distance, bool move);
     double getDistance();
 
-// private:
+    void incrementHeads();
+    double getReadPosition() const;
+    double getWritePosition() const;    
+
+
+private:
     inline void wrapReadHeader (double& head);
     inline int readBuffer(double head);
     inline void wrapWriteHeader (uint& head);

@@ -52,7 +52,7 @@ elif type == "amplitude":
     plt.yticks(np.arange(min, max, step))
 
 amount = len(data)-1
-plt.xticks([0, amount/8, amount/4, amount/8*3, amount/2, amount/8*5, amount/4*3, amount/8*7, amount], ["0", "0.25π", "0.5π", "0.75π", "π", "1.25π", "1.5π", "1.75π", "2π"])
+plt.xticks([0, amount/4, amount/2, amount/4*3, amount], ["0", "0.25π", "0.5π", "0.75π", "π"])
 ax.set(xlabel='Frequency', ylabel=yname,
        title=name)
 ax.grid()

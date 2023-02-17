@@ -9,11 +9,16 @@ struct Effect {
     ~Effect() {}
 
     virtual void prepareToPlay (int samplerate) = 0;
-    
+    virtual float output(float input) = 0;
 
     void setDryWet(float dryWet)
     {
-        this->dryWet = dryWet;
+        if (dryWet > 1.0f)
+            this->dryWet = 1.0f;
+        else if (dryWet < 0.0f)
+            this->dryWet = 0.0f;
+        else
+            this->dryWet = dryWet;
     }
 
     protected:

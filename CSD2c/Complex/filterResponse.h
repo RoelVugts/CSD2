@@ -27,9 +27,34 @@ class Filter {
         }
 
         //Returns the amplitude response of a given frequency 
+        double getResponse(double angle, bool dB = false)
+        {
+            std::complex<double> transferSum = {0.0, 0.0}; //initialize variable
+            std::vector<double>::iterator i = coefficients.begin();
+            i++; //skip first coefficient since this is not a complex number
+            double n = 1.0; //Index for the nth sample delay in the filter (n-1) (n-2) etc...
+            while (i != coefficients.end())
+            {
+                transferSum += std::polar(*i, angle * -1 * n);
+                i++;
+                n++;
+            }
+
+            transferSum += coefficients[0];
+
+            double amplitude = complexMagnitude(transferSum);
+            double phase = complexAngle(transferSum);
+            std::complex<double> {amplitude, phase};
+            if (dB)
+                return gainToDecibels(amplitude);
+            else
+                return amplitude;
+        }
+
+        //Returns the amplitude response of a given frequency 
         double ampResponse(double angle, bool dB = false)
         {
-            std::complex<double> transferSum = {0.0, 0.0};
+            std::complex<double> transferSum = {0.0, 0.0}; //initialize variable
             std::vector<double>::iterator i = coefficients.begin();
             i++; //skip first coefficient since this is not a complex number
             double n = 1.0; //Index for the nth sample delay in the filter (n-1) (n-2) etc...
@@ -74,7 +99,7 @@ class Filter {
         void plotAmpResponse(int numPoints)
         {
             double angle = 0.0;
-            double angleDelta = (2*pi)/(numPoints-1);
+            double angleDelta = pi/(numPoints-1);
             ampPlot.open("response.csv", std::ofstream::out | std::ofstream::trunc);
             for (int i = 0; i < numPoints; i++)
             {
@@ -91,7 +116,7 @@ class Filter {
         void plotPhaseResponse(int numPoints)
         {
             double angle = 0.0;
-            double angleDelta = (2*pi)/(numPoints-1);
+            double angleDelta = pi/(numPoints-1);
             phasePlot.open("response.csv", std::ofstream::out | std::ofstream::trunc);
             for (int i = 0; i < numPoints; i++)
             {

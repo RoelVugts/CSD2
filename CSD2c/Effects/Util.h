@@ -1,20 +1,21 @@
 
+#pragma once
+
 namespace Util
 {
-    template <typename T> T mapInRange(T value, T inputMin, T inputMax, T outputMin, T outputMax)
+    inline double mapInRange(double value, double inputMin, double inputMax, double outputMin, double outputMax)
     {
-        T inputRange = inputMax - inputMin;
-        T outputRange = outputMax - outputMin;
-        T valueScaled = (value-inputMin)/inputRange;
-        T output = valueScaled * outputRange + outputMin;
+        double inputRange = inputMax - inputMin;
+        double outputRange = outputMax - outputMin;
+        double valueScaled = (value-inputMin)/inputRange;
+        double output = valueScaled * outputRange + outputMin;
         return output;
     }
 
-    template <typename T> T linearMap(T factor, T min, T max)
+    inline double linearMap(double factor, double min, double max)
     {
-        T output = mapInRange(factor, 0.0, 1.0, min, max);
+        double output = mapInRange(factor, 0.0, 1.0, min, max);
         return output;
     }
-
 
 }// Util

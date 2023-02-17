@@ -1,38 +1,38 @@
 {
 	"Env" : 
 	{
-		"active" : false,
-		"attack" : 10.0,
+		"active" : true,
+		"attack" : 1.0,
 		"decay" : 500.0,
-		"release" : 20.0,
-		"sustain" : 0.80000001192092896
+		"release" : 1.0,
+		"sustain" : 0.0
 	},
 	"Filter" : 
 	{
 		"active" : true,
-		"cutoff" : 500.0,
+		"cutoff" : 10000.0,
 		"mode" : 0
 	},
 	"FmSynth" : 
 	{
 		"carrierAmp" : 1.0,
-		"carrierFreq" : 250.0,
-		"modulatorAmp" : 5.0,
-		"modulatorRatio" : 3.0,
+		"carrierFreq" : 1000.0,
+		"modulatorAmp" : 1.0,
+		"modulatorRatio" : 2.0,
 		"waveform" : 0
 	},
 	"LFO" : 
 	{
 		"LFOdepth" : 1.0,
-		"LFOfreq" : 1.0,
-		"active" : false,
+		"LFOfreq" : 2.0,
+		"active" : true,
 		"waveform" : 0
 	},
 	"SuperSynth" : 
 	{
 		"amplitude" : 1.0,
-		"detunePercentage" : 25,
+		"detunePercentage" : 5,
 		"note" : 69,
-		"numVoices" : 4
+		"numVoices" : 1
 	}
 }

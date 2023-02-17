@@ -11,10 +11,11 @@
 
 int main() 
 {
+
     Filter FIR;
     std::vector<double> coefficients;
     
-    std::cout << "Enter amount of coefficients (max delay): ";
+    std::cout << "Enter amount of coefficients: ";
     int amount;
     std::cin >> amount;
 

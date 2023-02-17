@@ -4,32 +4,31 @@
 #pragma once
 
 #include "effect.h"
-#include "EmptyCircBuffer.h"
+#include "CircularBuffer.h"
 
 class Delay : public Effect {
 public:
     Delay() {}
     ~Delay() {}
+
     void prepareToPlay (int sampleRate) override {
         this->sampleRate = sampleRate;
         circBuf.setSize(sampleRate*2);
-        circBuf.setDistance(msToSamps(1000));
+        circBuf.setDistance(msToSamps(1000), false);
 
     }
 
-    void input (float input) {
+    float output(float input)
+    {
         circBuf.incrementHeads();
         circBuf.input(input);
-    }
-
-    float output()
-    {
-        return circBuf.output();
+        float output = (1.0f - dryWet)*input + (dryWet * circBuf.output());
+        return output;
     }
 
     void setDelayTime(int ms)
     {
-        circBuf.setDistance(msToSamps(ms), 100);
+        circBuf.setDistance(msToSamps(ms), true);
     }
 
     void setMaxDelay(int maxDelay)

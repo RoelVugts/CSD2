@@ -1,6 +1,9 @@
-#include "EmptyCircBuffer.h"
+#include "CircularBuffer.h"
 #include "jack_module.h"
 #include "delay.h"
+#include "tremolo.h"
+#include "waveshaper.h"
+#include "sine.h"
 
 #include <iostream>
 #include <cmath>
@@ -13,30 +16,36 @@ class Callback : public AudioCallback {
 
 public:
 
-    void prepare (int sampleRate) override {
+    void prepare (int sampleRate) override 
+    {
         for (Delay& delay : delays)
-        {
             delay.prepareToPlay(sampleRate);
-        }
+        for (Tremolo& tremolo : tremolos)
+            tremolo.prepareToPlay(sampleRate);
+        for (Waveshaper& waveshaper : waveshapers)
+            waveshaper.prepareToPlay(sampleRate);
     }
 
     void process (AudioBuffer buffer) override {
         auto [inputChannels, outputChannels, numInputChannels, numOutputChannels, numFrames] = buffer;
         
-        for (int channel = 0u; channel < numOutputChannels; ++channel) {
-            for (int sample = 0u; sample < numFrames; ++sample) {
-                outputChannels[channel][sample] = delays[channel].output();
-                delays[channel].input(inputChannels[channel][sample]);
-
-                // std::cout << delays[channel].output() << std::endl;
+        for (int channel = 0u; channel < numOutputChannels; ++channel) { 
+            for (int sample = 0u; sample < numFrames; ++sample) 
+            {
+                sines[channel].tick();
+                outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
+                // outputChannels[channel][sample] = tremolos[channel].output(inputChannels[channel][sample]);
+                // outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
             }
         }
     }
 
+    std::array<Tremolo, 2> tremolos;
     std::array<Delay, 2> delays;
+    std::array<Waveshaper, 2> waveshapers;
 
 private:
-    
+    std::array<Sine, 2> sines { Sine(400, 0.5f), Sine(400, 0.5f) };
 };
 
 
@@ -63,34 +72,13 @@ int main() {
                     delay.setMaxDelay(maxDelay);
                 std::cout << "Set max delay to: " << maxDelay << " ms" << std::endl;
                 continue;
-            case 's':
-                for (Delay& delay : callback.delays)
-                    std::cout << "Current max delay: " << delay.circBuf.getSize() << std::endl;
-                continue;
             case 'd':
                 int delayTime;
                 std::cout << "Enter new delay time (ms): ";
                 std::cin >> delayTime;
-                std::cout << "Current delay time: " << callback.delays[1].getDelayTime() << std::endl;
-                std::cout << "readHead: " << callback.delays[1].circBuf.getReadPosition() << std::endl;
-                std::cout << "writeHead: " << callback.delays[1].circBuf.getWritePosition() << std::endl;
-                std::cout << "writeMax: " << callback.delays[1].circBuf.writeMax << std::endl;
-                std::cout << "readMax: " << callback.delays[1].circBuf.readMax << std::endl;
-                std::cout << "Current max delay: " << callback.delays[1].circBuf.getSize() << std::endl;
-                std::cout << "delayStarted: " << callback.delays[1].circBuf.delayStarted << std::endl;
                 for (Delay& delay : callback.delays)
                     delay.setDelayTime(delayTime);
                 std::cout << "Set delay time to: " << delayTime << " ms" << std::endl;
-                continue;
-            case 't':
-                    std::cout << "Current delay time: " << callback.delays[1].getDelayTime() << std::endl;
-                    std::cout << "readHead: " << callback.delays[1].circBuf.getReadPosition() << std::endl;
-                    std::cout << "writeHead: " << callback.delays[1].circBuf.getWritePosition() << std::endl;
-                    std::cout << "writeMax: " << callback.delays[1].circBuf.writeMax << std::endl;
-                    std::cout << "readMax: " << callback.delays[1].circBuf.readMax << std::endl;
-                    std::cout << "Current max delay: " << callback.delays[1].circBuf.getSize() << std::endl;
-                    std::cout << "delayStarted: " << callback.delays[1].circBuf.delayStarted << std::endl;
-
         }
     }
 

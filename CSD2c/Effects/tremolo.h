@@ -1,11 +1,14 @@
 #include "effect.h"
 #include "sine.h"
 
+#pragma once
+
 class Tremolo : public Effect {
     public:
-        Tremolo(float frequency, float dryWet) : frequency(frequency) 
+        Tremolo()
         {
-            this->dryWet = dryWet;
+            frequency = 5.0f;
+            dryWet = 1.0f;
         }
 
         ~Tremolo() {}
@@ -14,19 +17,25 @@ class Tremolo : public Effect {
         {
             this->sampleRate = sampleRate;
             sine.setSamplerate(sampleRate);
+            sine.setAmplitude(1.0f);
+            sine.setFrequency(frequency);
         }
 
         float output(float input)
         {
             sine.tick();
-            float output = input * ((1.0f - dryWet) + (dryWet * sine.getSample()));
+            float modulator = (sine.getSample() + 1.0f) / 2.0f; //make unipolar
+            float output = input * ((1.0f - dryWet) + (dryWet * modulator));
             return output;
         }
 
         void setFrequency(float frequency)
         {
             this->frequency = frequency;
+            sine.setFrequency(frequency);
         }
+
+
 
     private:
         Sine sine = Sine(frequency, dryWet);
