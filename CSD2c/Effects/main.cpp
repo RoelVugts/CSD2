@@ -4,6 +4,7 @@
 #include "tremolo.h"
 #include "waveshaper.h"
 #include "sine.h"
+#include "pitchShifter.h"
 
 #include <iostream>
 #include <cmath>
@@ -24,6 +25,9 @@ public:
             tremolo.prepareToPlay(sampleRate);
         for (Waveshaper& waveshaper : waveshapers)
             waveshaper.prepareToPlay(sampleRate);
+        for (PitchShifter& pitchShifter : pitchShifters)
+            pitchShifter.prepareToPlay(sampleRate);
+        
     }
 
     void process (AudioBuffer buffer) override {
@@ -35,7 +39,8 @@ public:
                 sines[channel].tick();
                 // outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
                 // outputChannels[channel][sample] = tremolos[channel].output(inputChannels[channel][sample]);
-                outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
+                // outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
+                outputChannels[channel][sample] = pitchShifters[channel].output(inputChannels[channel][sample]);
             }
         }
     }
@@ -43,6 +48,7 @@ public:
     std::array<Tremolo, 2> tremolos;
     std::array<Delay, 2> delays;
     std::array<Waveshaper, 2> waveshapers;
+    std::array<PitchShifter, 2> pitchShifters;
 
 private:
     std::array<Sine, 2> sines { Sine(400, 0.5f), Sine(400, 0.5f) };

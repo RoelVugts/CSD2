@@ -182,7 +182,7 @@ void CircBuffer::incrementHeads()
         else if (distance == newDistance)
         {
             readIncrement = 1.0;
-            std::cout << "New delay time reached" << std::endl;
+            // std::cout << "New delay time reached" << std::endl;
             changeDistance = false;
         }
     }
