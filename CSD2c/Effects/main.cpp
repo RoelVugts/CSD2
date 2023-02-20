@@ -33,9 +33,9 @@ public:
             for (int sample = 0u; sample < numFrames; ++sample) 
             {
                 sines[channel].tick();
-                outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
+                // outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
                 // outputChannels[channel][sample] = tremolos[channel].output(inputChannels[channel][sample]);
-                // outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
+                outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
             }
         }
     }
