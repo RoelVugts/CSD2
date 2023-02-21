@@ -29,7 +29,7 @@ public:
         for (PitchShifter& pitchShifter : pitchShifters)
         {
             pitchShifter.prepareToPlay(sampleRate);
-            pitchShifter.setPitch(1.5f);
+            pitchShifter.setPitch(-12.0f);
         }
             
         
