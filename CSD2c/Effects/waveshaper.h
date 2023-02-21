@@ -14,10 +14,10 @@ class Waveshaper : public Effect {
         void prepareToPlay(int sampleRate)
         {
             waveShape = new float[bufferSize];
-            setDrive(10.0f);
-            // bitCrusher(6);
-            setAssymetry(1.0f);
-            clipDist();
+            // setDrive(10.0f);
+            bitCrusher(4);
+            // setAssymetry(0.0f);
+            // clipDist();
         }
 
         float output(float input)

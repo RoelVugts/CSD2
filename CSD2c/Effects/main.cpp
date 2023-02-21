@@ -5,6 +5,7 @@
 #include "waveshaper.h"
 #include "sine.h"
 #include "pitchShifter.h"
+#include "filePlayer.h"
 
 #include <iostream>
 #include <cmath>
@@ -26,8 +27,14 @@ public:
         for (Waveshaper& waveshaper : waveshapers)
             waveshaper.prepareToPlay(sampleRate);
         for (PitchShifter& pitchShifter : pitchShifters)
+        {
             pitchShifter.prepareToPlay(sampleRate);
+            pitchShifter.setPitch(1.5f);
+        }
+            
         
+        readyVocal.open("Ready.wav");
+
     }
 
     void process (AudioBuffer buffer) override {
@@ -36,9 +43,9 @@ public:
         for (int channel = 0u; channel < numOutputChannels; ++channel) { 
             for (int sample = 0u; sample < numFrames; ++sample) 
             {
-                sines[channel].tick();
+                // sines[channel].tick();
                 // outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
-                // outputChannels[channel][sample] = tremolos[channel].output(inputChannels[channel][sample]);
+                // outputChannels[channel][sample] = tremolos[channel].output(sines[channel].getSample());
                 // outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
                 outputChannels[channel][sample] = pitchShifters[channel].output(inputChannels[channel][sample]);
             }
@@ -49,6 +56,8 @@ public:
     std::array<Delay, 2> delays;
     std::array<Waveshaper, 2> waveshapers;
     std::array<PitchShifter, 2> pitchShifters;
+    FilePlayer readyVocal;
+
 
 private:
     std::array<Sine, 2> sines { Sine(400, 0.5f), Sine(400, 0.5f) };
@@ -56,6 +65,9 @@ private:
 
 
 int main() {
+
+
+
 
     auto callback = Callback {};
     auto jack = JackModule (callback);

@@ -26,9 +26,9 @@ public:
         return output;
     }
 
-    void setDelayTime(int ms)
+    void setDelayTime(float ms)
     {
-        circBuf.setDistance(msToSamps(ms), true);
+        circBuf.setDistance(msToSamps(ms), false);
     }
 
     void setMaxDelay(int maxDelay)

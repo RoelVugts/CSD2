@@ -126,31 +126,25 @@ void CircBuffer::setDistance (double distance, bool move)
             newDistance = distance;
         else
             newDistance = currentSize-1;
+
         changeDistance = true;
     }
     else 
     {
         if (distance < currentSize) //if the new distance is greater than the buffer size
-        {
-            this->distance = distance;
-        }
-            
+            this->distance = distance;            
         else
             this->distance = currentSize;
 
 
         if (!delayStarted)
-            readHead = 0.0; //wait with incrementing the delay until delay time is reached (when we first start the delay)
+            readHead = 0.0; //wait with incrementing the readhead until delay time is reached (when we first start the delay)
         else 
         {
             if (writeHead > distance) //if true then the writehead is in front of the readhead in the buffer
-            {
-            readHead = writeHead - this->distance;
-            } 
+                readHead = writeHead - this->distance;
             else
-            {
-            readHead = currentSize - this->distance + writeHead; //wrap readHead to end if it's in front of writeHead
-            }
+                readHead = currentSize - this->distance + writeHead; //wrap readHead to end if it's in front of writeHead
         }
     }
 
