@@ -18,6 +18,7 @@ class Oscillator {
         float getSample();
         float getSampleRate();
         void setSamplerate(float samplerate);
+        void setPhase(float phase);
 
         virtual void tick();
         float polyBLEP(float t);

@@ -86,3 +86,8 @@ float Oscillator::polyBLEP(float t)
     else return 0.0;
 
 }
+
+void Oscillator::setPhase(float phase)
+{
+    this->phase = phase;
+}

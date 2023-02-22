@@ -5,6 +5,9 @@
 
 #pragma once
 
+//TRY THIS WITHOUT HEADPHONES SO THE SPEAKER FEEDBACKS WITH THE MIC (+ OR - 12 PITCH)
+//GAME SOUND DESING MACHINE
+
 class PitchShifter : public Effect {
     public:
 

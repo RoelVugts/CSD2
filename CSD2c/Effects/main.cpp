@@ -6,6 +6,7 @@
 #include "sine.h"
 #include "pitchShifter.h"
 #include "filePlayer.h"
+#include "chorus.h"
 
 #include <iostream>
 #include <cmath>
@@ -20,20 +21,19 @@ public:
 
     void prepare (int sampleRate) override 
     {
-        for (Delay& delay : delays)
-            delay.prepareToPlay(sampleRate);
-        for (Tremolo& tremolo : tremolos)
-            tremolo.prepareToPlay(sampleRate);
-        for (Waveshaper& waveshaper : waveshapers)
-            waveshaper.prepareToPlay(sampleRate);
-        for (PitchShifter& pitchShifter : pitchShifters)
-        {
-            pitchShifter.prepareToPlay(sampleRate);
-            pitchShifter.setPitch(-12.0f);
-        }
-            
-        
-        readyVocal.open("Ready.wav");
+        // for (Delay& delay : delays)
+        //     delay.prepareToPlay(sampleRate);
+        // for (Tremolo& tremolo : tremolos)
+        //     tremolo.prepareToPlay(sampleRate);
+        // for (Waveshaper& waveshaper : waveshapers)
+        //     waveshaper.prepareToPlay(sampleRate);
+        // for (PitchShifter& pitchShifter : pitchShifters)
+        // {
+        //     pitchShifter.prepareToPlay(sampleRate);
+        //     pitchShifter.setPitch(-12.0f);
+        // }
+        chorus.prepareToPlay(sampleRate);
+        chorus.setDryWet(0.5f);
 
     }
 
@@ -47,7 +47,8 @@ public:
                 // outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
                 // outputChannels[channel][sample] = tremolos[channel].output(sines[channel].getSample());
                 // outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
-                outputChannels[channel][sample] = pitchShifters[channel].output(inputChannels[channel][sample]);
+                // outputChannels[channel][sample] = pitchShifters[channel].output(inputChannels[channel][sample]);
+                outputChannels[channel][sample] = chorus.output(inputChannels[channel][sample], channel);
             }
         }
     }
@@ -56,7 +57,7 @@ public:
     std::array<Delay, 2> delays;
     std::array<Waveshaper, 2> waveshapers;
     std::array<PitchShifter, 2> pitchShifters;
-    FilePlayer readyVocal;
+    Chorus chorus;
 
 
 private:
