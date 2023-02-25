@@ -9,7 +9,10 @@ struct Effect {
     ~Effect() {}
 
     virtual void prepareToPlay (int samplerate) = 0;
-    virtual float output(float input) = 0;
+    virtual float output(float input) 
+    {
+        return input;
+    }
 
     void setDryWet(float dryWet)
     {

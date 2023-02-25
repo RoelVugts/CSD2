@@ -8,7 +8,7 @@
 
 
 //Constructor
-CircBuffer::CircBuffer(uint size) : currentSize (size), buffer (new float[currentSize]), newBuffer(nullptr)
+CircBuffer::CircBuffer(uint size) : buffer (new float[currentSize]), currentSize (size), newBuffer(nullptr)
 { 
     //initialize write- and readHeader wrap values to buffer size
     writeMax = size; 

@@ -21,7 +21,7 @@ public:
     float output(float input)
     {
         circBuf.incrementHeads();
-        circBuf.input(input);
+        circBuf.input(input + feedback * circBuf.output());
         float output = (1.0f - dryWet)*input + (dryWet * circBuf.output());
         return output;
     }
@@ -41,6 +41,16 @@ public:
         return circBuf.getDistance();
     }
 
+    void setFeedback(float feedback)
+    {
+        if (feedback > 0.9f)
+            this->feedback = 0.9f;
+        else if (feedback < -0.9f)
+            this->feedback = -0.9f;
+        else
+            this->feedback = feedback;
+    }
+
 
     CircBuffer circBuf = CircBuffer(1);
 
@@ -51,6 +61,6 @@ private:
         return (ms/1000.0f) * sampleRate;
     }
 
-
     int sampleRate;
+    float feedback { 0.0f };
 };

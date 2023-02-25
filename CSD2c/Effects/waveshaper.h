@@ -43,7 +43,7 @@ class Waveshaper : public Effect {
 
             double step = 2.0f / (pow(2.0, bitDepth) - 1.0);
 
-            for (int i = 0; i < bufferSize; i++)
+            for (uint i = 0; i < bufferSize; i++)
             {
                 float index = ((float)i/bufferSize) * 2.0 -1.0;
                 waveShape[i] = step * (int)(index/step);
@@ -65,7 +65,7 @@ class Waveshaper : public Effect {
 
         void clipDist()
         {
-            for (int i = 0; i < bufferSize; i++)
+            for (uint i = 0; i < bufferSize; i++)
             {
                 float index = ((float)i/bufferSize) * 2 - 1; //scale i between -1.0 and + 1.0
                 

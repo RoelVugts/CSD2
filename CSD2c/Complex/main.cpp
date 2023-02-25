@@ -39,8 +39,8 @@ int main()
     FIR.setCoefficients(coefficients);
 
     //Draw a graph showing amplitude and phase response
-    FIR.plotAmpResponse(10000);
-    FIR.plotPhaseResponse(10000);
+    FIR.plotResponse(10000, "amplitude");
+    FIR.plotResponse(10000, "phase");
 
 
 

@@ -25,36 +25,26 @@ class Chorus : public Effect {
             this->sampleRate = sampleRate;
         }
 
-        float output(float input) override
+        float output(float input, uint channel = 0)
         {
-            tick();
-            
-            return input * (1.0f - dryWet) + delays[0].output(input) * dryWet + delays[1].output(input) * dryWet;
-        }
+            tick(channel);
 
-        float output(float input, int channel)
-        {
-            tick();
             return input * (1 - dryWet) + delays[channel].output(input) * dryWet;
         }
 
-        void tick()
+        void tick(uint channel)
         {
-            for (int channel = 0; channel < 2; channel++)
-            {
-                lfos[channel].tick();
-                float modulation = delayTime + depth * lfos[channel].getSample();
-                delays[channel].setDelayTime(modulation);
-                // std::cout << "Modulation: " << modulation << std::endl;
-            }
+            lfos[channel].tick();
+            float modulation = delayTime + depth * lfos[channel].getSample();
+            delays[channel].setDelayTime(modulation);
         }
 
 
     private:
-        float rate { 0.5f };
+        float rate { 5.0f };
         Delay delays[2] = {Delay(), Delay()};
-        Sine lfos[2] = { Sine(rate, 0.5f), Sine(rate, 0.5f) };
-        float depth { 10.0f };
+        Sine lfos[2] = { Sine(rate, 0.5f), Sine(rate, 0.0f) };
+        float depth { 5.0f };
         float delayTime { 25.0f };
         float sampleRate;
 

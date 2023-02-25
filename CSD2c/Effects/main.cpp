@@ -21,17 +21,17 @@ public:
 
     void prepare (int sampleRate) override 
     {
-        // for (Delay& delay : delays)
-        //     delay.prepareToPlay(sampleRate);
-        // for (Tremolo& tremolo : tremolos)
-        //     tremolo.prepareToPlay(sampleRate);
-        // for (Waveshaper& waveshaper : waveshapers)
-        //     waveshaper.prepareToPlay(sampleRate);
-        // for (PitchShifter& pitchShifter : pitchShifters)
-        // {
-        //     pitchShifter.prepareToPlay(sampleRate);
-        //     pitchShifter.setPitch(-12.0f);
-        // }
+        for (int i = 0; i < 2; i++)
+        {
+            delays[i].prepareToPlay(sampleRate);
+            delays[i].setFeedback(0.5f);
+            tremolos[i].prepareToPlay(sampleRate);
+            waveshapers[i].prepareToPlay(sampleRate);
+            pitchShifters[i].prepareToPlay(sampleRate);
+            pitchShifters[i].setPitch(2.0f);
+            sines[i].setSamplerate(sampleRate);
+        }
+
         chorus.prepareToPlay(sampleRate);
         chorus.setDryWet(0.5f);
 
@@ -43,12 +43,13 @@ public:
         for (int channel = 0u; channel < numOutputChannels; ++channel) { 
             for (int sample = 0u; sample < numFrames; ++sample) 
             {
-                // sines[channel].tick();
-                // outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
+                sines[channel].tick();
+                outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
                 // outputChannels[channel][sample] = tremolos[channel].output(sines[channel].getSample());
                 // outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
                 // outputChannels[channel][sample] = pitchShifters[channel].output(inputChannels[channel][sample]);
-                outputChannels[channel][sample] = chorus.output(inputChannels[channel][sample], channel);
+                // outputChannels[channel][sample] = chorus.output(inputChannels[channel][sample], channel);
+                // outputChannels[channel][sample] = sines[channel].getSample();
             }
         }
     }
