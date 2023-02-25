@@ -34,6 +34,7 @@ public:
 
         chorus.prepareToPlay(sampleRate);
         chorus.setDryWet(0.5f);
+        chorus.setFeedback(0.2f);
 
     }
 
@@ -44,11 +45,11 @@ public:
             for (int sample = 0u; sample < numFrames; ++sample) 
             {
                 sines[channel].tick();
-                outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
+                // outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
                 // outputChannels[channel][sample] = tremolos[channel].output(sines[channel].getSample());
                 // outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
                 // outputChannels[channel][sample] = pitchShifters[channel].output(inputChannels[channel][sample]);
-                // outputChannels[channel][sample] = chorus.output(inputChannels[channel][sample], channel);
+                outputChannels[channel][sample] = chorus.output(inputChannels[channel][sample], channel);
                 // outputChannels[channel][sample] = sines[channel].getSample();
             }
         }
