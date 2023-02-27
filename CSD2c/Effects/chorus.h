@@ -46,7 +46,7 @@ class Chorus : public Effect {
 
 
     private:
-        float rate { 0.5f };
+        float rate { 2.0f };
         Delay delays[2] = {Delay(), Delay()};
         Sine lfos[2] = { Sine(rate, 0.5f), Sine(rate, 0.5f) };
         float depth { 20.0f };

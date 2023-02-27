@@ -97,7 +97,7 @@ void CircBuffer::input (float value)
     
 }
 
-//Reads from the buffer
+//Reads from the buffer and interpolates decimal values
 float CircBuffer::output() 
 {
     if (ceil(readHead) == readHead || floor(readHead) == readHead)
