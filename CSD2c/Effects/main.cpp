@@ -7,6 +7,10 @@
 #include "pitchShifter.h"
 #include "filePlayer.h"
 #include "chorus.h"
+#include "sawtooth.h"
+#include "flanger.h"
+#include "triangle.h"
+#include "filter.h"
 
 #include <iostream>
 #include <cmath>
@@ -28,13 +32,19 @@ public:
             tremolos[i].prepareToPlay(sampleRate);
             waveshapers[i].prepareToPlay(sampleRate);
             pitchShifters[i].prepareToPlay(sampleRate);
-            pitchShifters[i].setPitch(2.0f);
+            pitchShifters[i].setPitchNote(0.0f);
             sines[i].setSamplerate(sampleRate);
+            flangers[i].prepareToPlay(sampleRate);
+            flangers[i].setDryWet(0.5f);
+            flangers[i].setFeedback(0.0f);
+            saws[i].setSamplerate(sampleRate);
+            triangles[i].setSamplerate(sampleRate);
         }
 
         chorus.prepareToPlay(sampleRate);
         chorus.setDryWet(0.5f);
-        chorus.setFeedback(0.2f);
+        chorus.setFeedback(0.5f);
+        
         vocal.open("ready.wav");
 
     }
@@ -46,13 +56,19 @@ public:
             for (int sample = 0u; sample < numFrames; ++sample) 
             {
                 sines[channel].tick();
+                saws[channel].tick();
+                triangles[channel].tick();
                 // outputChannels[channel][sample] = delays[channel].output(inputChannels[channel][sample]);
                 // outputChannels[channel][sample] = tremolos[channel].output(sines[channel].getSample());
                 // outputChannels[channel][sample] = waveshapers[channel].output(sines[channel].getSample());
                 // outputChannels[channel][sample] = pitchShifters[channel].output(inputChannels[channel][sample]);
-                // outputChannels[channel][sample] = chorus.output(inputChannels[channel][sample], channel);
+                // outputChannels[channel][sample] = chorus.output(sines[channel].getSample(), channel);
                 // outputChannels[channel][sample] = sines[channel].getSample();
                 // outputChannels[channel][sample] = vocal.read(channel);
+                // outputChannels[channel][sample] = flangers[channel].output(saws[channel].getSample());
+                // outputChannels[channel][sample] = triangles[channel].getSample();
+                outputChannels[channel][sample] = filters[channel].output(saws[channel].getSample());
+
             }
         }
     }
@@ -61,8 +77,12 @@ public:
     std::array<Delay, 2> delays;
     std::array<Waveshaper, 2> waveshapers;
     std::array<PitchShifter, 2> pitchShifters;
+    std::array<Flanger, 2> flangers;
     Chorus chorus;
     FilePlayer vocal;
+    std::array<Sawtooth, 2> saws { Sawtooth(400, 0.8f), Sawtooth(400, 0.8f) };
+    std::array<Triangle, 2> triangles { Triangle(400, 0.5f), Triangle(400, 0.5f) };
+    std::array<Filter, 2> filters { Filter(), Filter() };
 
 
 private:

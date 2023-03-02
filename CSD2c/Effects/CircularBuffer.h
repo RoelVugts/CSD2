@@ -37,16 +37,15 @@ private:
     inline void incrementRead();
     void deleteBuffer();
 
-
-    float* buffer;
-    float* newBuffer;
     bool delayStarted { false }, waitingForResize { false };
     bool changeDistance { false };
     bool changeIncrement { false };
 
     double readIncrement { 1.0 };
     double distance, newDistance;
+    float* buffer;
     uint currentSize { 0 }, newSize { 0 }; //newSize is a variable that stores the new bufferSize when the setSize() function is called
+    float* newBuffer;
     uint writeHead { 0 };
     double readHead { 0.0 };
     uint writeMax { 0 };

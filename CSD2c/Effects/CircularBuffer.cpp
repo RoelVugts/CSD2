@@ -8,11 +8,14 @@
 
 
 //Constructor
-CircBuffer::CircBuffer(uint size) : buffer (new float[currentSize]), currentSize (size), newBuffer(nullptr)
+CircBuffer::CircBuffer(uint size) : buffer (new float[size]), currentSize (size), newBuffer(nullptr)
 { 
     //initialize write- and readHeader wrap values to buffer size
     writeMax = size; 
     readMax = size;
+
+    for (uint i = 0; i < size; i++)
+        buffer[i] = 0.0f;
 
 }
 
@@ -100,17 +103,21 @@ void CircBuffer::input (float value)
 //Reads from the buffer and interpolates decimal values
 float CircBuffer::output() 
 {
-    if (ceil(readHead) == readHead || floor(readHead) == readHead)
-    {
-        return buffer[(int)readHead];
-    } 
-    else 
-    {
-        double low = buffer[(int)readHead];
-        double high = buffer[readBuffer((int)readHead + 1)];
-        double fraction = readHead - (int)readHead;
-        double sample = Util::linearMap(fraction, low, high);
-        return sample;
+    if (!delayStarted)
+        return 0.0f;
+    else {
+        if (ceil(readHead) == readHead || floor(readHead) == readHead)
+        {
+            return buffer[(int)readHead];
+        } 
+        else 
+        {
+            double low = buffer[(int)readHead];
+            double high = buffer[readBuffer((int)readHead + 1)];
+            double fraction = readHead - (int)readHead;
+            double sample = Util::linearMap(fraction, low, high);
+            return sample;
+        }
     }
     
 }

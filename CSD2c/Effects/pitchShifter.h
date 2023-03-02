@@ -5,9 +5,6 @@
 
 #pragma once
 
-//TRY THIS WITHOUT HEADPHONES SO THE SPEAKER FEEDBACKS WITH THE MIC (+ OR - 12 PITCH)
-//GAME SOUND DESING MACHINE
-
 class PitchShifter : public Effect {
     public:
 
@@ -27,11 +24,17 @@ class PitchShifter : public Effect {
             return sum;
         }
         
-        void setPitch(float pitch)
+        void setPitchNote(float pitch)
         {
             float convertedPitch = pow(2.0f, (pitch/12.0f)); //equal temperament
             phasorFreq = (1.0f - convertedPitch) / (window/1000.0f); // Fout(Hz) = Fin(Hz) * (1 - ( Fp(Hz) * w(s))) --> (1 - (Fout/Fin(Hz))) / w(s) = Fp(Hz)
+            std::cout << "freq: " << phasorFreq << std::endl;
             this->pitch = pitch;
+        }
+
+        void setPitch(float pitch)
+        {
+            phasorFreq = (1.0f - pitch);
         }
 
     private:

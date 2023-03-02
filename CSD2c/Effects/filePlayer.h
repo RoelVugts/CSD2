@@ -41,7 +41,7 @@ class FilePlayer {
             return samples[channel][readPos++];
         }
 
-        int readPos { 0 };
+        long unsigned int readPos { 0 };
         SF_INFO file_info;
         std::array<std::vector<float>, 2> samples;
 };
