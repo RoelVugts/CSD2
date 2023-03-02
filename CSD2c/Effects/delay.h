@@ -52,7 +52,7 @@ public:
     }
 
 
-    CircBuffer circBuf = CircBuffer(1);
+    CircBuffer<float, float> circBuf = CircBuffer<float, float>(1);
 
 private:
 

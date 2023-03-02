@@ -81,8 +81,8 @@ class Filter : public Effect {
 
     private:
 
-        CircBuffer circBuf = { CircBuffer(samplerate) }; //delay buffer for allpass input X[n-d]
-        CircBuffer filterBuf = { CircBuffer(samplerate) }; //delay buffer for allpass output (Y[n-d])
+        CircBuffer<double, uint> circBuf = { CircBuffer<double, uint>(samplerate) }; //delay buffer for allpass input X[n-d]
+        CircBuffer<double, uint> filterBuf = { CircBuffer<double, uint>(samplerate) }; //delay buffer for allpass output (Y[n-d])
     
         float cutoff;
         float resonance;

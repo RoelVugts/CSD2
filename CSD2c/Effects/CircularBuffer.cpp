@@ -1,5 +1,6 @@
 #include "CircularBuffer.h"
 #include "Util.h"
+#include <type_traits>
 
 #include <iostream>
 #include <unistd.h>
@@ -8,27 +9,29 @@
 
 
 //Constructor
-CircBuffer::CircBuffer(uint size) : buffer (new float[size]), currentSize (size), newBuffer(nullptr)
+template<class dataType, class headType>
+CircBuffer<dataType, headType>::CircBuffer(uint size) : buffer (new dataType[size]), currentSize (size), newBuffer(nullptr)
 { 
     //initialize write- and readHeader wrap values to buffer size
     writeMax = size; 
     readMax = size;
 
     for (uint i = 0; i < size; i++)
-        buffer[i] = 0.0f;
+        buffer[i] = 0.0;
 
 }
 
 //Destructor
-CircBuffer::~CircBuffer()
+template<class dataType, class headType>
+CircBuffer<dataType, headType>::~CircBuffer()
 {
     delete[] buffer; 
-    std::cout << "buffer deleted" << std::endl;
 }
 
 
 //changes the size of the buffer
-void CircBuffer::setSize(uint size)
+template<class dataType, class headType>
+void CircBuffer<dataType, headType>::setSize(uint size)
 {
     //----------------------------------------------------------------
     //when new size equals old size
@@ -37,7 +40,7 @@ void CircBuffer::setSize(uint size)
     
     //----------------------------------------------------------------
     //when new size is bigger than old size
-    newBuffer = new float[size]; //create new buffer
+    newBuffer = new dataType[size]; //create new buffer
     
     if (size > currentSize)
     {
@@ -86,7 +89,8 @@ void CircBuffer::setSize(uint size)
     }
 }
 
-int CircBuffer::getSize() const
+template<class dataType, class headType>
+uint CircBuffer<dataType, headType>::getSize() const
 {
     return currentSize;
 }
@@ -94,38 +98,39 @@ int CircBuffer::getSize() const
 
 
 //Writes to the buffer
-void CircBuffer::input (float value) 
+template<class dataType, class headType>
+void CircBuffer<dataType, headType>::input (dataType value) 
 {
     buffer[writeHead] = value;
     
 }
 
 //Reads from the buffer and interpolates decimal values
-float CircBuffer::output() 
+template<class dataType, class headType>
+dataType CircBuffer<dataType, headType>::output()
 {
     if (!delayStarted)
-        return 0.0f;
-    else {
-        if (ceil(readHead) == readHead || floor(readHead) == readHead)
+        return 0.0;
+    else 
+    {
+        if (std::is_same<headType, int>::value)
         {
             return buffer[(int)readHead];
-        } 
+        }
         else 
         {
-            double low = buffer[(int)readHead];
-            double high = buffer[readBuffer((int)readHead + 1)];
-            double fraction = readHead - (int)readHead;
-            double sample = Util::linearMap(fraction, low, high);
+            dataType low = buffer[(int)readHead];
+            dataType high = buffer[readBuffer((int)readHead + 1)];
+            headType fraction = readHead - (int)readHead;
+            dataType sample = Util::linearMap(fraction, low, high);
             return sample;
         }
     }
-    
 }
 
-
-
 //Sets the delay instantly
-void CircBuffer::setDistance (double distance, bool move) 
+template<class dataType, class headType>
+void CircBuffer<dataType, headType>::setDistance (headType distance, bool move) 
 {   
     if (move)
     {
@@ -158,17 +163,19 @@ void CircBuffer::setDistance (double distance, bool move)
 }
 
 //Returns the current delay time in samples
-double CircBuffer::getDistance()
+template<class dataType, class headType>
+headType CircBuffer<dataType, headType>::getDistance() const
 {
     if (writeHead < readHead)
         return currentSize - readHead + writeHead;
     else
-        return ((double)writeHead - readHead);
+        return (writeHead - readHead);
 }
 
 
 //Increments the heads 1 position further
-void CircBuffer::incrementHeads() 
+template<class dataType, class headType>
+void CircBuffer<dataType, headType>::incrementHeads() 
 {
     incrementWrite();
     incrementRead();
@@ -183,24 +190,25 @@ void CircBuffer::incrementHeads()
         else if (distance == newDistance)
         {
             readIncrement = 1.0;
-            // std::cout << "New delay time reached" << std::endl;
             changeDistance = false;
         }
     }
 }
 
-double CircBuffer::getReadPosition() const
+template<class dataType, class headType>
+headType CircBuffer<dataType, headType>::getReadPosition() const
 {
     return readHead;
 }
 
-double CircBuffer::getWritePosition() const
+template<class dataType, class headType>
+uint CircBuffer<dataType, headType>::getWritePosition() const
 {
     return writeHead;
 }
 
-
-inline void CircBuffer::wrapReadHeader (double& head) 
+template<class dataType, class headType>
+inline void CircBuffer<dataType, headType>::wrapReadHeader (headType& head) 
 {
     if (head <= writeHead) 
         readMax = currentSize; //if buffer is resized (larger than old buf) when readHead is > writeHead then it wraps the readHead based on the old buffer size
@@ -209,20 +217,26 @@ inline void CircBuffer::wrapReadHeader (double& head)
         head -= readMax;
 }
 
-inline int CircBuffer::readBuffer(double head)
+/*wraps the readHead without changing the actual readhead
+function is used in output() function for interpolation
+*/
+template<class dataType, class headType>
+inline int CircBuffer<dataType, headType>::readBuffer(headType head)
 {
     if (head >= readMax)
     head -= readMax;
     return head;
 }
 
-inline void CircBuffer::wrapWriteHeader(uint& head)
+template<class dataType, class headType>
+inline void CircBuffer<dataType, headType>::wrapWriteHeader(uint& head)
 {
     if (head >= writeMax)
         head -= writeMax;
 }
 
-inline void CircBuffer::incrementWrite() 
+template<class dataType, class headType>
+inline void CircBuffer<dataType, headType>::incrementWrite() 
 {
     writeHead++;
     wrapWriteHeader(writeHead);
@@ -230,7 +244,9 @@ inline void CircBuffer::incrementWrite()
     if (writeHead > distance)
         delayStarted = true; //start reading after distance (delay) had been reached
 }
-inline void CircBuffer::incrementRead() 
+
+template<class dataType, class headType>
+inline void CircBuffer<dataType, headType>::incrementRead() 
 {
     if (delayStarted)
     {
@@ -252,7 +268,8 @@ inline void CircBuffer::incrementRead()
     }
 }
 
-void CircBuffer::deleteBuffer() 
+template<class dataType, class headType>
+void CircBuffer<dataType, headType>::deleteBuffer() 
 {
         delete[] buffer;
 }

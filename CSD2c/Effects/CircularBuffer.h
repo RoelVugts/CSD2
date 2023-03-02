@@ -1,14 +1,10 @@
-//
-// Created by Dean on 05/02/2023.
-//
-
 #include <iostream>
 #include <thread>
 
 #pragma once
 
 //TODO: When changing delay time to bufferSize changeDistance is never set to false again.
-
+template<class dataType, class headType> 
 class CircBuffer {
     using uint = unsigned int;
 public:
@@ -16,22 +12,22 @@ public:
     ~CircBuffer();
 
     void setSize(uint size);
-    int getSize() const;
+    uint getSize() const;
 
-    void input (float value);
-    float output();
+    void input (dataType value);
+    dataType output();
 
-    void setDistance(double distance, bool move);
-    double getDistance();
+    void setDistance(headType distance, bool move);
+    headType getDistance() const;
 
     void incrementHeads();
-    double getReadPosition() const;
-    double getWritePosition() const;    
+    headType getReadPosition() const;
+    uint getWritePosition() const;    
 
 
 private:
-    inline void wrapReadHeader (double& head);
-    inline int readBuffer(double head);
+    inline void wrapReadHeader (headType& head);
+    inline int readBuffer(headType head);
     inline void wrapWriteHeader (uint& head);
     inline void incrementWrite();
     inline void incrementRead();
@@ -41,14 +37,14 @@ private:
     bool changeDistance { false };
     bool changeIncrement { false };
 
-    double readIncrement { 1.0 };
-    double distance, newDistance;
-    float* buffer;
+    headType readIncrement { 1 };
+    headType distance, newDistance;
+    dataType* buffer;
     uint currentSize { 0 }, newSize { 0 }; //newSize is a variable that stores the new bufferSize when the setSize() function is called
-    float* newBuffer;
+    dataType* newBuffer;
     uint writeHead { 0 };
-    double readHead { 0.0 };
+    headType readHead { 0 };
     uint writeMax { 0 };
-    double readMax { 0.0 };
+    headType readMax { 0 };
 
 };

@@ -1,4 +1,5 @@
 #include "CircularBuffer.h"
+#include "CircularBuffer.cpp"
 #include "jack_module.h"
 #include "delay.h"
 #include "tremolo.h"
@@ -67,7 +68,7 @@ public:
                 // outputChannels[channel][sample] = vocal.read(channel);
                 // outputChannels[channel][sample] = flangers[channel].output(saws[channel].getSample());
                 // outputChannels[channel][sample] = triangles[channel].getSample();
-                outputChannels[channel][sample] = filters[channel].output(saws[channel].getSample());
+                // outputChannels[channel][sample] = filters[channel].output(saws[channel].getSample());
 
             }
         }
