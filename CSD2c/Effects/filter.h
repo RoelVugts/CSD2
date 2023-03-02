@@ -9,15 +9,17 @@ class Filter : public Effect {
         virtual void prepareToPlay(int samplerate) override
         {
             this->samplerate = samplerate;
+            circBuf.setSize(samplerate);
+            filterBuf.setSize(samplerate);
         }
 
         virtual float output(float input) override
         {
             if (mode == 0)
                 return lowpass(input);
-            if (mode == 1)
+            else if (mode == 1)
                 return highpass(input);
-            if (mode == 2)
+            else if (mode == 2)
                 return allpass(input);
             else 
                 return 0.0f;
@@ -59,13 +61,10 @@ class Filter : public Effect {
         }
 
         float allpass(float inputValue)
-        {
+        {   
             circBuf.input(inputValue);
-            std::cout << "input: " << inputValue;
             output1 = (allpassFeedback * -1 * inputValue) + circBuf.output() + (allpassFeedback * filterBuf.output());// y[n] = (-g * x[n]) + x[n - d] + (g * y[n - d])
             filterBuf.input(output1);
-            std::cout << "          bufOutput: " << filterBuf.output();
-            std::cout << "          output: " << output1 << std::endl;
             circBuf.incrementHeads();
             filterBuf.incrementHeads();
             return output1;
@@ -81,8 +80,8 @@ class Filter : public Effect {
 
     private:
 
-        CircBuffer<double, uint> circBuf = { CircBuffer<double, uint>(samplerate) }; //delay buffer for allpass input X[n-d]
-        CircBuffer<double, uint> filterBuf = { CircBuffer<double, uint>(samplerate) }; //delay buffer for allpass output (Y[n-d])
+        CircBuffer<float, uint> circBuf = { CircBuffer<float, uint>((uint)samplerate) }; //delay buffer for allpass input X[n-d]
+        CircBuffer<float, uint> filterBuf = { CircBuffer<float, uint>((uint)samplerate) }; //delay buffer for allpass output (Y[n-d])
     
         float cutoff;
         float resonance;
@@ -91,5 +90,5 @@ class Filter : public Effect {
         float output2;
         int samplerate;
         float allpassFeedback { 0.2f };
-        double allpassDelay { 5.0 };
+        double allpassDelay { 5 };
 };

@@ -101,8 +101,8 @@ uint CircBuffer<dataType, headType>::getSize() const
 template<class dataType, class headType>
 void CircBuffer<dataType, headType>::input (dataType value) 
 {
+    // std::cout << "Write: " << value << std::endl;
     buffer[writeHead] = value;
-    
 }
 
 //Reads from the buffer and interpolates decimal values
@@ -110,10 +110,13 @@ template<class dataType, class headType>
 dataType CircBuffer<dataType, headType>::output()
 {
     if (!delayStarted)
+    {
+        // std::cout << "Read: " << "0" << std::endl;
         return 0.0;
+    }
     else 
     {
-        if (std::is_same<headType, int>::value)
+        if (std::is_same<headType, int>::value || std::is_same<headType, uint>::value)
         {
             return buffer[(int)readHead];
         }

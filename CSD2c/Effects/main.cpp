@@ -28,32 +28,34 @@ public:
     {
         for (int i = 0; i < 2; i++)
         {
-            delays[i].prepareToPlay(sampleRate);
-            delays[i].setFeedback(0.5f);
-            tremolos[i].prepareToPlay(sampleRate);
-            waveshapers[i].prepareToPlay(sampleRate);
-            pitchShifters[i].prepareToPlay(sampleRate);
-            pitchShifters[i].setPitchNote(0.0f);
-            sines[i].setSamplerate(sampleRate);
-            flangers[i].prepareToPlay(sampleRate);
-            flangers[i].setDryWet(0.5f);
-            flangers[i].setFeedback(0.7f);
+            // delays[i].prepareToPlay(sampleRate);
+            // delays[i].setFeedback(0.5f);
+            // tremolos[i].prepareToPlay(sampleRate);
+            // waveshapers[i].prepareToPlay(sampleRate);
+            // pitchShifters[i].prepareToPlay(sampleRate);
+            // pitchShifters[i].setPitchNote(0.0f);
+            // sines[i].setSamplerate(sampleRate);
+            // flangers[i].prepareToPlay(sampleRate);
+            // flangers[i].setDryWet(0.5f);
+            // flangers[i].setFeedback(0.7f);
             saws[i].setSamplerate(sampleRate);
-            triangles[i].setSamplerate(sampleRate);
+            // triangles[i].setSamplerate(sampleRate);
+            filters[i].prepareToPlay(sampleRate);
         }
-
-        chorus.prepareToPlay(sampleRate);
-        chorus.setDryWet(0.5f);
-        chorus.setFeedback(0.5f);
+            filters[0].setAllpass(0.6f, 5);
+            filters[1].setAllpass(0.3f, 50);
+        // chorus.prepareToPlay(sampleRate);
+        // chorus.setDryWet(0.5f);
+        // chorus.setFeedback(0.5f);
         
-        vocal.open("ready.wav");
+        // vocal.open("ready.wav");
 
     }
 
     void process (AudioBuffer buffer) override {
         auto [inputChannels, outputChannels, numInputChannels, numOutputChannels, numFrames] = buffer;
         
-        for (int channel = 0u; channel < numOutputChannels; ++channel) { 
+        for (int channel = 0u; channel < numOutputChannels; ++channel) {  
             for (int sample = 0u; sample < numFrames; ++sample) 
             {
                 sines[channel].tick();
@@ -68,8 +70,7 @@ public:
                 // outputChannels[channel][sample] = vocal.read(channel);
                 // outputChannels[channel][sample] = flangers[channel].output(saws[channel].getSample());
                 // outputChannels[channel][sample] = triangles[channel].getSample();
-                // outputChannels[channel][sample] = filters[channel].output(saws[channel].getSample());
-
+                outputChannels[channel][sample] = filters[channel].output(saws[channel].getSample());
             }
         }
     }
