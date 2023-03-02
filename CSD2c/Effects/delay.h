@@ -36,7 +36,7 @@ public:
         circBuf.setSize(msToSamps(maxDelay));
     }
 
-    int getDelayTime()
+    double getDelayTime()
     {
         return circBuf.getDistance();
     }

@@ -163,7 +163,7 @@ double CircBuffer::getDistance()
     if (writeHead < readHead)
         return currentSize - readHead + writeHead;
     else
-        return (writeHead - readHead);
+        return ((double)writeHead - readHead);
 }
 
 

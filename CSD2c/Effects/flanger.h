@@ -37,8 +37,8 @@ class Flanger : public Effect {
 
     private:
         Delay delay = { Delay() };
-        Triangle triangle = { Triangle(1.0f, 1.0f) };
-        Triangle modTriangle = { Triangle(1.0f, 1.0f) };
+        Triangle triangle = { Triangle(0.5f, 0.8f) };
+        Triangle modTriangle = { Triangle(0.5f, 0.8f) };
         float depth { 2.0f };
         float freq { 1.0f };
         int samplerate;
@@ -49,8 +49,9 @@ class Flanger : public Effect {
             triangle.tick();
             modTriangle.tick();
             float modSignal = (modTriangle.getSample() + 1) / 2;
-            std::cout << "delay: " << modSignal * depth << std::endl;
-            delay.setDelayTime(depth * modSignal);
+            triangle.setFrequency(freq * modSignal);
+            float modModSignal = (triangle.getSample() +1) / 2;
+            delay.setDelayTime(depth * modModSignal);
         }
 
         void foldSaw(Sawtooth osc)

@@ -45,6 +45,8 @@ class Filter {
                 return gainToDecibels(abs(transferSum));
             else if (type == "phase")
                 return arg(transferSum);
+            else
+                return 1.0;
         }
 
         void plotResponse(int numPoints, std::string type)

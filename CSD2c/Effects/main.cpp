@@ -36,7 +36,7 @@ public:
             sines[i].setSamplerate(sampleRate);
             flangers[i].prepareToPlay(sampleRate);
             flangers[i].setDryWet(0.5f);
-            flangers[i].setFeedback(0.0f);
+            flangers[i].setFeedback(0.7f);
             saws[i].setSamplerate(sampleRate);
             triangles[i].setSamplerate(sampleRate);
         }
