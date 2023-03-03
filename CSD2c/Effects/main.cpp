@@ -12,6 +12,7 @@
 #include "flanger.h"
 #include "triangle.h"
 #include "filter.h"
+#include "decorrelation.h"
 
 #include <iostream>
 #include <cmath>
@@ -41,9 +42,11 @@ public:
             saws[i].setSamplerate(sampleRate);
             // triangles[i].setSamplerate(sampleRate);
             filters[i].prepareToPlay(sampleRate);
+            decorrelators[i].prepareToPlay(sampleRate);
+
         }
-            filters[0].setAllpass(0.6f, 5);
-            filters[1].setAllpass(0.3f, 50);
+        filters[0].setAllpass(0.6f, 5);
+        filters[1].setAllpass(0.3f, 50);
         // chorus.prepareToPlay(sampleRate);
         // chorus.setDryWet(0.5f);
         // chorus.setFeedback(0.5f);
@@ -70,7 +73,8 @@ public:
                 // outputChannels[channel][sample] = vocal.read(channel);
                 // outputChannels[channel][sample] = flangers[channel].output(saws[channel].getSample());
                 // outputChannels[channel][sample] = triangles[channel].getSample();
-                outputChannels[channel][sample] = filters[channel].output(saws[channel].getSample());
+                // outputChannels[channel][sample] = filters[channel].output(saws[channel].getSample());
+                outputChannels[channel][sample] = decorrelators[channel].output(saws[channel].getSample()) + saws[channel].getSample();
             }
         }
     }
@@ -85,7 +89,7 @@ public:
     std::array<Sawtooth, 2> saws { Sawtooth(400, 0.8f), Sawtooth(400, 0.8f) };
     std::array<Triangle, 2> triangles { Triangle(400, 0.5f), Triangle(400, 0.5f) };
     std::array<Filter, 2> filters { Filter(), Filter() };
-
+    std::array<Decorrelator, 2> decorrelators { Decorrelator() };
 
 private:
     std::array<Sine, 2> sines { Sine(400, 0.5f), Sine(400, 0.5f) };

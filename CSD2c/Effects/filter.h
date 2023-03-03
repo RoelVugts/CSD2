@@ -3,6 +3,8 @@
 #include <cmath>
 #include <iostream>
 
+#pragma once
+
 class Filter : public Effect {
     public:
 
@@ -23,6 +25,8 @@ class Filter : public Effect {
                 return allpass(input);
             else 
                 return 0.0f;
+            
+            
         }
 
 
@@ -86,7 +90,7 @@ class Filter : public Effect {
         float cutoff;
         float resonance;
         int mode { 2 };
-        float output1;
+        float output1 { 0.0f };
         float output2;
         int samplerate;
         float allpassFeedback { 0.2f };

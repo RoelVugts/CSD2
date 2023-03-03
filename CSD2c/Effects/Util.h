@@ -18,4 +18,9 @@ namespace Util
         return output;
     }
 
+    template<typename T> T randomGenerator()
+    {
+        
+    }
+
 }// Util
