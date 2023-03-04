@@ -1,5 +1,6 @@
 #include "filter.h"
 #include "effect.h"
+#include "Util.h"
 
 #pragma once
 
@@ -13,16 +14,12 @@ class Decorrelator : public Effect {
         virtual void prepareToPlay(int sampleRate) override
         {
             this->sampleRate = sampleRate;
-            // setFilterAmount(5);
+
             for (Filter& filter : filters)
             {
                     filter.prepareToPlay(sampleRate);
             }
-            filters[0].setAllpass(0.8f, 78);
-            filters[1].setAllpass(0.99f, 358);
-            filters[2].setAllpass(0.9f, 20.73);
-            filters[3].setAllpass(0.9f, 930);
-            filters[4].setAllpass(0.75f, 149.6);
+            setCoefficients();
         }
 
         virtual float output(float input) override
@@ -32,37 +29,26 @@ class Decorrelator : public Effect {
             for (Filter& filter : filters)
                 output = filter.output(output);
             
-            return output;
-        }
-
-        void setCorrelation(float correlation)
-        {
-            this->correlation = correlation;
-        }
-
-        void setFilterAmount(uint amount)
-        {
-            // this->filterAmount = amount;
-            // for (uint i  = 0; i < amount; i++)
-            //     filters.push_back(Filter());
+            return (1.0f - dryWet) * input + dryWet * output;
         }
 
         void setCoefficients()
         {  
-            // std::vector<Filter*>::iterator i = filters.begin();
-            // while (i != filters.end())
-            // {
-            //         (*i)->prepareToPlay(sampleRate);
-            //         (*i)->setAllpass(0.8f, 12.0);
-            //         i++;
-            // }
+            for (Filter& filter : filters)
+            {
+                float gain = Util::random(1000) / 1000.0f;
+                float delay = Util::random(sampleRate/2);
+                std::cout << "Gain: " << gain;
+                std::cout << "        Delay: " << delay << std::endl;
+                filter.setAllpass(gain, delay);
+            }
         }  
 
 
 
     private:
         float correlation;
-        Filter filters[5] { Filter(), Filter(), Filter(), Filter(), Filter() };
+        Filter filters[512] { {Filter()} };
         uint filterAmount;
         int sampleRate;
 };

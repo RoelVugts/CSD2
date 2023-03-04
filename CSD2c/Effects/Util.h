@@ -1,5 +1,8 @@
 
+#include <cmath>
+
 #pragma once
+
 
 namespace Util
 {
@@ -18,9 +21,11 @@ namespace Util
         return output;
     }
 
-    template<typename T> T randomGenerator()
+    inline int random(int maxValue)
     {
-        
+        std::srand(clock());
+        int randomInt = rand() % maxValue;
+        return randomInt;
     }
 
 }// Util
