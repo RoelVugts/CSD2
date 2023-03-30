@@ -43,7 +43,7 @@ class Filter {
 
             transferSum += coefficients[0];
             if (type == "amplitude")
-                return gainToDecibels(abs(transferSum));
+                    return gainToDecibels(abs(transferSum));
             else if (type == "phase")
                 return arg(transferSum);
             else

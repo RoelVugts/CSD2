@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <iomanip>
 
 
 #define pi acos(-1)
@@ -40,16 +41,18 @@ int main()
     }
 // 
     FIR.setCoefficients(coefficients);
-
-    bool singleFrequency = askQuestion("Do you want to calcuate the response for a specific frequency[Y/n]?");
-    float frequency = askQuestion("What is the frequency (range 0.0 to 6.238315307)?", 0.0f, 6.283185307f);
-    if (singleFrequency)
+    int piDivisions = 0;
+    piDivisions = askQuestion("How many divisions of pi do you want?", 1, 10000);
+    double piStep = pi / piDivisions;
+    for (int i = 0; i <= piDivisions; i++)
     {
-        std::cout << "Amplitude Response: " << Util::decibelsToGain(FIR.getResponse(frequency, "amplitude")) << " || " << FIR.getResponse(frequency, "amplitude") << " dB" << std::endl;
-        std::cout << "Phase Response" << FIR.getResponse(frequency, "phase") << std::endl;
+        std::cout << "Pi / " << piDivisions << " x " << i << ": ";
+        std::cout << std::setw(10) << "Amplitude Response: " << std::setw(10) << Util::decibelsToGain(FIR.getResponse(piStep*i, "amplitude")) << " || ";
+        std::cout << std::setw(10) << FIR.getResponse(piStep*i, "amplitude") << " dB, ";
+        std::cout << std::setw(10) << "   Phase Response: " << FIR.getResponse(piStep*i, "phase") << std::endl;
     }
   
-    bool drawPlot = askQuestion("Do you want to draw the response in a plot?");
+    bool drawPlot = askQuestion("Do you want to draw the filter in a plot?");
     if (drawPlot)
     {
         //Draw a graph showing amplitude and phase response
