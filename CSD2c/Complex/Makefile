@@ -1,7 +1,6 @@
 CXX= g++
 CXXFLAGS = -I/usr/local/include -Wall -std=c++17
-LDFLAGS= -lmyUtil
-SOURCE=main.o UI.o
+SOURCE=main.o UI.o util.o
 TARGET=Complex
 
 $(TARGET) : $(SOURCE)
