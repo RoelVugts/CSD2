@@ -46,7 +46,7 @@ int main()
     double piStep = pi / piDivisions;
     for (int i = 0; i <= piDivisions; i++)
     {
-        std::cout << "Pi / " << piDivisions << " x " << i << ": ";
+        std::cout << "(Pi / " << piDivisions << ") x " << i << ": ";
         std::cout << std::setw(10) << "Amplitude Response: " << std::setw(10) << Util::decibelsToGain(FIR.getResponse(piStep*i, "amplitude")) << " || ";
         std::cout << std::setw(10) << FIR.getResponse(piStep*i, "amplitude") << " dB, ";
         std::cout << std::setw(10) << "   Phase Response: " << FIR.getResponse(piStep*i, "phase") << std::endl;
