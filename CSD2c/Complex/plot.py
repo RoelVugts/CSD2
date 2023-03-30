@@ -28,7 +28,7 @@ if type == "amplitude":
     if min(data) > -78:
         min = round(min(data) - 6, -1)
         step = round(min / -7)
-        step = 1
+        step = 6
     else:
         min = -78
         plt.ylim(-78, 6)
@@ -50,7 +50,7 @@ elif type == "phase":
 if type == "phase":
     plt.yticks([-3.14, -2.36, -1.57, -0.79, 0, 0.79, 1.57, 2.36, 3.14], ["-π", "-0.75π", "-0.5π", "-0.25π", "0", "0.25π", "0.5π", "0.75π", "π"])
 elif type == "amplitude":
-    print("min: ", min, " max: ", max, " step: ", step);
+    # print("min: ", min, " max: ", max, " step: ", step)
     plt.yticks(np.arange(min, max, step))
 
 amount = len(data)-1

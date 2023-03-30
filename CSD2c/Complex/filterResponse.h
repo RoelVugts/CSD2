@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <vector>
 #include <cstdio>
+#include <circularBuffer.h>
 
 #pragma once
 
@@ -62,7 +63,30 @@ class Filter {
             ampPlot.close();
             std::string command = "python3 plot.py " + type;
             std::system(command.c_str());
-        }        
+        }
+
+        // void plotImpulseResponse()
+        // {
+        //     impulsePlot.open("response.csv", std::ofstream::out | std::ofstream::trunc);
+        //     for (long unsigned int i = 0; i < (coefficients.size() + 10); i ++)
+        //     {
+        //         float output = 0.0f;
+        //         delay.writeSample(impulse);
+
+        //         for (long unsigned int j = 0; j < coefficients.size(); j++)
+        //         {
+        //             output += delay.readSample(j) * coefficients[j];
+        //             std::cout <<"Sample " << i << ": Reading " << j << " sample delay with value: " << delay.readSample(j) << std::endl;
+        //         }
+
+        //         impulse = 0.0f;
+        //         impulsePlot << output << std::endl;
+        //         delay.incrementWrite();
+        //     }
+
+        //     impulsePlot.close();
+        //     std::system("python3 plotImpulse.py");
+        // }     
 
     private:
 
@@ -83,4 +107,7 @@ class Filter {
         std::complex<double> i { 0.0, 1.0 };
         std::ofstream ampPlot;
         std::ofstream phasePlot;
+        std::ofstream impulsePlot;
+        float impulse { 1.0f };
+
 };
